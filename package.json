@@ -1,0 +1,22 @@
+{
+  "name": "carlayarts",
+  "version": "1.0.0",
+  "description": "Carlay Art - French contemporary artist website",
+  "main": "index.js",
+  "scripts": {
+    "scrape": "node scripts/scrape-site-standalone.js",
+    "scrape:install": "npx playwright install chromium && npm run scrape",
+    "dev": "npx serve .",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:28317/git/stimutak/carlayArts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "playwright": "^1.57.0"
+  }
+}
