@@ -366,6 +366,140 @@
       color: var(--text-muted);
     }
 
+    /* Lightbox / Zoom Modal */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      cursor: zoom-out;
+    }
+
+    .lightbox--open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .lightbox__image {
+      max-width: 90vw;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: var(--radius-sm);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+
+    .lightbox--open .lightbox__image {
+      transform: scale(1);
+    }
+
+    .lightbox__close {
+      position: absolute;
+      top: var(--space-6);
+      right: var(--space-6);
+      width: 48px;
+      height: 48px;
+      background: transparent;
+      border: 1px solid var(--color-ghost-20);
+      border-radius: var(--radius-full);
+      color: var(--color-white);
+      font-size: var(--text-xl);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .lightbox__close:hover {
+      background: var(--color-rose);
+      border-color: var(--color-rose);
+    }
+
+    .lightbox__info {
+      position: absolute;
+      bottom: var(--space-8);
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      color: var(--color-white);
+    }
+
+    .lightbox__title {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: var(--weight-semibold);
+      margin-bottom: var(--space-1);
+    }
+
+    .lightbox__meta {
+      color: var(--text-muted);
+      font-size: var(--text-sm);
+    }
+
+    .lightbox__nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: var(--radius-full);
+      color: var(--color-white);
+      font-size: var(--text-xl);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .lightbox__nav:hover {
+      background: var(--color-rose);
+    }
+
+    .lightbox__nav--prev {
+      left: var(--space-6);
+    }
+
+    .lightbox__nav--next {
+      right: var(--space-6);
+    }
+
+    /* Zoom icon on hover */
+    .product-card__image {
+      cursor: zoom-in;
+    }
+
+    .product-card__zoom {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      width: 48px;
+      height: 48px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .product-card:hover .product-card__zoom {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
     .empty-state__icon {
       font-size: 3rem;
       margin-bottom: var(--space-4);
@@ -1722,6 +1856,18 @@
     </div>
   </footer>
 
+  <!-- Lightbox Modal -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox__close" id="lightboxClose">✕</button>
+    <button class="lightbox__nav lightbox__nav--prev" id="lightboxPrev">←</button>
+    <button class="lightbox__nav lightbox__nav--next" id="lightboxNext">→</button>
+    <img class="lightbox__image" id="lightboxImage" src="" alt="">
+    <div class="lightbox__info">
+      <h3 class="lightbox__title" id="lightboxTitle"></h3>
+      <p class="lightbox__meta" id="lightboxMeta"></p>
+    </div>
+  </div>
+
   <!-- Snipcart Container -->
   <div hidden id="snipcart" data-api-key="YOUR_PUBLIC_API_KEY" data-config-modal-style="side" data-currency="EUR"></div>
 
@@ -1818,6 +1964,116 @@
       card.style.transform = 'translateY(30px)';
       card.style.transition = `opacity 0.5s ease ${(index % 6) * 0.1}s, transform 0.5s ease ${(index % 6) * 0.1}s`;
       fadeInObserver.observe(card);
+    });
+
+    // Fallback for add-to-cart buttons when Snipcart isn't configured
+    document.querySelectorAll('.snipcart-add-item').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        // Check if Snipcart is loaded and configured
+        if (typeof Snipcart === 'undefined' || !Snipcart.api) {
+          e.preventDefault();
+          const itemName = btn.dataset.itemName;
+          const itemPrice = btn.dataset.itemPrice;
+          alert(`${itemName} — €${parseFloat(itemPrice).toLocaleString()}\n\nLe panier sera activé prochainement.`);
+        }
+      });
+    });
+
+    // Lightbox functionality
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightboxImage');
+    const lightboxTitle = document.getElementById('lightboxTitle');
+    const lightboxMeta = document.getElementById('lightboxMeta');
+    const lightboxClose = document.getElementById('lightboxClose');
+    const lightboxPrev = document.getElementById('lightboxPrev');
+    const lightboxNext = document.getElementById('lightboxNext');
+
+    let currentImageIndex = 0;
+    let visibleProducts = [];
+
+    function updateVisibleProducts() {
+      visibleProducts = Array.from(products).filter(p => p.dataset.hidden !== 'true');
+    }
+
+    function openLightbox(index) {
+      updateVisibleProducts();
+      currentImageIndex = index;
+      const product = visibleProducts[index];
+      if (!product) return;
+
+      const img = product.querySelector('.product-card__image img');
+      const title = product.querySelector('.product-card__title');
+      const series = product.querySelector('.product-card__series');
+      const price = product.querySelector('.product-card__price');
+
+      // Use higher resolution image if available
+      let imgSrc = img.src;
+      imgSrc = imgSrc.replace('-680x680', '').replace('-300x300', '');
+
+      lightboxImage.src = imgSrc;
+      lightboxImage.alt = title ? title.textContent : '';
+      lightboxTitle.textContent = title ? title.textContent : '';
+      lightboxMeta.textContent = series ? `${series.textContent} · ${price ? price.textContent : ''}` : '';
+
+      lightbox.classList.add('lightbox--open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('lightbox--open');
+      document.body.style.overflow = '';
+    }
+
+    function showPrevImage() {
+      currentImageIndex = (currentImageIndex - 1 + visibleProducts.length) % visibleProducts.length;
+      openLightbox(currentImageIndex);
+    }
+
+    function showNextImage() {
+      currentImageIndex = (currentImageIndex + 1) % visibleProducts.length;
+      openLightbox(currentImageIndex);
+    }
+
+    // Add click handlers to product images
+    products.forEach((product, index) => {
+      const imageWrapper = product.querySelector('.product-card__image');
+      if (imageWrapper) {
+        // Add zoom icon
+        const zoomIcon = document.createElement('div');
+        zoomIcon.className = 'product-card__zoom';
+        zoomIcon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>';
+        imageWrapper.appendChild(zoomIcon);
+
+        imageWrapper.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateVisibleProducts();
+          const visibleIndex = visibleProducts.indexOf(product);
+          if (visibleIndex !== -1) {
+            openLightbox(visibleIndex);
+          }
+        });
+      }
+    });
+
+    // Lightbox controls
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightboxPrev.addEventListener('click', (e) => { e.stopPropagation(); showPrevImage(); });
+    lightboxNext.addEventListener('click', (e) => { e.stopPropagation(); showNextImage(); });
+
+    // Close on background click
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('lightbox--open')) return;
+
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') showPrevImage();
+      if (e.key === 'ArrowRight') showNextImage();
     });
   </script>
 </body>
