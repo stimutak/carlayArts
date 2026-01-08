@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Carlay Art - French contemporary artist. Acrylic paintings on canvas. Original artworks.">
+  <meta name="description" content="Carlay Art - Artiste contemporaine française. Peintures acryliques sur toile. Œuvres originales.">
 
-  <title>CARLAY ART — French Contemporary Artist</title>
+  <title>CARLAY ART — Artiste Contemporaine Française</title>
 
   <!-- Styles -->
   <link rel="stylesheet" href="src/css/tokens.css">
@@ -16,7 +16,19 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
 
   <style>
-    /* Page-specific overrides */
+    /* Hero with logo */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: var(--space-20) var(--gutter);
+      overflow: hidden;
+    }
+
     .hero__bg {
       position: absolute;
       inset: 0;
@@ -29,52 +41,211 @@
       inset: 0;
       background: radial-gradient(
         ellipse at 30% 20%,
-        rgba(99, 102, 241, 0.15) 0%,
+        rgba(139, 92, 246, 0.15) 0%,
         transparent 50%
       ),
       radial-gradient(
         ellipse at 70% 80%,
-        rgba(255, 51, 102, 0.1) 0%,
+        rgba(255, 51, 102, 0.12) 0%,
         transparent 50%
       );
+      animation: pulse 4s ease-in-out infinite;
     }
 
-    /* Placeholder for artwork images */
-    .placeholder-art {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-display);
-      font-size: var(--text-2xl);
-      font-weight: var(--weight-bold);
-      letter-spacing: var(--tracking-wide);
-      background: linear-gradient(135deg, var(--color-charcoal) 0%, var(--color-smoke) 100%);
+    /* Pulsing glow animation */
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+    }
+
+    /* Stars container */
+    .stars {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+      animation: twinkle var(--duration, 3s) ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    .star--large {
+      width: 3px;
+      height: 3px;
+      box-shadow: 0 0 6px 1px rgba(255, 255, 255, 0.5);
+    }
+
+    @keyframes twinkle {
+      0%, 100% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      50% {
+        opacity: var(--brightness, 0.8);
+        transform: scale(1);
+      }
+    }
+
+    /* Shooting star */
+    .shooting-star {
+      position: absolute;
+      width: 100px;
+      height: 1px;
+      background: linear-gradient(90deg, white, transparent);
+      opacity: 0;
+      animation: shoot 6s ease-in-out infinite;
+      animation-delay: var(--delay, 2s);
+    }
+
+    @keyframes shoot {
+      0% {
+        opacity: 0;
+        transform: translateX(0) translateY(0) rotate(-45deg);
+      }
+      5% {
+        opacity: 1;
+      }
+      15% {
+        opacity: 0;
+        transform: translateX(300px) translateY(300px) rotate(-45deg);
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .hero__logo {
+      width: clamp(200px, 40vw, 400px);
+      height: auto;
+      margin-bottom: var(--space-8);
+      opacity: 0;
+      animation: fadeIn 1.2s var(--ease-out) 0.3s forwards;
+    }
+
+    .hero__tagline {
+      font-family: var(--font-accent);
+      font-size: var(--text-xl);
+      font-style: italic;
       color: var(--text-muted);
+      opacity: 0;
+      animation: fadeUp 0.8s var(--ease-out) 0.8s forwards;
     }
 
-    .placeholder-art--vortex {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    .hero__cta {
+      margin-top: var(--space-8);
+      opacity: 0;
+      animation: fadeUp 0.8s var(--ease-out) 1s forwards;
     }
 
-    .placeholder-art--romeo {
-      background: linear-gradient(135deg, #2d132c 0%, #801336 50%, #c72c41 100%);
+    /* Artist section with real image */
+    .about-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-12);
+      align-items: center;
     }
 
-    .placeholder-art--galaxy {
-      background: linear-gradient(135deg, #240046 0%, #5a189a 50%, #9d4edd 100%);
+    .about-section__image {
+      position: relative;
+      overflow: hidden;
     }
 
-    .placeholder-art--juliette {
-      background: linear-gradient(135deg, #1b1b2f 0%, #162447 50%, #1f4068 100%);
+    .about-section__image img {
+      width: 100%;
+      height: auto;
+      filter: grayscale(100%);
+      transition: filter var(--duration-slow) var(--ease-out);
     }
 
-    .placeholder-art--golden {
-      background: linear-gradient(135deg, #1a1a1a 0%, #3d3d3d 25%, #8b6914 50%, #c9a227 100%);
+    .about-section__image:hover img {
+      filter: grayscale(0%);
     }
 
-    /* Mobile menu overlay */
+    .about-section__signature {
+      width: 150px;
+      margin-top: var(--space-6);
+      opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+      .about-section {
+        grid-template-columns: 1fr;
+      }
+      .about-section__image {
+        order: -1;
+      }
+    }
+
+    /* Bento grid for featured works */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: repeat(2, 300px);
+      gap: var(--space-4);
+    }
+
+    .bento-grid__item:nth-child(1) {
+      grid-column: span 6;
+      grid-row: span 2;
+    }
+
+    .bento-grid__item:nth-child(2) {
+      grid-column: span 3;
+    }
+
+    .bento-grid__item:nth-child(3) {
+      grid-column: span 3;
+    }
+
+    .bento-grid__item:nth-child(4) {
+      grid-column: span 3;
+    }
+
+    .bento-grid__item:nth-child(5) {
+      grid-column: span 3;
+    }
+
+    @media (max-width: 1024px) {
+      .bento-grid {
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: repeat(3, 250px);
+      }
+      .bento-grid__item:nth-child(1) {
+        grid-column: span 6;
+        grid-row: span 1;
+      }
+      .bento-grid__item:nth-child(n+2) {
+        grid-column: span 3;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .bento-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+      .bento-grid__item {
+        grid-column: span 1 !important;
+        grid-row: span 1 !important;
+        height: 300px;
+      }
+    }
+
+    /* Mobile menu */
     .mobile-menu {
       position: fixed;
       inset: 0;
@@ -130,6 +301,52 @@
       margin-left: auto;
       margin-right: auto;
     }
+
+    /* Collection cards */
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-6);
+    }
+
+    .collection-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-sm);
+      background: var(--color-charcoal);
+    }
+
+    .collection-card__image {
+      aspect-ratio: 4/3;
+      overflow: hidden;
+    }
+
+    .collection-card__image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--duration-slow) var(--ease-out);
+    }
+
+    .collection-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .collection-card__content {
+      padding: var(--space-5);
+    }
+
+    .collection-card__title {
+      font-family: var(--font-display);
+      font-size: var(--text-lg);
+      font-weight: var(--weight-semibold);
+      margin-bottom: var(--space-1);
+    }
+
+    .collection-card__meta {
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
@@ -139,15 +356,15 @@
   <!-- Navigation -->
   <nav class="nav" id="nav">
     <div class="container nav__inner">
-      <a href="/" class="nav__logo">CARLAY</a>
+      <a href="/" class="nav__logo">CARLAY ART</a>
 
       <ul class="nav__links">
-        <li><a href="#collections" class="nav__link">Collections</a></li>
-        <li><a href="#about" class="nav__link">About</a></li>
-        <li><a href="#contact" class="nav__link">Contact</a></li>
+        <li><a href="#collections" class="nav__link">Œuvres</a></li>
+        <li><a href="#about" class="nav__link">L'Artiste</a></li>
+        <li><a href="/boutique" class="nav__link">Boutique</a></li>
       </ul>
 
-      <button class="nav__menu-btn" id="menuBtn" aria-label="Toggle menu">
+      <button class="nav__menu-btn" id="menuBtn" aria-label="Menu">
         <span></span>
         <span></span>
         <span></span>
@@ -157,20 +374,28 @@
 
   <!-- Mobile Menu -->
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#collections" class="mobile-menu__link">Collections</a>
-    <a href="#about" class="mobile-menu__link">About</a>
-    <a href="#contact" class="mobile-menu__link">Contact</a>
+    <a href="#collections" class="mobile-menu__link">Œuvres</a>
+    <a href="#about" class="mobile-menu__link">L'Artiste</a>
+    <a href="/boutique" class="mobile-menu__link">Boutique</a>
   </div>
 
   <!-- Hero Section -->
-  <section class="hero">
+  <section class="hero" id="hero">
     <div class="hero__bg" aria-hidden="true"></div>
 
+    <!-- Stars - generated dynamically -->
+    <div class="stars" id="stars" aria-hidden="true"></div>
+
     <div class="hero__content">
-      <p class="hero__subtitle">French Contemporary Artist</p>
-      <div class="hero__divider"></div>
-      <h1 class="hero__title">CARLAY<br>ART</h1>
-      <p class="hero__tagline">Acrylic on Canvas</p>
+      <img
+        src="original-site/images/logo-carlay-BLANC.png"
+        alt="Carlay Art"
+        class="hero__logo"
+      >
+      <p class="hero__tagline">Art Contemporain · Acrylique sur Toile</p>
+      <div class="hero__cta">
+        <a href="#collections" class="btn btn--primary">Découvrir la Galerie</a>
+      </div>
     </div>
 
     <div class="hero__scroll">
@@ -179,42 +404,43 @@
     </div>
   </section>
 
-  <!-- Featured Collections -->
+  <!-- Featured Works - Bento Grid -->
   <section class="section" id="collections">
     <div class="container">
       <header class="section-header">
-        <span class="section-header__eyebrow">The Gallery</span>
-        <h2 class="section-header__title">Featured Works</h2>
+        <span class="section-header__eyebrow">La Galerie</span>
+        <h2 class="section-header__title">Œuvres Sélectionnées</h2>
         <p class="section-header__description">
-          Each piece is an original acrylic painting on canvas, accompanied by a certificate of authenticity.
+          Chaque pièce est une peinture acrylique originale sur toile, accompagnée d'un certificat d'authenticité.
         </p>
       </header>
 
-      <div class="artwork-grid artwork-grid--featured">
+      <div class="bento-grid">
         <!-- Featured: Romeo 1 -->
-        <article class="artwork-card">
+        <article class="artwork-card bento-grid__item">
+          <span class="artwork-card__badge">Sold Out</span>
           <div class="artwork-card__image-wrapper">
-            <div class="placeholder-art placeholder-art--romeo">R</div>
+            <img src="original-site/images/Romeo-1-680x680.jpg" alt="Romeo 1" loading="lazy">
           </div>
           <div class="artwork-card__overlay"></div>
           <div class="artwork-card__content">
-            <span class="artwork-card__series">Romeo Series</span>
+            <span class="artwork-card__series">Série Romeo</span>
             <h3 class="artwork-card__title">ROMEO 1</h3>
             <div class="artwork-card__meta">
-              <span>Acrylic on Canvas</span>
+              <span>76 × 102 cm</span>
               <span class="artwork-card__price">€3,000</span>
             </div>
           </div>
         </article>
 
         <!-- Vortex 5 -->
-        <article class="artwork-card">
+        <article class="artwork-card bento-grid__item">
           <div class="artwork-card__image-wrapper">
-            <div class="placeholder-art placeholder-art--vortex">V</div>
+            <img src="original-site/images/VORTEX-5.jpg" alt="Vortex 5" loading="lazy">
           </div>
           <div class="artwork-card__overlay"></div>
           <div class="artwork-card__content">
-            <span class="artwork-card__series">Vortex Series</span>
+            <span class="artwork-card__series">Série Vortex</span>
             <h3 class="artwork-card__title">VORTEX 5</h3>
             <div class="artwork-card__meta">
               <span>32 × 32 cm</span>
@@ -223,139 +449,158 @@
           </div>
         </article>
 
-        <!-- Purple Galaxy 7 -->
-        <article class="artwork-card">
-          <span class="artwork-card__badge">Sold</span>
+        <!-- Insomnia 1 -->
+        <article class="artwork-card bento-grid__item">
           <div class="artwork-card__image-wrapper">
-            <div class="placeholder-art placeholder-art--galaxy">G</div>
+            <img src="original-site/images/insomnia-1-680x680.jpg" alt="Insomnia 1" loading="lazy">
           </div>
           <div class="artwork-card__overlay"></div>
           <div class="artwork-card__content">
-            <span class="artwork-card__series">Purple Galaxy Series</span>
+            <span class="artwork-card__series">Série Insomnia</span>
+            <h3 class="artwork-card__title">INSOMNIA 1</h3>
+            <div class="artwork-card__meta">
+              <span>Acrylique sur toile</span>
+              <span class="artwork-card__price">€1,000</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Purple Galaxy 7 -->
+        <article class="artwork-card bento-grid__item">
+          <span class="artwork-card__badge">Sold Out</span>
+          <div class="artwork-card__image-wrapper">
+            <img src="original-site/images/PURPLE-GALAXY-7-680x680.jpg" alt="Purple Galaxy 7" loading="lazy">
+          </div>
+          <div class="artwork-card__overlay"></div>
+          <div class="artwork-card__content">
+            <span class="artwork-card__series">Série Purple Galaxy</span>
             <h3 class="artwork-card__title">PURPLE GALAXY 7</h3>
             <div class="artwork-card__meta">
               <span>22 × 30 cm</span>
-              <span class="artwork-card__price artwork-card--sold">€1,000</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- Juliette 1 -->
-        <article class="artwork-card">
-          <div class="artwork-card__image-wrapper">
-            <div class="placeholder-art placeholder-art--juliette">J</div>
-          </div>
-          <div class="artwork-card__overlay"></div>
-          <div class="artwork-card__content">
-            <span class="artwork-card__series">Juliette Series</span>
-            <h3 class="artwork-card__title">JULIETTE 1</h3>
-            <div class="artwork-card__meta">
-              <span>Acrylic on Canvas</span>
-              <span class="artwork-card__price">€3,000</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- Golden Sunset -->
-        <article class="artwork-card">
-          <div class="artwork-card__image-wrapper">
-            <div class="placeholder-art placeholder-art--golden">S</div>
-          </div>
-          <div class="artwork-card__overlay"></div>
-          <div class="artwork-card__content">
-            <span class="artwork-card__series">Single Works</span>
-            <h3 class="artwork-card__title">GOLDEN SUNSET</h3>
-            <div class="artwork-card__meta">
-              <span>Acrylic on Canvas</span>
               <span class="artwork-card__price">€1,000</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Juliette 2 -->
+        <article class="artwork-card bento-grid__item">
+          <div class="artwork-card__image-wrapper">
+            <img src="original-site/images/Juliette-2-680x680.jpg" alt="Juliette 2" loading="lazy">
+          </div>
+          <div class="artwork-card__overlay"></div>
+          <div class="artwork-card__content">
+            <span class="artwork-card__series">Série Juliette</span>
+            <h3 class="artwork-card__title">JULIETTE 2</h3>
+            <div class="artwork-card__meta">
+              <span>Acrylique sur toile</span>
+              <span class="artwork-card__price">€3,000</span>
             </div>
           </div>
         </article>
       </div>
 
       <div style="text-align: center; margin-top: var(--space-10);">
-        <a href="/collections" class="btn btn--secondary">
-          View All Collections
+        <a href="/boutique" class="btn btn--secondary">
+          Voir Toutes les Œuvres
           <span class="btn__arrow">→</span>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- About Teaser -->
+  <!-- About Section with Real Artist Image -->
   <section class="section" id="about" style="background: var(--color-charcoal);">
     <div class="container">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-12); align-items: center;">
+      <div class="about-section">
         <div>
-          <span class="section-header__eyebrow">The Artist</span>
+          <span class="section-header__eyebrow">L'Artiste</span>
           <h2 class="section-header__title" style="margin-bottom: var(--space-6);">CARLAY</h2>
           <p class="text-body" style="margin-bottom: var(--space-4);">
-            French contemporary artist working primarily in acrylic on canvas.
-            Each piece is a unique exploration of color, form, and emotion.
+            Carlay est une artiste émergente française, elle évolue dans l'univers de l'art abstrait.
+            Sa technique est d'utiliser principalement de l'acrylique sur toile.
           </p>
-          <p class="text-body" style="margin-bottom: var(--space-8);">
-            Every artwork comes with a certificate of authenticity and
-            represents a singular moment of creative expression.
+          <p class="text-body" style="margin-bottom: var(--space-4);">
+            Inspirée par les paysages urbains et les scènes du quotidien, elle transforme des moments
+            ordinaires en expériences visuelles extraordinaires. Ses œuvres colorées capturent des
+            moments de vie avec une intensité émotionnelle unique.
           </p>
-          <a href="/about" class="btn btn--ghost">
-            Learn More
-            <span class="btn__arrow">→</span>
-          </a>
+          <p class="text-body" style="margin-bottom: var(--space-6);">
+            Active principalement en France et à New York, sa présence croissante sur ces marchés
+            artistiques majeurs témoigne de son talent exceptionnel.
+          </p>
+          <img
+            src="original-site/images/Carlay-art-signature.png"
+            alt="Signature Carlay"
+            class="about-section__signature"
+          >
+          <div style="margin-top: var(--space-6);">
+            <a href="/a-propos" class="btn btn--ghost">
+              En Savoir Plus
+              <span class="btn__arrow">→</span>
+            </a>
+          </div>
         </div>
-        <div style="aspect-ratio: 3/4; background: var(--color-smoke); display: flex; align-items: center; justify-content: center;">
-          <span class="text-caption">Artist Portrait</span>
+        <div class="about-section__image">
+          <img
+            src="original-site/images/Carlay-art.jpg"
+            alt="Carlay - Artiste contemporaine française"
+            loading="lazy"
+          >
         </div>
       </div>
     </div>
   </section>
 
-  <!-- All Collections Overview -->
+  <!-- Collections Overview -->
   <section class="section">
     <div class="container">
       <header class="section-header section-header--center">
-        <span class="section-header__eyebrow">Explore</span>
+        <span class="section-header__eyebrow">Explorer</span>
         <h2 class="section-header__title">Collections</h2>
       </header>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-4);">
-        <!-- Collection Cards -->
-        <a href="/collections/romeo" class="artwork-card" style="border: var(--border);">
-          <div class="artwork-card__image-wrapper" style="aspect-ratio: 16/9;">
-            <div class="placeholder-art placeholder-art--romeo">ROMEO</div>
+      <div class="collection-grid">
+        <!-- Romeo -->
+        <a href="/boutique?collection=romeo" class="collection-card">
+          <div class="collection-card__image">
+            <img src="original-site/images/Romeo-2-680x680.jpg" alt="Série Romeo" loading="lazy">
           </div>
-          <div style="padding: var(--space-4);">
-            <h3 style="font-size: var(--text-lg); font-weight: var(--weight-semibold);">Romeo Series</h3>
-            <p class="text-small">3 works · From €3,000</p>
-          </div>
-        </a>
-
-        <a href="/collections/juliette" class="artwork-card" style="border: var(--border);">
-          <div class="artwork-card__image-wrapper" style="aspect-ratio: 16/9;">
-            <div class="placeholder-art placeholder-art--juliette">JULIETTE</div>
-          </div>
-          <div style="padding: var(--space-4);">
-            <h3 style="font-size: var(--text-lg); font-weight: var(--weight-semibold);">Juliette Series</h3>
-            <p class="text-small">2 works · From €3,000</p>
+          <div class="collection-card__content">
+            <h3 class="collection-card__title">Romeo</h3>
+            <p class="collection-card__meta">3 œuvres · À partir de €3,000</p>
           </div>
         </a>
 
-        <a href="/collections/vortex" class="artwork-card" style="border: var(--border);">
-          <div class="artwork-card__image-wrapper" style="aspect-ratio: 16/9;">
-            <div class="placeholder-art placeholder-art--vortex">VORTEX</div>
+        <!-- Vortex -->
+        <a href="/boutique?collection=vortex" class="collection-card">
+          <div class="collection-card__image">
+            <img src="original-site/images/VORTEX-9.jpg" alt="Série Vortex" loading="lazy">
           </div>
-          <div style="padding: var(--space-4);">
-            <h3 style="font-size: var(--text-lg); font-weight: var(--weight-semibold);">Vortex Series</h3>
-            <p class="text-small">2 works · From €1,000</p>
+          <div class="collection-card__content">
+            <h3 class="collection-card__title">Vortex</h3>
+            <p class="collection-card__meta">9 œuvres · À partir de €1,000</p>
           </div>
         </a>
 
-        <a href="/collections/purple-galaxy" class="artwork-card" style="border: var(--border);">
-          <div class="artwork-card__image-wrapper" style="aspect-ratio: 16/9;">
-            <div class="placeholder-art placeholder-art--galaxy">GALAXY</div>
+        <!-- Insomnia -->
+        <a href="/boutique?collection=insomnia" class="collection-card">
+          <div class="collection-card__image">
+            <img src="original-site/images/insomnia-3-680x680.jpg" alt="Série Insomnia" loading="lazy">
           </div>
-          <div style="padding: var(--space-4);">
-            <h3 style="font-size: var(--text-lg); font-weight: var(--weight-semibold);">Purple Galaxy Series</h3>
-            <p class="text-small">3 works · From €1,000</p>
+          <div class="collection-card__content">
+            <h3 class="collection-card__title">Insomnia</h3>
+            <p class="collection-card__meta">6 œuvres · À partir de €1,000</p>
+          </div>
+        </a>
+
+        <!-- Free Spirit -->
+        <a href="/boutique?collection=free-spirit" class="collection-card">
+          <div class="collection-card__image">
+            <img src="original-site/images/elastic-1-2-680x680.jpg" alt="Série Free Spirit" loading="lazy">
+          </div>
+          <div class="collection-card__content">
+            <h3 class="collection-card__title">Free Spirit</h3>
+            <p class="collection-card__meta">3 œuvres · À partir de €1,000</p>
           </div>
         </a>
       </div>
@@ -363,14 +608,22 @@
   </section>
 
   <!-- CTA Section -->
-  <section class="cta-section" id="contact">
-    <h2 class="cta-section__title">Interested in a piece?</h2>
+  <section class="cta-section" id="purchase">
+    <h2 class="cta-section__title">Acquérir une Œuvre</h2>
     <p class="cta-section__subtitle">
-      Get in touch to discuss availability, commissions, or exhibitions.
+      Paiement sécurisé par carte bancaire ou crypto. Livraison mondiale assurée.
     </p>
-    <a href="mailto:carlayart369@gmail.com" class="btn btn--primary">
-      Contact the Artist
+    <a href="/boutique" class="btn btn--primary">
+      Voir la Boutique
     </a>
+    <div style="margin-top: var(--space-6); display: flex; justify-content: center; gap: var(--space-4); flex-wrap: wrap;">
+      <span class="text-small" style="color: var(--text-muted);">Visa</span>
+      <span class="text-small" style="color: var(--text-muted);">Mastercard</span>
+      <span class="text-small" style="color: var(--text-muted);">Apple Pay</span>
+      <span class="text-small" style="color: var(--text-muted);">iDEAL</span>
+      <span class="text-small" style="color: var(--text-muted);">Bitcoin</span>
+      <span class="text-small" style="color: var(--text-muted);">Ethereum</span>
+    </div>
   </section>
 
   <!-- Footer -->
@@ -378,40 +631,45 @@
     <div class="container">
       <div class="footer__top">
         <div class="footer__brand">
-          <div class="footer__logo">CARLAY</div>
-          <p class="footer__tagline">French Contemporary Art</p>
+          <img
+            src="original-site/images/logo-carlay-BLANC-300x175.png"
+            alt="Carlay Art"
+            style="width: 120px; margin-bottom: var(--space-4);"
+          >
+          <p class="footer__tagline">Art Contemporain Français</p>
         </div>
 
         <div>
           <h4 class="footer__heading">Collections</h4>
           <ul class="footer__links">
-            <li><a href="/collections/romeo" class="footer__link">Romeo</a></li>
-            <li><a href="/collections/juliette" class="footer__link">Juliette</a></li>
-            <li><a href="/collections/vortex" class="footer__link">Vortex</a></li>
-            <li><a href="/collections/purple-galaxy" class="footer__link">Purple Galaxy</a></li>
+            <li><a href="/boutique?collection=romeo" class="footer__link">Romeo</a></li>
+            <li><a href="/boutique?collection=juliette" class="footer__link">Juliette</a></li>
+            <li><a href="/boutique?collection=vortex" class="footer__link">Vortex</a></li>
+            <li><a href="/boutique?collection=insomnia" class="footer__link">Insomnia</a></li>
           </ul>
         </div>
 
         <div>
           <h4 class="footer__heading">Info</h4>
           <ul class="footer__links">
-            <li><a href="/about" class="footer__link">About</a></li>
-            <li><a href="/contact" class="footer__link">Contact</a></li>
-            <li><a href="/shipping" class="footer__link">Shipping</a></li>
+            <li><a href="/a-propos" class="footer__link">L'Artiste</a></li>
+            <li><a href="/livraison" class="footer__link">Livraison</a></li>
+            <li><a href="/mentions-legales" class="footer__link">Mentions Légales</a></li>
           </ul>
         </div>
 
         <div>
-          <h4 class="footer__heading">Connect</h4>
+          <h4 class="footer__heading">Paiements</h4>
           <ul class="footer__links">
-            <li><a href="https://instagram.com" class="footer__link" target="_blank" rel="noopener">Instagram</a></li>
-            <li><a href="mailto:carlayart369@gmail.com" class="footer__link">Email</a></li>
+            <li><span class="footer__link" style="cursor: default;">Carte Bancaire</span></li>
+            <li><span class="footer__link" style="cursor: default;">Crypto (BTC/ETH)</span></li>
+            <li><span class="footer__link" style="cursor: default;">iDEAL · Bancontact</span></li>
           </ul>
         </div>
       </div>
 
       <div class="footer__bottom">
-        <p>&copy; 2024 Carlay Art. All rights reserved.</p>
+        <p>© 2024 Carlay Art. Tous droits réservés.</p>
         <div class="footer__social">
           <a href="https://instagram.com" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -427,11 +685,7 @@
     // Navigation scroll effect
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 50) {
-        nav.classList.add('nav--scrolled');
-      } else {
-        nav.classList.remove('nav--scrolled');
-      }
+      nav.classList.toggle('nav--scrolled', window.scrollY > 50);
     });
 
     // Mobile menu toggle
@@ -442,6 +696,7 @@
     menuBtn.addEventListener('click', () => {
       menuOpen = !menuOpen;
       mobileMenu.classList.toggle('mobile-menu--open', menuOpen);
+      document.body.style.overflow = menuOpen ? 'hidden' : '';
     });
 
     // Close mobile menu when clicking a link
@@ -449,6 +704,7 @@
       link.addEventListener('click', () => {
         menuOpen = false;
         mobileMenu.classList.remove('mobile-menu--open');
+        document.body.style.overflow = '';
       });
     });
 
@@ -478,13 +734,89 @@
       });
     }, observerOptions);
 
-    // Observe artwork cards for animation
-    document.querySelectorAll('.artwork-card').forEach((card, index) => {
+    // Observe elements for animation
+    document.querySelectorAll('.artwork-card, .collection-card').forEach((card, index) => {
       card.style.opacity = '0';
       card.style.transform = 'translateY(30px)';
       card.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
       fadeInObserver.observe(card);
     });
+
+    // Observe section headers
+    document.querySelectorAll('.section-header').forEach((header) => {
+      header.style.opacity = '0';
+      header.style.transform = 'translateY(20px)';
+      header.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+      fadeInObserver.observe(header);
+    });
+
+    // Generate stars for hero background
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      if (!starsContainer) return;
+
+      const numStars = 80;
+      const numLargeStars = 15;
+      const numShootingStars = 2;
+
+      // Regular stars
+      for (let i = 0; i < numStars; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.setProperty('--duration', (2 + Math.random() * 4) + 's');
+        star.style.setProperty('--delay', Math.random() * 5 + 's');
+        star.style.setProperty('--brightness', (0.4 + Math.random() * 0.6).toString());
+        starsContainer.appendChild(star);
+      }
+
+      // Large bright stars
+      for (let i = 0; i < numLargeStars; i++) {
+        const star = document.createElement('div');
+        star.className = 'star star--large';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.setProperty('--duration', (3 + Math.random() * 3) + 's');
+        star.style.setProperty('--delay', Math.random() * 4 + 's');
+        star.style.setProperty('--brightness', '1');
+        starsContainer.appendChild(star);
+      }
+
+      // Shooting stars
+      for (let i = 0; i < numShootingStars; i++) {
+        const shootingStar = document.createElement('div');
+        shootingStar.className = 'shooting-star';
+        shootingStar.style.left = (10 + Math.random() * 40) + '%';
+        shootingStar.style.top = (5 + Math.random() * 30) + '%';
+        shootingStar.style.setProperty('--delay', (i * 8 + Math.random() * 4) + 's');
+        starsContainer.appendChild(shootingStar);
+      }
+    }
+
+    // Initialize stars after page load
+    createStars();
+
+    // Reveal more stars on scroll (hero becomes more cosmic as you stay)
+    let starsRevealed = false;
+    const heroSection = document.getElementById('hero');
+    setTimeout(() => {
+      if (!starsRevealed && heroSection) {
+        const moreStars = 30;
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < moreStars; i++) {
+          const star = document.createElement('div');
+          star.className = 'star';
+          star.style.left = Math.random() * 100 + '%';
+          star.style.top = Math.random() * 100 + '%';
+          star.style.setProperty('--duration', (2 + Math.random() * 3) + 's');
+          star.style.setProperty('--delay', (Math.random() * 2) + 's');
+          star.style.setProperty('--brightness', (0.6 + Math.random() * 0.4).toString());
+          starsContainer.appendChild(star);
+        }
+        starsRevealed = true;
+      }
+    }, 3000);
   </script>
 </body>
 </html>
