@@ -1819,6 +1819,19 @@
       card.style.transition = `opacity 0.5s ease ${(index % 6) * 0.1}s, transform 0.5s ease ${(index % 6) * 0.1}s`;
       fadeInObserver.observe(card);
     });
+
+    // Fallback for add-to-cart buttons when Snipcart isn't configured
+    document.querySelectorAll('.snipcart-add-item').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        // Check if Snipcart is loaded and configured
+        if (typeof Snipcart === 'undefined' || !Snipcart.api) {
+          e.preventDefault();
+          const itemName = btn.dataset.itemName;
+          const itemPrice = btn.dataset.itemPrice;
+          alert(`${itemName} — €${parseFloat(itemPrice).toLocaleString()}\n\nLe panier sera activé prochainement.`);
+        }
+      });
+    });
   </script>
 </body>
 </html>
