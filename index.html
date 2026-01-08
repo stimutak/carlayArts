@@ -100,31 +100,28 @@
       }
     }
 
-    /* Shooting star */
-    .shooting-star {
-      position: absolute;
-      width: 100px;
-      height: 1px;
-      background: linear-gradient(90deg, white, transparent);
-      opacity: 0;
-      animation: shoot 6s ease-in-out infinite;
-      animation-delay: var(--delay, 2s);
+    /* Bright pulsing stars */
+    .star--bright {
+      width: 4px;
+      height: 4px;
+      background: white;
+      box-shadow: 0 0 12px 4px rgba(255, 255, 255, 0.6),
+                  0 0 24px 8px rgba(255, 255, 255, 0.3);
+      animation: pulseBright var(--duration, 6s) ease-in-out infinite;
     }
 
-    @keyframes shoot {
-      0% {
-        opacity: 0;
-        transform: translateX(0) translateY(0) rotate(-45deg);
+    @keyframes pulseBright {
+      0%, 100% {
+        opacity: 0.4;
+        transform: scale(0.8);
+        box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.4),
+                    0 0 16px 4px rgba(255, 255, 255, 0.2);
       }
-      5% {
+      50% {
         opacity: 1;
-      }
-      15% {
-        opacity: 0;
-        transform: translateX(300px) translateY(300px) rotate(-45deg);
-      }
-      100% {
-        opacity: 0;
+        transform: scale(1.2);
+        box-shadow: 0 0 16px 6px rgba(255, 255, 255, 0.8),
+                    0 0 32px 12px rgba(255, 255, 255, 0.4);
       }
     }
 
@@ -757,7 +754,7 @@
 
       const numStars = 80;
       const numLargeStars = 15;
-      const numShootingStars = 2;
+      const numBrightStars = 6;
 
       // Regular stars
       for (let i = 0; i < numStars; i++) {
@@ -771,7 +768,7 @@
         starsContainer.appendChild(star);
       }
 
-      // Large bright stars
+      // Large stars
       for (let i = 0; i < numLargeStars; i++) {
         const star = document.createElement('div');
         star.className = 'star star--large';
@@ -783,14 +780,15 @@
         starsContainer.appendChild(star);
       }
 
-      // Shooting stars
-      for (let i = 0; i < numShootingStars; i++) {
-        const shootingStar = document.createElement('div');
-        shootingStar.className = 'shooting-star';
-        shootingStar.style.left = (10 + Math.random() * 40) + '%';
-        shootingStar.style.top = (5 + Math.random() * 30) + '%';
-        shootingStar.style.setProperty('--delay', (i * 8 + Math.random() * 4) + 's');
-        starsContainer.appendChild(shootingStar);
+      // Bright pulsing stars (slow, prominent)
+      for (let i = 0; i < numBrightStars; i++) {
+        const star = document.createElement('div');
+        star.className = 'star star--bright';
+        star.style.left = (10 + Math.random() * 80) + '%';
+        star.style.top = (10 + Math.random() * 70) + '%';
+        star.style.setProperty('--duration', (5 + Math.random() * 4) + 's');
+        star.style.setProperty('--delay', Math.random() * 3 + 's');
+        starsContainer.appendChild(star);
       }
     }
 
