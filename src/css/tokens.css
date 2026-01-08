@@ -1,0 +1,153 @@
+/* ═══════════════════════════════════════════════════════════
+   CARLAY ART — Design Tokens
+   Edgy. Cool. Understated.
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ─────────────────────────────────────────────────────────
+     COLORS
+     ───────────────────────────────────────────────────────── */
+
+  /* Primary */
+  --color-black: #0A0A0A;
+  --color-white: #FAFAFA;
+  --color-charcoal: #1A1A1A;
+  --color-smoke: #2A2A2A;
+
+  /* Accent */
+  --color-rose: #FF3366;
+  --color-indigo: #6366F1;
+
+  /* Atmospheric */
+  --color-ghost: rgba(255, 255, 255, 0.05);
+  --color-ghost-10: rgba(255, 255, 255, 0.1);
+  --color-ghost-20: rgba(255, 255, 255, 0.2);
+  --color-rose-glow: rgba(255, 51, 102, 0.1);
+  --color-rose-glow-20: rgba(255, 51, 102, 0.2);
+
+  /* Text */
+  --text-primary: var(--color-white);
+  --text-secondary: rgba(250, 250, 250, 0.7);
+  --text-muted: rgba(250, 250, 250, 0.4);
+
+  /* ─────────────────────────────────────────────────────────
+     TYPOGRAPHY
+     ───────────────────────────────────────────────────────── */
+
+  /* Font Families */
+  --font-display: 'Clash Display', 'Space Grotesk', sans-serif;
+  --font-body: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-accent: 'Playfair Display', Georgia, serif;
+
+  /* Font Sizes - Fluid */
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+  --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --text-lg: clamp(1.25rem, 1rem + 1.25vw, 1.5rem);
+  --text-xl: clamp(1.5rem, 1rem + 2.5vw, 2rem);
+  --text-2xl: clamp(2rem, 1rem + 4vw, 3.5rem);
+  --text-3xl: clamp(2.5rem, 1rem + 6vw, 5rem);
+  --text-hero: clamp(3.5rem, 1rem + 12vw, 10rem);
+
+  /* Font Weights */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Line Heights */
+  --leading-none: 1;
+  --leading-tight: 1.15;
+  --leading-snug: 1.3;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
+
+  /* Letter Spacing */
+  --tracking-tighter: -0.05em;
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.05em;
+  --tracking-wider: 0.1em;
+  --tracking-widest: 0.2em;
+
+  /* ─────────────────────────────────────────────────────────
+     SPACING
+     ───────────────────────────────────────────────────────── */
+
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.5rem;    /* 24px */
+  --space-6: 2rem;      /* 32px */
+  --space-8: 3rem;      /* 48px */
+  --space-10: 4rem;     /* 64px */
+  --space-12: 5rem;     /* 80px */
+  --space-16: 6rem;     /* 96px */
+  --space-20: 8rem;     /* 128px */
+
+  /* Container */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+
+  --gutter: clamp(1rem, 5vw, 3rem);
+
+  /* ─────────────────────────────────────────────────────────
+     EFFECTS
+     ───────────────────────────────────────────────────────── */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 40px var(--color-rose-glow);
+
+  /* Borders */
+  --border-width: 1px;
+  --border-color: var(--color-ghost);
+  --border: var(--border-width) solid var(--border-color);
+
+  /* Radius */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+
+  /* ─────────────────────────────────────────────────────────
+     MOTION
+     ───────────────────────────────────────────────────────── */
+
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 800ms;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ─────────────────────────────────────────────────────────
+     Z-INDEX
+     ───────────────────────────────────────────────────────── */
+
+  --z-below: -1;
+  --z-base: 0;
+  --z-above: 10;
+  --z-nav: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-cursor: 9999;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+    --duration-slower: 0ms;
+  }
+}
