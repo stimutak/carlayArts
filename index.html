@@ -41,14 +41,91 @@
       inset: 0;
       background: radial-gradient(
         ellipse at 30% 20%,
-        rgba(139, 92, 246, 0.1) 0%,
+        rgba(139, 92, 246, 0.15) 0%,
         transparent 50%
       ),
       radial-gradient(
         ellipse at 70% 80%,
-        rgba(255, 51, 102, 0.08) 0%,
+        rgba(255, 51, 102, 0.12) 0%,
         transparent 50%
       );
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    /* Pulsing glow animation */
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+    }
+
+    /* Stars container */
+    .stars {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+      animation: twinkle var(--duration, 3s) ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    .star--large {
+      width: 3px;
+      height: 3px;
+      box-shadow: 0 0 6px 1px rgba(255, 255, 255, 0.5);
+    }
+
+    @keyframes twinkle {
+      0%, 100% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      50% {
+        opacity: var(--brightness, 0.8);
+        transform: scale(1);
+      }
+    }
+
+    /* Shooting star */
+    .shooting-star {
+      position: absolute;
+      width: 100px;
+      height: 1px;
+      background: linear-gradient(90deg, white, transparent);
+      opacity: 0;
+      animation: shoot 6s ease-in-out infinite;
+      animation-delay: var(--delay, 2s);
+    }
+
+    @keyframes shoot {
+      0% {
+        opacity: 0;
+        transform: translateX(0) translateY(0) rotate(-45deg);
+      }
+      5% {
+        opacity: 1;
+      }
+      15% {
+        opacity: 0;
+        transform: translateX(300px) translateY(300px) rotate(-45deg);
+      }
+      100% {
+        opacity: 0;
+      }
     }
 
     .hero__logo {
@@ -282,9 +359,9 @@
       <a href="/" class="nav__logo">CARLAY ART</a>
 
       <ul class="nav__links">
-        <li><a href="#collections" class="nav__link">Mes Œuvres</a></li>
-        <li><a href="#about" class="nav__link">À Propos</a></li>
-        <li><a href="#contact" class="nav__link">Contact</a></li>
+        <li><a href="#collections" class="nav__link">Œuvres</a></li>
+        <li><a href="#about" class="nav__link">L'Artiste</a></li>
+        <li><a href="/boutique" class="nav__link">Boutique</a></li>
       </ul>
 
       <button class="nav__menu-btn" id="menuBtn" aria-label="Menu">
@@ -297,14 +374,17 @@
 
   <!-- Mobile Menu -->
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#collections" class="mobile-menu__link">Mes Œuvres</a>
-    <a href="#about" class="mobile-menu__link">À Propos</a>
-    <a href="#contact" class="mobile-menu__link">Contact</a>
+    <a href="#collections" class="mobile-menu__link">Œuvres</a>
+    <a href="#about" class="mobile-menu__link">L'Artiste</a>
+    <a href="/boutique" class="mobile-menu__link">Boutique</a>
   </div>
 
   <!-- Hero Section -->
-  <section class="hero">
+  <section class="hero" id="hero">
     <div class="hero__bg" aria-hidden="true"></div>
+
+    <!-- Stars - generated dynamically -->
+    <div class="stars" id="stars" aria-hidden="true"></div>
 
     <div class="hero__content">
       <img
@@ -528,14 +608,22 @@
   </section>
 
   <!-- CTA Section -->
-  <section class="cta-section" id="contact">
-    <h2 class="cta-section__title">Intéressé par une œuvre ?</h2>
+  <section class="cta-section" id="purchase">
+    <h2 class="cta-section__title">Acquérir une Œuvre</h2>
     <p class="cta-section__subtitle">
-      Contactez-moi pour discuter de la disponibilité, des commissions ou des expositions.
+      Paiement sécurisé par carte bancaire ou crypto. Livraison mondiale assurée.
     </p>
-    <a href="mailto:carlayart369@gmail.com" class="btn btn--primary">
-      Contacter l'Artiste
+    <a href="/boutique" class="btn btn--primary">
+      Voir la Boutique
     </a>
+    <div style="margin-top: var(--space-6); display: flex; justify-content: center; gap: var(--space-4); flex-wrap: wrap;">
+      <span class="text-small" style="color: var(--text-muted);">Visa</span>
+      <span class="text-small" style="color: var(--text-muted);">Mastercard</span>
+      <span class="text-small" style="color: var(--text-muted);">Apple Pay</span>
+      <span class="text-small" style="color: var(--text-muted);">iDEAL</span>
+      <span class="text-small" style="color: var(--text-muted);">Bitcoin</span>
+      <span class="text-small" style="color: var(--text-muted);">Ethereum</span>
+    </div>
   </section>
 
   <!-- Footer -->
@@ -564,17 +652,18 @@
         <div>
           <h4 class="footer__heading">Info</h4>
           <ul class="footer__links">
-            <li><a href="/a-propos" class="footer__link">À Propos</a></li>
-            <li><a href="/contact" class="footer__link">Contact</a></li>
+            <li><a href="/a-propos" class="footer__link">L'Artiste</a></li>
+            <li><a href="/livraison" class="footer__link">Livraison</a></li>
             <li><a href="/mentions-legales" class="footer__link">Mentions Légales</a></li>
           </ul>
         </div>
 
         <div>
-          <h4 class="footer__heading">Contact</h4>
+          <h4 class="footer__heading">Paiements</h4>
           <ul class="footer__links">
-            <li><a href="https://instagram.com" class="footer__link" target="_blank" rel="noopener">Instagram</a></li>
-            <li><a href="mailto:carlayart369@gmail.com" class="footer__link">carlayart369@gmail.com</a></li>
+            <li><span class="footer__link" style="cursor: default;">Carte Bancaire</span></li>
+            <li><span class="footer__link" style="cursor: default;">Crypto (BTC/ETH)</span></li>
+            <li><span class="footer__link" style="cursor: default;">iDEAL · Bancontact</span></li>
           </ul>
         </div>
       </div>
@@ -660,6 +749,74 @@
       header.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
       fadeInObserver.observe(header);
     });
+
+    // Generate stars for hero background
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      if (!starsContainer) return;
+
+      const numStars = 80;
+      const numLargeStars = 15;
+      const numShootingStars = 2;
+
+      // Regular stars
+      for (let i = 0; i < numStars; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.setProperty('--duration', (2 + Math.random() * 4) + 's');
+        star.style.setProperty('--delay', Math.random() * 5 + 's');
+        star.style.setProperty('--brightness', (0.4 + Math.random() * 0.6).toString());
+        starsContainer.appendChild(star);
+      }
+
+      // Large bright stars
+      for (let i = 0; i < numLargeStars; i++) {
+        const star = document.createElement('div');
+        star.className = 'star star--large';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.setProperty('--duration', (3 + Math.random() * 3) + 's');
+        star.style.setProperty('--delay', Math.random() * 4 + 's');
+        star.style.setProperty('--brightness', '1');
+        starsContainer.appendChild(star);
+      }
+
+      // Shooting stars
+      for (let i = 0; i < numShootingStars; i++) {
+        const shootingStar = document.createElement('div');
+        shootingStar.className = 'shooting-star';
+        shootingStar.style.left = (10 + Math.random() * 40) + '%';
+        shootingStar.style.top = (5 + Math.random() * 30) + '%';
+        shootingStar.style.setProperty('--delay', (i * 8 + Math.random() * 4) + 's');
+        starsContainer.appendChild(shootingStar);
+      }
+    }
+
+    // Initialize stars after page load
+    createStars();
+
+    // Reveal more stars on scroll (hero becomes more cosmic as you stay)
+    let starsRevealed = false;
+    const heroSection = document.getElementById('hero');
+    setTimeout(() => {
+      if (!starsRevealed && heroSection) {
+        const moreStars = 30;
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < moreStars; i++) {
+          const star = document.createElement('div');
+          star.className = 'star';
+          star.style.left = Math.random() * 100 + '%';
+          star.style.top = Math.random() * 100 + '%';
+          star.style.setProperty('--duration', (2 + Math.random() * 3) + 's');
+          star.style.setProperty('--delay', (Math.random() * 2) + 's');
+          star.style.setProperty('--brightness', (0.6 + Math.random() * 0.4).toString());
+          starsContainer.appendChild(star);
+        }
+        starsRevealed = true;
+      }
+    }, 3000);
   </script>
 </body>
 </html>

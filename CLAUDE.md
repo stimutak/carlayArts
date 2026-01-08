@@ -42,7 +42,24 @@ She's active in France and New York art markets.
 
 - Styling: Custom CSS with design tokens
 - Fonts: Space Grotesk (body), Clash Display (headings)
-- E-commerce: Snipcart or Stripe integration
+- E-commerce: See Payment Integration below
+
+## Payment Integration
+
+**See `PAYMENTS.md` for full documentation.**
+
+### Providers
+| Provider | Use Case | Methods |
+|----------|----------|---------|
+| **Mollie** | Europe (primary) | iDEAL, Bancontact, Cards, SEPA, Apple Pay |
+| **Stripe** | Global fallback | Cards, Apple Pay, Google Pay, Link |
+| **Coinbase Commerce** | Crypto | BTC, ETH, USDC, LTC |
+
+### Philosophy
+- **No direct artist contact** — purchases are transactional
+- **Worldwide support** — any card, any country
+- **Crypto-friendly** — for privacy-conscious collectors
+- **Instant checkout** — minimal friction
 
 ## Project Structure
 
@@ -50,6 +67,7 @@ She's active in France and New York art markets.
 /
 ├── CLAUDE.md                 # This file
 ├── DESIGN_PROPOSAL.md        # Full design strategy
+├── PAYMENTS.md               # Payment integration docs
 ├── index.html                # Homepage
 ├── original-site/            # Scraped reference site
 │   ├── images/               # All artwork images (300+)
