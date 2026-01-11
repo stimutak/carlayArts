@@ -112,14 +112,110 @@
       padding-right: var(--space-4);
     }
 
-    /* Boutique grid */
+    /* Boutique container */
+    .boutique-container {
+      padding: 0 var(--gutter);
+      max-width: var(--container-max);
+      margin: 0 auto var(--space-16);
+    }
+
+    /* Collection section */
+    .collection-section {
+      margin-bottom: var(--space-12);
+    }
+
+    .collection-section[data-hidden="true"] {
+      display: none;
+    }
+
+    .collection-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-3);
+      border-bottom: var(--border);
+    }
+
+    .collection-header__title {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: var(--weight-semibold);
+      letter-spacing: var(--tracking-tight);
+    }
+
+    .collection-header__count {
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+    }
+
+    /* Collection grids - optimal layouts */
+    .collection-grid {
+      display: grid;
+      gap: var(--space-6);
+    }
+
+    /* 3 items: single row */
+    .collection-grid--3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* 4 items: 2x2 square */
+    .collection-grid--4 {
+      grid-template-columns: repeat(2, 1fr);
+      max-width: 600px;
+    }
+
+    /* 6 items: 3x2 rectangle */
+    .collection-grid--6 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* 8 items: 4x2 rectangle */
+    .collection-grid--8 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    /* 9 items: 3x3 square */
+    .collection-grid--9 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* 10+ items: 5 columns */
+    .collection-grid--auto {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    @media (max-width: 900px) {
+      .collection-grid--3,
+      .collection-grid--6,
+      .collection-grid--9 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .collection-grid--4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .collection-grid--8 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .collection-grid--3,
+      .collection-grid--4,
+      .collection-grid--6,
+      .collection-grid--8,
+      .collection-grid--9,
+      .collection-grid--auto {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Legacy flat grid for filter view */
     .boutique-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: var(--space-6);
-      padding: 0 var(--gutter);
-      max-width: var(--container-max);
-      margin: 0 auto var(--space-16);
     }
 
     /* Product card */
@@ -585,10 +681,16 @@
     </div>
   </div>
 
-  <!-- Products Grid -->
-  <div class="boutique-grid" id="productsGrid">
+  <!-- Products by Collection -->
+  <div class="boutique-container" id="productsContainer">
 
     <!-- ROMEO SERIES -->
+    <section class="collection-section" data-collection="romeo">
+      <div class="collection-header">
+        <h2 class="collection-header__title">Romeo</h2>
+        <span class="collection-header__count">3 œuvres</span>
+      </div>
+      <div class="collection-grid collection-grid--3">
     <article class="product-card" data-collection="romeo">
       <div class="product-card__image">
         <span class="product-card__badge product-card__badge--sold">Vendu</span>
@@ -636,10 +738,19 @@
         <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
+      </div>
+    </section>
 
     <!-- JULIETTE SERIES -->
+    <section class="collection-section" data-collection="juliette">
+      <div class="collection-header">
+        <h2 class="collection-header__title">Juliette</h2>
+        <span class="collection-header__count">3 œuvres</span>
+      </div>
+      <div class="collection-grid collection-grid--3">
     <article class="product-card" data-collection="juliette">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/Juliette-1-680x680.jpg" alt="Juliette 1" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -647,22 +758,15 @@
         <h2 class="product-card__title">JULIETTE 1</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">76 × 102 cm</span>
-          <span class="product-card__price">€3,000</span>
+          <span class="product-card__price product-card__price--sold">€3,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="juliette-1"
-          data-item-price="3000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Juliette 1"
-          data-item-description="Série Juliette · Acrylique sur toile · 76×102cm"
-          data-item-image="original-site/images/Juliette-1-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="juliette">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/Juliette-2-680x680.jpg" alt="Juliette 2" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -670,22 +774,15 @@
         <h2 class="product-card__title">JULIETTE 2</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">76 × 102 cm</span>
-          <span class="product-card__price">€3,000</span>
+          <span class="product-card__price product-card__price--sold">€3,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="juliette-2"
-          data-item-price="3000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Juliette 2"
-          data-item-description="Série Juliette · Acrylique sur toile · 76×102cm"
-          data-item-image="original-site/images/Juliette-2-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="juliette">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/Juliette-3-680x680.jpg" alt="Juliette 3" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -693,21 +790,21 @@
         <h2 class="product-card__title">JULIETTE 3</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">76 × 102 cm</span>
-          <span class="product-card__price">€3,000</span>
+          <span class="product-card__price product-card__price--sold">€3,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="juliette-3"
-          data-item-price="3000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Juliette 3"
-          data-item-description="Série Juliette · Acrylique sur toile · 76×102cm"
-          data-item-image="original-site/images/Juliette-3-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
+      </div>
+    </section>
 
     <!-- VORTEX SERIES -->
+    <section class="collection-section" data-collection="vortex">
+      <div class="collection-header">
+        <h2 class="collection-header__title">Vortex</h2>
+        <span class="collection-header__count">6 œuvres</span>
+      </div>
+      <div class="collection-grid collection-grid--6">
     <article class="product-card" data-collection="vortex">
       <div class="product-card__image">
         <img src="original-site/images/vortex1-680x680.jpeg" alt="Vortex 1" loading="lazy">
@@ -733,6 +830,7 @@
 
     <article class="product-card" data-collection="vortex">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/vortex-2-680x680.jpeg" alt="Vortex 2" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -740,17 +838,9 @@
         <h2 class="product-card__title">VORTEX 2</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">32 × 32 cm</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="vortex-2"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Vortex 2"
-          data-item-description="Série Vortex · Acrylique sur toile · 32×32cm"
-          data-item-image="original-site/images/vortex-2-680x680.jpeg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
@@ -779,6 +869,7 @@
 
     <article class="product-card" data-collection="vortex">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/vortex-6-680x680.jpeg" alt="Vortex 6" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -786,22 +877,15 @@
         <h2 class="product-card__title">VORTEX 6</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">32 × 32 cm</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="vortex-6"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Vortex 6"
-          data-item-description="Série Vortex · Acrylique sur toile · 32×32cm"
-          data-item-image="original-site/images/vortex-6-680x680.jpeg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="vortex">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/VORTEX-8.jpg" alt="Vortex 8" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -809,22 +893,15 @@
         <h2 class="product-card__title">VORTEX 8</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">32 × 32 cm</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="vortex-8"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Vortex 8"
-          data-item-description="Série Vortex · Acrylique sur toile · 32×32cm"
-          data-item-image="original-site/images/VORTEX-8.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="vortex">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/VORTEX-9.jpg" alt="Vortex 9" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -832,21 +909,21 @@
         <h2 class="product-card__title">VORTEX 9</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">32 × 32 cm</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="vortex-9"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Vortex 9"
-          data-item-description="Série Vortex · Acrylique sur toile · 32×32cm"
-          data-item-image="original-site/images/VORTEX-9.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
+      </div>
+    </section>
 
     <!-- INSOMNIA SERIES -->
+    <section class="collection-section" data-collection="insomnia">
+      <div class="collection-header">
+        <h2 class="collection-header__title">Insomnia</h2>
+        <span class="collection-header__count">6 œuvres</span>
+      </div>
+      <div class="collection-grid collection-grid--6">
     <article class="product-card" data-collection="insomnia">
       <div class="product-card__image">
         <img src="original-site/images/insomnia-1-680x680.jpg" alt="Insomnia 1" loading="lazy">
@@ -984,10 +1061,19 @@
         </button>
       </div>
     </article>
+      </div>
+    </section>
 
     <!-- PURPLE GALAXY SERIES -->
+    <section class="collection-section" data-collection="purple-galaxy">
+      <div class="collection-header">
+        <h2 class="collection-header__title">Purple Galaxy</h2>
+        <span class="collection-header__count">6 œuvres</span>
+      </div>
+      <div class="collection-grid collection-grid--6">
     <article class="product-card" data-collection="purple-galaxy">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/PURPLE-GALAXY-2-680x680.jpg" alt="Purple Galaxy 2" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -995,17 +1081,9 @@
         <h2 class="product-card__title">PURPLE GALAXY 2</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">22 × 30 cm</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="purple-galaxy-2"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Purple Galaxy 2"
-          data-item-description="Série Purple Galaxy · Acrylique sur toile · 22×30cm"
-          data-item-image="original-site/images/PURPLE-GALAXY-2-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
@@ -1034,6 +1112,7 @@
 
     <article class="product-card" data-collection="purple-galaxy">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/PURPLE-GALAXY-5-680x680.jpg" alt="Purple Galaxy 5" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1041,17 +1120,9 @@
         <h2 class="product-card__title">PURPLE GALAXY 5</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">22 × 30 cm</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="purple-galaxy-5"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Purple Galaxy 5"
-          data-item-description="Série Purple Galaxy · Acrylique sur toile · 22×30cm"
-          data-item-image="original-site/images/PURPLE-GALAXY-5-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
@@ -1073,6 +1144,7 @@
 
     <article class="product-card" data-collection="purple-galaxy">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/PURPLE-GALAXY-8-680x680.jpg" alt="Purple Galaxy 8" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1080,22 +1152,15 @@
         <h2 class="product-card__title">PURPLE GALAXY 8</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">22 × 30 cm</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="purple-galaxy-8"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Purple Galaxy 8"
-          data-item-description="Série Purple Galaxy · Acrylique sur toile · 22×30cm"
-          data-item-image="original-site/images/PURPLE-GALAXY-8-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="purple-galaxy">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/PURPLE-GALAXY-9-680x680.jpg" alt="Purple Galaxy 9" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1103,23 +1168,24 @@
         <h2 class="product-card__title">PURPLE GALAXY 9</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">22 × 30 cm</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="purple-galaxy-9"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Purple Galaxy 9"
-          data-item-description="Série Purple Galaxy · Acrylique sur toile · 22×30cm"
-          data-item-image="original-site/images/PURPLE-GALAXY-9-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
+      </div>
+    </section>
 
     <!-- COSMIC SERIES -->
+    <section class="collection-section" data-collection="cosmic">
+      <div class="collection-header">
+        <h2 class="collection-header__title">Cosmic</h2>
+        <span class="collection-header__count">3 œuvres</span>
+      </div>
+      <div class="collection-grid collection-grid--3">
     <article class="product-card" data-collection="cosmic">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/COSMIC-1-680x680.jpg" alt="Cosmic 1" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1127,22 +1193,15 @@
         <h2 class="product-card__title">COSMIC 1</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="cosmic-1"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Cosmic 1"
-          data-item-description="Série Cosmic · Acrylique sur toile"
-          data-item-image="original-site/images/COSMIC-1-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="cosmic">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/COSMIC-2-680x680.jpg" alt="Cosmic 2" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1150,22 +1209,15 @@
         <h2 class="product-card__title">COSMIC 2</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="cosmic-2"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Cosmic 2"
-          data-item-description="Série Cosmic · Acrylique sur toile"
-          data-item-image="original-site/images/COSMIC-2-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="cosmic">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/COSMIC-3-680x680.jpg" alt="Cosmic 3" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1173,21 +1225,21 @@
         <h2 class="product-card__title">COSMIC 3</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="cosmic-3"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Cosmic 3"
-          data-item-description="Série Cosmic · Acrylique sur toile"
-          data-item-image="original-site/images/COSMIC-3-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
+      </div>
+    </section>
 
     <!-- EVOLUTION SERIES -->
+    <section class="collection-section" data-collection="evolution">
+      <div class="collection-header">
+        <h2 class="collection-header__title">Evolution</h2>
+        <span class="collection-header__count">3 œuvres</span>
+      </div>
+      <div class="collection-grid collection-grid--3">
     <article class="product-card" data-collection="evolution">
       <div class="product-card__image">
         <img src="original-site/images/EVOLUTION-1-680x680.jpg" alt="Evolution 1" loading="lazy">
@@ -1256,8 +1308,16 @@
         </button>
       </div>
     </article>
+      </div>
+    </section>
 
     <!-- GOLDEN SUNSET SERIES -->
+    <section class="collection-section" data-collection="golden-sunset">
+      <div class="collection-header">
+        <h2 class="collection-header__title">Golden Sunset</h2>
+        <span class="collection-header__count">3 œuvres</span>
+      </div>
+      <div class="collection-grid collection-grid--3">
     <article class="product-card" data-collection="golden-sunset">
       <div class="product-card__image">
         <img src="original-site/images/GLODEN-SUNSET-1-680x680.jpg" alt="Golden Sunset 1" loading="lazy">
@@ -1326,10 +1386,19 @@
         </button>
       </div>
     </article>
+      </div>
+    </section>
 
     <!-- SWEET LIFE SERIES -->
+    <section class="collection-section" data-collection="sweet-life">
+      <div class="collection-header">
+        <h2 class="collection-header__title">Sweet Life</h2>
+        <span class="collection-header__count">3 œuvres</span>
+      </div>
+      <div class="collection-grid collection-grid--3">
     <article class="product-card" data-collection="sweet-life">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/SWEET-LIFE-1-680x680.jpg" alt="Sweet Life 1" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1337,22 +1406,15 @@
         <h2 class="product-card__title">SWEET LIFE 1</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="sweet-life-1"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Sweet Life 1"
-          data-item-description="Série Sweet Life · Acrylique sur toile"
-          data-item-image="original-site/images/SWEET-LIFE-1-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="sweet-life">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/SWEET-LIFE-2-680x680.jpg" alt="Sweet Life 2" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1360,22 +1422,15 @@
         <h2 class="product-card__title">SWEET LIFE 2</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="sweet-life-2"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Sweet Life 2"
-          data-item-description="Série Sweet Life · Acrylique sur toile"
-          data-item-image="original-site/images/SWEET-LIFE-2-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="sweet-life">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/SWEET-LIFE-3-680x680.jpg" alt="Sweet Life 3" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1383,21 +1438,21 @@
         <h2 class="product-card__title">SWEET LIFE 3</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="sweet-life-3"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Sweet Life 3"
-          data-item-description="Série Sweet Life · Acrylique sur toile"
-          data-item-image="original-site/images/SWEET-LIFE-3-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
+      </div>
+    </section>
 
     <!-- ELASTIC SERIES -->
+    <section class="collection-section" data-collection="elastic">
+      <div class="collection-header">
+        <h2 class="collection-header__title">Elastic</h2>
+        <span class="collection-header__count">3 œuvres</span>
+      </div>
+      <div class="collection-grid collection-grid--3">
     <article class="product-card" data-collection="elastic">
       <div class="product-card__image">
         <img src="original-site/images/elastic-1-2-680x680.jpg" alt="Elastic 1" loading="lazy">
@@ -1466,10 +1521,19 @@
         </button>
       </div>
     </article>
+      </div>
+    </section>
 
     <!-- SUNDAY MORNING SERIES -->
+    <section class="collection-section" data-collection="sunday-morning">
+      <div class="collection-header">
+        <h2 class="collection-header__title">Sunday Morning</h2>
+        <span class="collection-header__count">3 œuvres</span>
+      </div>
+      <div class="collection-grid collection-grid--3">
     <article class="product-card" data-collection="sunday-morning">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/sundaymorning1-680x680.jpg" alt="Sunday Morning 1" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1477,22 +1541,15 @@
         <h2 class="product-card__title">SUNDAY MORNING 1</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="sunday-morning-1"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Sunday Morning 1"
-          data-item-description="Série Sunday Morning · Acrylique sur toile"
-          data-item-image="original-site/images/sundaymorning1-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="sunday-morning">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/sunday-morning-2-680x680.jpg" alt="Sunday Morning 2" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1500,22 +1557,15 @@
         <h2 class="product-card__title">SUNDAY MORNING 2</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="sunday-morning-2"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Sunday Morning 2"
-          data-item-description="Série Sunday Morning · Acrylique sur toile"
-          data-item-image="original-site/images/sunday-morning-2-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="sunday-morning">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/sunday-morning-3-680x680.jpg" alt="Sunday Morning 3" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1523,23 +1573,24 @@
         <h2 class="product-card__title">SUNDAY MORNING 3</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="sunday-morning-3"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Sunday Morning 3"
-          data-item-description="Série Sunday Morning · Acrylique sur toile"
-          data-item-image="original-site/images/sunday-morning-3-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
+      </div>
+    </section>
 
     <!-- OTHER WORKS -->
+    <section class="collection-section" data-collection="other">
+      <div class="collection-header">
+        <h2 class="collection-header__title">Œuvres Uniques</h2>
+        <span class="collection-header__count">10 œuvres</span>
+      </div>
+      <div class="collection-grid collection-grid--auto">
     <article class="product-card" data-collection="other">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/BLUE-DREAMS-680x680.jpg" alt="Blue Dreams" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1547,22 +1598,15 @@
         <h2 class="product-card__title">BLUE DREAMS</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="blue-dreams"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Blue Dreams"
-          data-item-description="Œuvre Unique · Acrylique sur toile"
-          data-item-image="original-site/images/BLUE-DREAMS-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="other">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/Rainbow-tears-680x680.jpg" alt="Rainbow Tears" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1570,22 +1614,15 @@
         <h2 class="product-card__title">RAINBOW TEARS</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,500</span>
+          <span class="product-card__price product-card__price--sold">€1,500</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="rainbow-tears"
-          data-item-price="1500.00"
-          data-item-url="/boutique.html"
-          data-item-name="Rainbow Tears"
-          data-item-description="Œuvre Unique · Acrylique sur toile"
-          data-item-image="original-site/images/Rainbow-tears-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="other">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/Hope-680x680.webp" alt="Hope" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1593,22 +1630,15 @@
         <h2 class="product-card__title">HOPE</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="hope"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Hope"
-          data-item-description="Œuvre Unique · Acrylique sur toile"
-          data-item-image="original-site/images/Hope-680x680.webp">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="other">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/PINK-DREAM-680x680.jpg" alt="Pink Dream" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1616,22 +1646,15 @@
         <h2 class="product-card__title">PINK DREAM</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="pink-dream"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Pink Dream"
-          data-item-description="Œuvre Unique · Acrylique sur toile"
-          data-item-image="original-site/images/PINK-DREAM-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="other">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/PURPLE-DREAM-680x680.jpg" alt="Purple Dream" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1639,22 +1662,15 @@
         <h2 class="product-card__title">PURPLE DREAM</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="purple-dream"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Purple Dream"
-          data-item-description="Œuvre Unique · Acrylique sur toile"
-          data-item-image="original-site/images/PURPLE-DREAM-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="other">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/HUMBLE-1-e1737499014597-680x680.jpeg" alt="Humble" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1662,22 +1678,15 @@
         <h2 class="product-card__title">HUMBLE</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="humble"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Humble"
-          data-item-description="Œuvre Unique · Acrylique sur toile"
-          data-item-image="original-site/images/HUMBLE-1-e1737499014597-680x680.jpeg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="other">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/POSITIVITY-e1737499176943-680x680.jpg" alt="Positivity" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1685,22 +1694,15 @@
         <h2 class="product-card__title">POSITIVITY</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="positivity"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Positivity"
-          data-item-description="Œuvre Unique · Acrylique sur toile"
-          data-item-image="original-site/images/POSITIVITY-e1737499176943-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="other">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/Silver-waves.png" alt="Silver Waves" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1708,22 +1710,15 @@
         <h2 class="product-card__title">SILVER WAVES</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="silver-waves"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Silver Waves"
-          data-item-description="Œuvre Unique · Acrylique sur toile"
-          data-item-image="original-site/images/Silver-waves.png">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="other">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/Splatsh-3-680x680.png" alt="Splatsh 3" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1731,22 +1726,15 @@
         <h2 class="product-card__title">SPLATSH 3</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="splatsh-3"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Splatsh 3"
-          data-item-description="Série Splatsh · Acrylique sur toile"
-          data-item-image="original-site/images/Splatsh-3-680x680.png">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
 
     <article class="product-card" data-collection="other">
       <div class="product-card__image">
+        <span class="product-card__badge product-card__badge--sold">Vendu</span>
         <img src="original-site/images/BABY-BLUES-680x680.jpg" alt="Baby Blues" loading="lazy">
       </div>
       <div class="product-card__content">
@@ -1754,19 +1742,13 @@
         <h2 class="product-card__title">BABY BLUES</h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
-          <span class="product-card__price">€1,000</span>
+          <span class="product-card__price product-card__price--sold">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
-          data-item-id="baby-blues"
-          data-item-price="1000.00"
-          data-item-url="/boutique.html"
-          data-item-name="Baby Blues"
-          data-item-description="Œuvre Unique · Acrylique sur toile"
-          data-item-image="original-site/images/BABY-BLUES-680x680.jpg">
-          Ajouter au Panier
-        </button>
+        <button class="product-card__btn" disabled>Vendu</button>
       </div>
     </article>
+      </div>
+    </section>
 
   </div>
 
@@ -1897,18 +1879,21 @@
 
     // Filter functionality
     const filterBtns = document.querySelectorAll('.filter-btn');
+    const sections = document.querySelectorAll('.collection-section');
     const products = document.querySelectorAll('.product-card');
     const resultsCount = document.getElementById('resultsCount');
 
-    function filterProducts(collection) {
+    function filterCollections(collection) {
       let visibleCount = 0;
 
-      products.forEach(product => {
-        const productCollection = product.dataset.collection;
-        const shouldShow = collection === 'all' || productCollection === collection;
+      sections.forEach(section => {
+        const sectionCollection = section.dataset.collection;
+        const shouldShow = collection === 'all' || sectionCollection === collection;
+        section.dataset.hidden = !shouldShow;
 
-        product.dataset.hidden = !shouldShow;
-        if (shouldShow) visibleCount++;
+        if (shouldShow) {
+          visibleCount += section.querySelectorAll('.product-card').length;
+        }
       });
 
       resultsCount.textContent = visibleCount;
@@ -1920,8 +1905,8 @@
         filterBtns.forEach(b => b.classList.remove('filter-btn--active'));
         btn.classList.add('filter-btn--active');
 
-        // Filter products
-        filterProducts(btn.dataset.filter);
+        // Filter collections
+        filterCollections(btn.dataset.filter);
       });
     });
 
@@ -1936,7 +1921,7 @@
           btn.click();
         }
       } else {
-        filterProducts('all');
+        filterCollections('all');
       }
     }
 
@@ -1992,7 +1977,12 @@
     let visibleProducts = [];
 
     function updateVisibleProducts() {
-      visibleProducts = Array.from(products).filter(p => p.dataset.hidden !== 'true');
+      visibleProducts = [];
+      sections.forEach(section => {
+        if (section.dataset.hidden !== 'true') {
+          visibleProducts.push(...section.querySelectorAll('.product-card'));
+        }
+      });
     }
 
     function openLightbox(index) {
