@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panier — Carlay Art. Finalisez votre commande.">
+
+  <title>Panier — CARLAY ART</title>
+
+  <link rel="stylesheet" href="src/css/tokens.css">
+  <link rel="stylesheet" href="src/css/base.css">
+  <link rel="stylesheet" href="src/css/components.css">
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+
+  <script src="src/js/cart.js" defer></script>
+
+  <style>
+    .checkout {
+      padding: calc(var(--space-20) + 80px) var(--gutter) var(--space-16);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .checkout__title {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: var(--weight-bold);
+      letter-spacing: var(--tracking-tight);
+      margin-bottom: var(--space-8);
+    }
+
+    .checkout__grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: var(--space-8);
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      .checkout__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Cart items list */
+    .checkout-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .checkout-item {
+      display: flex;
+      gap: var(--space-5);
+      padding: var(--space-5) 0;
+      border-bottom: 1px solid var(--color-ghost-10);
+    }
+
+    .checkout-item__image {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+    }
+
+    .checkout-item__details {
+      flex: 1;
+    }
+
+    .checkout-item__name {
+      font-family: var(--font-display);
+      font-size: var(--text-base);
+      font-weight: var(--weight-semibold);
+      margin-bottom: 4px;
+    }
+
+    .checkout-item__desc {
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      margin-bottom: var(--space-3);
+    }
+
+    .checkout-item__row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .checkout-item__qty {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--text-sm);
+    }
+
+    .checkout-item__qty-btn {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-smoke);
+      border: 1px solid var(--color-ghost-10);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: var(--text-base);
+      transition: border-color var(--duration-fast) var(--ease-out);
+    }
+
+    .checkout-item__qty-btn:hover {
+      border-color: var(--color-rose);
+    }
+
+    .checkout-item__price {
+      font-family: var(--font-display);
+      font-weight: var(--weight-bold);
+      font-size: var(--text-base);
+    }
+
+    .checkout-item__remove {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: var(--text-xs);
+      text-decoration: underline;
+      padding: 0;
+      transition: color var(--duration-fast);
+    }
+
+    .checkout-item__remove:hover {
+      color: var(--color-rose);
+    }
+
+    /* Summary sidebar */
+    .checkout-summary {
+      background: var(--color-charcoal);
+      border: 1px solid var(--color-ghost-10);
+      border-radius: var(--radius-md);
+      padding: var(--space-6);
+      position: sticky;
+      top: 100px;
+    }
+
+    .checkout-summary__title {
+      font-family: var(--font-display);
+      font-size: var(--text-lg);
+      font-weight: var(--weight-bold);
+      letter-spacing: var(--tracking-wide);
+      text-transform: uppercase;
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid var(--color-ghost-10);
+    }
+
+    .checkout-summary__row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: var(--space-3);
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+
+    .checkout-summary__row--total {
+      font-family: var(--font-display);
+      font-size: var(--text-lg);
+      font-weight: var(--weight-bold);
+      color: var(--text-primary);
+      margin-top: var(--space-4);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-ghost-10);
+    }
+
+    .checkout-summary__note {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      margin-top: var(--space-4);
+      line-height: var(--leading-relaxed);
+    }
+
+    /* Payment methods */
+    .payment-options {
+      margin-top: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .payment-options__label {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wider);
+      margin-bottom: var(--space-2);
+    }
+
+    .payment-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-3);
+      width: 100%;
+      padding: var(--space-4) var(--space-5);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-out);
+      text-decoration: none;
+      border: none;
+    }
+
+    .payment-btn--stripe {
+      background: #635BFF;
+      color: #fff;
+    }
+
+    .payment-btn--stripe:hover {
+      background: #7A73FF;
+    }
+
+    .payment-btn--mollie {
+      background: #fff;
+      color: #0a0a0a;
+    }
+
+    .payment-btn--mollie:hover {
+      background: #e8e8e8;
+    }
+
+    .payment-btn--crypto {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--color-ghost-20);
+    }
+
+    .payment-btn--crypto:hover {
+      border-color: #F7931A;
+      color: #F7931A;
+    }
+
+    .payment-btn__icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    /* Empty cart */
+    .checkout-empty {
+      text-align: center;
+      padding: var(--space-16) var(--space-4);
+    }
+
+    .checkout-empty__icon {
+      opacity: 0.2;
+      margin-bottom: var(--space-6);
+    }
+
+    .checkout-empty__text {
+      color: var(--text-muted);
+      font-size: var(--text-lg);
+      margin-bottom: var(--space-6);
+    }
+
+    .checkout-empty .btn {
+      display: inline-flex;
+      text-decoration: none;
+    }
+
+    /* Security badges */
+    .security-badges {
+      display: flex;
+      gap: var(--space-4);
+      justify-content: center;
+      margin-top: var(--space-4);
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+    }
+
+    .security-badge {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Navigation -->
+  <nav class="nav nav--scrolled" id="nav">
+    <div class="container nav__inner">
+      <a href="index.html" class="nav__logo">CARLAY ART</a>
+
+      <ul class="nav__links">
+        <li><a href="index.html#collections" class="nav__link">Œuvres</a></li>
+        <li><a href="index.html#about" class="nav__link">L'Artiste</a></li>
+        <li><a href="boutique.html" class="nav__link">Boutique</a></li>
+      </ul>
+
+      <button class="nav__cart" data-cart-toggle>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 6h15l-1.5 9h-12z"/>
+          <circle cx="9" cy="20" r="1"/>
+          <circle cx="18" cy="20" r="1"/>
+          <path d="M6 6L5 3H2"/>
+        </svg>
+        <span class="cart-count">0</span>
+      </button>
+
+      <button class="nav__menu-btn" id="menuBtn" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#collections" class="mobile-menu__link">Œuvres</a>
+    <a href="index.html#about" class="mobile-menu__link">L'Artiste</a>
+    <a href="boutique.html" class="mobile-menu__link">Boutique</a>
+    <button class="btn btn--primary" data-cart-toggle style="margin-top: var(--space-4);">
+      Panier (<span class="cart-count">0</span>)
+    </button>
+  </div>
+
+  <!-- Checkout Content -->
+  <section class="checkout">
+    <h1 class="checkout__title">Votre Panier</h1>
+
+    <div id="checkoutContent"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__top">
+        <div class="footer__brand">
+          <img src="original-site/images/logo-carlay-BLANC-300x175.png" alt="Carlay Art" style="width: 120px; margin-bottom: var(--space-4);">
+          <p class="footer__tagline">Art Contemporain Français</p>
+        </div>
+
+        <div>
+          <h4 class="footer__heading">Collections</h4>
+          <ul class="footer__links">
+            <li><a href="boutique.html?collection=romeo" class="footer__link">Romeo</a></li>
+            <li><a href="boutique.html?collection=juliette" class="footer__link">Juliette</a></li>
+            <li><a href="boutique.html?collection=vortex" class="footer__link">Vortex</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__heading">Info</h4>
+          <ul class="footer__links">
+            <li><a href="index.html#about" class="footer__link">L'Artiste</a></li>
+            <li><a href="/livraison" class="footer__link">Livraison</a></li>
+            <li><a href="/mentions-legales" class="footer__link">Mentions Légales</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__heading">Paiements</h4>
+          <ul class="footer__links">
+            <li><span class="footer__link" style="cursor: default;">Carte Bancaire</span></li>
+            <li><span class="footer__link" style="cursor: default;">Crypto (BTC/ETH)</span></li>
+            <li><span class="footer__link" style="cursor: default;">iDEAL · Bancontact</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <p>&copy; 2024 Carlay Art. Tous droits réservés.</p>
+        <div class="footer__social">
+          <a href="https://instagram.com" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    let menuOpen = false;
+
+    menuBtn.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('mobile-menu--open', menuOpen);
+      document.body.style.overflow = menuOpen ? 'hidden' : '';
+    });
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuOpen = false;
+        mobileMenu.classList.remove('mobile-menu--open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // Render checkout page
+    function renderCheckout() {
+      const container = document.getElementById('checkoutContent');
+      const items = Cart.getItems();
+
+      if (!items.length) {
+        container.innerHTML = `
+          <div class="checkout-empty">
+            <div class="checkout-empty__icon">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <path d="M6 6h15l-1.5 9h-12z"/>
+                <circle cx="9" cy="20" r="1"/>
+                <circle cx="18" cy="20" r="1"/>
+                <path d="M6 6L5 3H2"/>
+              </svg>
+            </div>
+            <p class="checkout-empty__text">Votre panier est vide</p>
+            <a href="boutique.html" class="btn btn--primary">Voir la Boutique</a>
+          </div>`;
+        return;
+      }
+
+      const subtotal = Cart.total();
+      const shipping = 0; // Free shipping for art
+      const total = subtotal + shipping;
+
+      container.innerHTML = `
+        <div class="checkout__grid">
+          <div class="checkout-items">
+            ${items.map(item => `
+              <div class="checkout-item">
+                <img class="checkout-item__image" src="${item.image}" alt="${item.name}">
+                <div class="checkout-item__details">
+                  <h3 class="checkout-item__name">${item.name}</h3>
+                  <p class="checkout-item__desc">${item.description}</p>
+                  <div class="checkout-item__row">
+                    <div class="checkout-item__qty">
+                      <button class="checkout-item__qty-btn" onclick="Cart.updateQty('${item.id}', ${item.qty - 1})">−</button>
+                      <span>${item.qty}</span>
+                      <button class="checkout-item__qty-btn" onclick="Cart.updateQty('${item.id}', ${item.qty + 1})">+</button>
+                    </div>
+                    <span class="checkout-item__price">&euro;${(item.price * item.qty).toLocaleString()}</span>
+                  </div>
+                  <button class="checkout-item__remove" onclick="Cart.remove('${item.id}')">Supprimer</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="checkout-summary">
+            <h2 class="checkout-summary__title">Récapitulatif</h2>
+
+            <div class="checkout-summary__row">
+              <span>Sous-total (${Cart.count()} ${Cart.count() > 1 ? 'œuvres' : 'œuvre'})</span>
+              <span>&euro;${subtotal.toLocaleString()}</span>
+            </div>
+            <div class="checkout-summary__row">
+              <span>Livraison</span>
+              <span>Gratuite</span>
+            </div>
+            <div class="checkout-summary__row checkout-summary__row--total">
+              <span>Total</span>
+              <span>&euro;${total.toLocaleString()}</span>
+            </div>
+
+            <div class="payment-options">
+              <span class="payment-options__label">Choisir le mode de paiement</span>
+
+              <button class="payment-btn payment-btn--stripe" onclick="handlePayment('stripe')">
+                <svg class="payment-btn__icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/>
+                </svg>
+                Carte Bancaire (Stripe)
+              </button>
+
+              <button class="payment-btn payment-btn--mollie" onclick="handlePayment('mollie')">
+                <svg class="payment-btn__icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.109 2c-2.747 0-4.268 1.456-4.268 4.09v.207h-.013c-.672-1.715-2.432-2.87-4.56-2.87C4.25 3.427 1 7.12 1 12.26 1 17.253 4.074 21 8.268 21c2.128 0 3.888-1.155 4.56-2.87h.013V20.5h4v-14c0-1.5.6-2.5 2.268-2.5H21V2h-3.891zM9.5 16.5c-1.933 0-3.5-1.79-3.5-4s1.567-4 3.5-4 3.5 1.79 3.5 4-1.567 4-3.5 4z"/>
+                </svg>
+                iDEAL · Bancontact · SEPA (Mollie)
+              </button>
+
+              <button class="payment-btn payment-btn--crypto" onclick="handlePayment('crypto')">
+                <svg class="payment-btn__icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23.638 14.904c-1.602 6.43-8.113 10.34-14.542 8.736C2.67 22.05-1.244 15.525.362 9.105 1.962 2.67 8.475-1.243 14.9.358c6.43 1.605 10.342 8.115 8.738 14.546zm-6.35-4.613c.24-1.59-.974-2.45-2.64-3.03l.54-2.153-1.315-.33-.525 2.107c-.345-.087-.7-.17-1.053-.254l.53-2.12-1.315-.328-.54 2.153c-.285-.065-.565-.13-.84-.2l.002-.007-1.815-.453-.35 1.407s.975.224.955.238c.535.136.63.492.615.775l-.618 2.48c.037.01.085.024.138.046l-.14-.036-.867 3.468c-.065.164-.232.41-.61.317.013.02-.956-.24-.956-.24l-.652 1.514 1.71.426c.32.08.63.164.94.243l-.546 2.19 1.314.327.54-2.17c.36.1.707.19 1.05.273l-.538 2.156 1.315.33.546-2.183c2.245.427 3.93.255 4.64-1.774.57-1.637-.03-2.58-1.217-3.196.867-.2 1.52-.77 1.694-1.94z"/>
+                </svg>
+                Bitcoin · Ethereum · USDC (Coinbase)
+              </button>
+            </div>
+
+            <div class="security-badges">
+              <span class="security-badge">🔒 SSL</span>
+              <span class="security-badge">🛡️ 3D Secure</span>
+              <span class="security-badge">✓ PCI DSS</span>
+            </div>
+
+            <p class="checkout-summary__note">
+              Certificat d'authenticité inclus avec chaque œuvre. Livraison assurée dans le monde entier.
+            </p>
+          </div>
+        </div>`;
+    }
+
+    // Payment handler
+    function handlePayment(method) {
+      const items = Cart.getItems();
+      if (!items.length) return;
+
+      const total = Cart.total();
+      const orderData = {
+        items: items.map(i => ({
+          id: i.id,
+          name: i.name,
+          price: i.price,
+          qty: i.qty
+        })),
+        total,
+        currency: 'EUR'
+      };
+
+      switch (method) {
+        case 'stripe':
+          // In production: POST to /api/checkout/stripe with orderData
+          // Server creates a Stripe Checkout Session and returns the URL
+          alert(
+            `Stripe Checkout\n\n` +
+            `Total: €${total.toLocaleString()}\n` +
+            `${items.length} œuvre(s)\n\n` +
+            `La passerelle de paiement Stripe sera connectée prochainement.\n` +
+            `Contactez carlayart369@gmail.com pour acheter.`
+          );
+          break;
+
+        case 'mollie':
+          // In production: POST to /api/checkout/mollie with orderData
+          // Server creates a Mollie payment and returns redirect URL
+          alert(
+            `Mollie Checkout\n\n` +
+            `Total: €${total.toLocaleString()}\n` +
+            `Méthodes: iDEAL, Bancontact, SEPA, Carte\n\n` +
+            `La passerelle Mollie sera connectée prochainement.\n` +
+            `Contactez carlayart369@gmail.com pour acheter.`
+          );
+          break;
+
+        case 'crypto':
+          // In production: POST to /api/checkout/coinbase with orderData
+          // Server creates a Coinbase Commerce charge and returns checkout URL
+          alert(
+            `Coinbase Commerce\n\n` +
+            `Total: €${total.toLocaleString()}\n` +
+            `Crypto: BTC, ETH, USDC, LTC\n\n` +
+            `Le paiement crypto sera connecté prochainement.\n` +
+            `Contactez carlayart369@gmail.com pour acheter.`
+          );
+          break;
+      }
+    }
+
+    // Re-render on cart changes
+    Cart.onChange(renderCheckout);
+
+    // Initial render
+    document.addEventListener('DOMContentLoaded', renderCheckout);
+  </script>
+</body>
+</html>

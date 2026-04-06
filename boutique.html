@@ -12,9 +12,8 @@
   <link rel="stylesheet" href="src/css/base.css">
   <link rel="stylesheet" href="src/css/components.css">
 
-  <!-- Snipcart -->
-  <link rel="preconnect" href="https://app.snipcart.com">
-  <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3/default/snipcart.css" />
+  <!-- Cart -->
+  <script src="src/js/cart.js" defer></script>
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
@@ -450,7 +449,7 @@
       color: var(--color-rose);
     }
 
-    .nav__cart-count {
+    .cart-count {
       background: var(--color-rose);
       color: white;
       font-size: var(--text-xs);
@@ -608,11 +607,6 @@
       opacity: 0.5;
     }
 
-    /* Snipcart theme overrides */
-    :root {
-      --snipcart-bg: #1a1a1a;
-      --snipcart-primary: #ff3366;
-    }
   </style>
 </head>
 <body>
@@ -630,14 +624,14 @@
         <li><a href="boutique.html" class="nav__link" style="color: var(--color-rose);">Boutique</a></li>
       </ul>
 
-      <button class="nav__cart snipcart-checkout">
+      <button class="nav__cart" data-cart-toggle>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M6 6h15l-1.5 9h-12z"/>
           <circle cx="9" cy="20" r="1"/>
           <circle cx="18" cy="20" r="1"/>
           <path d="M6 6L5 3H2"/>
         </svg>
-        <span class="snipcart-items-count">0</span>
+        <span class="cart-count">0</span>
       </button>
 
       <button class="nav__menu-btn" id="menuBtn" aria-label="Menu">
@@ -653,8 +647,8 @@
     <a href="index.html#collections" class="mobile-menu__link">Œuvres</a>
     <a href="index.html#about" class="mobile-menu__link">L'Artiste</a>
     <a href="boutique.html" class="mobile-menu__link">Boutique</a>
-    <button class="btn btn--primary snipcart-checkout" style="margin-top: var(--space-4);">
-      Panier (<span class="snipcart-items-count">0</span>)
+    <button class="btn btn--primary" data-cart-toggle style="margin-top: var(--space-4);">
+      Panier (<span class="cart-count">0</span>)
     </button>
   </div>
 
@@ -824,10 +818,10 @@
           <span class="product-card__dimensions">32 × 32 cm</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="vortex-1"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Vortex 1"
           data-item-description="Série Vortex · Acrylique sur toile · 32×32cm"
           data-item-image="original-site/images/vortex1-680x680.jpeg">
@@ -895,10 +889,10 @@
           <span class="product-card__dimensions">32 × 32 cm</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="vortex-5"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Vortex 5"
           data-item-description="Série Vortex · Acrylique sur toile · 32×32cm"
           data-item-image="original-site/images/VORTEX-5.jpg">
@@ -991,10 +985,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="insomnia-1"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Insomnia 1"
           data-item-description="Série Insomnia · Acrylique sur toile"
           data-item-image="original-site/images/insomnia-1-680x680.jpg">
@@ -1014,10 +1008,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="insomnia-2"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Insomnia 2"
           data-item-description="Série Insomnia · Acrylique sur toile"
           data-item-image="original-site/images/insomnia-2-680x680.jpg">
@@ -1037,10 +1031,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="insomnia-3"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Insomnia 3"
           data-item-description="Série Insomnia · Acrylique sur toile"
           data-item-image="original-site/images/insomnia-3-680x680.jpg">
@@ -1060,10 +1054,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="insomnia-4"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Insomnia 4"
           data-item-description="Série Insomnia · Acrylique sur toile"
           data-item-image="original-site/images/insomnia-4-680x680.jpg">
@@ -1083,10 +1077,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="insomnia-5"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Insomnia 5"
           data-item-description="Série Insomnia · Acrylique sur toile"
           data-item-image="original-site/images/insomnia-5-680x680.jpg">
@@ -1106,10 +1100,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="insomnia-6"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Insomnia 6"
           data-item-description="Série Insomnia · Acrylique sur toile"
           data-item-image="original-site/images/insomnia-6-680x680.jpg">
@@ -1154,10 +1148,10 @@
           <span class="product-card__dimensions">22 × 30 cm</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="purple-galaxy-4"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Purple Galaxy 4"
           data-item-description="Série Purple Galaxy · Acrylique sur toile · 22×30cm"
           data-item-image="original-site/images/PURPLE-GALAXY-4-680x680.jpg">
@@ -1307,10 +1301,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="evolution-1"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Evolution 1"
           data-item-description="Série Evolution · Acrylique sur toile"
           data-item-image="original-site/images/EVOLUTION-1-680x680.jpg">
@@ -1330,10 +1324,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="evolution-2"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Evolution 2"
           data-item-description="Série Evolution · Acrylique sur toile"
           data-item-image="original-site/images/EVOLUTION-2-680x680.jpg">
@@ -1353,10 +1347,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="evolution-3"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Evolution 3"
           data-item-description="Série Evolution · Acrylique sur toile"
           data-item-image="original-site/images/EVOLUTION-3-680x680.jpg">
@@ -1385,10 +1379,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="golden-sunset-1"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Golden Sunset 1"
           data-item-description="Série Golden Sunset · Acrylique sur toile"
           data-item-image="original-site/images/GLODEN-SUNSET-1-680x680.jpg">
@@ -1408,10 +1402,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="golden-sunset-2"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Golden Sunset 2"
           data-item-description="Série Golden Sunset · Acrylique sur toile"
           data-item-image="original-site/images/GOLDEN-SUNSET-2-680x680.jpg">
@@ -1431,10 +1425,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="golden-sunset-3"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Golden Sunset 3"
           data-item-description="Série Golden Sunset · Acrylique sur toile"
           data-item-image="original-site/images/GOLDEN-SUNSET-3-680x680.jpg">
@@ -1520,10 +1514,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="free-spirit-1"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Free Spirit 1"
           data-item-description="Série Free Spirit · Acrylique sur toile"
           data-item-image="original-site/images/elastic-1-2-680x680.jpg">
@@ -1543,10 +1537,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="free-spirit-2"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Free Spirit 2"
           data-item-description="Série Free Spirit · Acrylique sur toile"
           data-item-image="original-site/images/elastic-2-680x680.jpg">
@@ -1566,10 +1560,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="free-spirit-3"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Free Spirit 3"
           data-item-description="Série Free Spirit · Acrylique sur toile"
           data-item-image="original-site/images/elastic-3-680x680.jpg">
@@ -1598,10 +1592,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="elastic-1"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Elastic 1"
           data-item-description="Série Elastic · Acrylique sur toile"
           data-item-image="original-site/images/elastic-1-2-680x680.jpg">
@@ -1621,10 +1615,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="elastic-2"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Elastic 2"
           data-item-description="Série Elastic · Acrylique sur toile"
           data-item-image="original-site/images/elastic-2-680x680.jpg">
@@ -1644,10 +1638,10 @@
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
         </div>
-        <button class="product-card__btn snipcart-add-item"
+        <button class="product-card__btn" data-add-to-cart
           data-item-id="elastic-3"
           data-item-price="1000.00"
-          data-item-url="/boutique.html"
+
           data-item-name="Elastic 3"
           data-item-description="Série Elastic · Acrylique sur toile"
           data-item-image="original-site/images/elastic-3-680x680.jpg">
@@ -2025,11 +2019,6 @@
     </div>
   </div>
 
-  <!-- Snipcart Container -->
-  <div hidden id="snipcart" data-api-key="YOUR_PUBLIC_API_KEY" data-config-modal-style="side" data-currency="EUR"></div>
-
-  <!-- Snipcart Script -->
-  <script async src="https://cdn.snipcart.com/themes/v3/default/snipcart.js"></script>
 
   <script>
     // Mobile menu toggle
@@ -2126,18 +2115,6 @@
       fadeInObserver.observe(card);
     });
 
-    // Fallback for add-to-cart buttons when Snipcart isn't configured
-    document.querySelectorAll('.snipcart-add-item').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        // Check if Snipcart is loaded and configured
-        if (typeof Snipcart === 'undefined' || !Snipcart.api) {
-          e.preventDefault();
-          const itemName = btn.dataset.itemName;
-          const itemPrice = btn.dataset.itemPrice;
-          alert(`${itemName} — €${parseFloat(itemPrice).toLocaleString()}\n\nLe panier sera activé prochainement.`);
-        }
-      });
-    });
 
     // Lightbox functionality
     const lightbox = document.getElementById('lightbox');
