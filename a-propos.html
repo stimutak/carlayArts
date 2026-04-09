@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Carlay Art - Artiste contemporaine française. Art abstrait, acrylique sur toile. Active en France et à New York.">
+
+  <title>L'Artiste — CARLAY ART</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="src/css/tokens.css">
+  <link rel="stylesheet" href="src/css/base.css">
+  <link rel="stylesheet" href="src/css/components.css">
+
+  <!-- Cart -->
+  <script src="src/js/cart.js" defer></script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+
+  <style>
+    /* ── PAGE HERO ── */
+    .page-hero {
+      position: relative;
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: var(--space-20) var(--gutter) var(--space-12);
+      overflow: hidden;
+    }
+
+    .page-hero__artwork {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-image: url('original-site/images/Romeo-2-680x680.jpg');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.2) saturate(1.2);
+      transform: scale(1.05);
+      animation: heroBreath 20s ease-in-out infinite;
+    }
+
+    @keyframes heroBreath {
+      0%, 100% { transform: scale(1.05); }
+      50% { transform: scale(1.1); }
+    }
+
+    .page-hero__vignette {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: radial-gradient(ellipse at center, transparent 20%, rgba(10, 10, 10, 0.8) 100%);
+      pointer-events: none;
+    }
+
+    .page-hero__gradient {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40%;
+      z-index: 1;
+      background: linear-gradient(to top, var(--color-black) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .page-hero__content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .page-hero__title {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 1rem + 10vw, 8rem);
+      font-weight: var(--weight-bold);
+      line-height: var(--leading-none);
+      letter-spacing: var(--tracking-tight);
+      text-transform: uppercase;
+      margin-bottom: var(--space-4);
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 1s var(--ease-out) 0.3s forwards;
+    }
+
+    .page-hero__subtitle {
+      font-family: var(--font-accent);
+      font-size: var(--text-xl);
+      font-style: italic;
+      color: var(--text-secondary);
+      opacity: 0;
+      animation: fadeUp 0.8s var(--ease-out) 0.6s forwards;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .page-hero__artwork {
+        animation: none;
+        transform: scale(1.05);
+      }
+    }
+
+    /* ── ARTIST BIO SECTION ── */
+    .bio-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-12);
+      align-items: center;
+    }
+
+    .bio-section__image {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-sm);
+    }
+
+    .bio-section__image img {
+      width: 100%;
+      height: auto;
+      filter: grayscale(100%);
+      transition: filter var(--duration-slow) var(--ease-out);
+    }
+
+    .bio-section__image:hover img {
+      filter: grayscale(0%);
+    }
+
+    .bio-section__signature {
+      width: 150px;
+      margin-top: var(--space-6);
+      opacity: 0.8;
+    }
+
+    .bio-section .text-body {
+      margin-bottom: var(--space-4);
+    }
+
+    .bio-section .text-body:last-of-type {
+      margin-bottom: var(--space-6);
+    }
+
+    @media (max-width: 768px) {
+      .bio-section {
+        grid-template-columns: 1fr;
+      }
+      .bio-section__image {
+        order: -1;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+    }
+
+    /* ── PHILOSOPHY SECTION ── */
+    .philosophy-section {
+      text-align: center;
+      background: var(--color-charcoal);
+    }
+
+    .philosophy-section__quote {
+      font-family: var(--font-accent);
+      font-size: var(--text-xl);
+      font-style: italic;
+      color: var(--text-secondary);
+      max-width: 800px;
+      margin: 0 auto var(--space-12);
+      line-height: var(--leading-relaxed);
+      position: relative;
+      padding: 0 var(--space-6);
+    }
+
+    .philosophy-section__quote::before {
+      content: '\201C';
+      position: absolute;
+      top: -0.4em;
+      left: -0.1em;
+      font-size: clamp(3rem, 6vw, 5rem);
+      color: var(--color-rose);
+      opacity: 0.3;
+      font-family: var(--font-accent);
+      line-height: 1;
+    }
+
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-8);
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .philosophy-grid__item {
+      padding: var(--space-6);
+      border: 1px solid var(--color-ghost);
+      border-radius: var(--radius-sm);
+      transition: border-color var(--duration-normal) var(--ease-out);
+    }
+
+    .philosophy-grid__item:hover {
+      border-color: var(--color-ghost-20);
+    }
+
+    .philosophy-grid__title {
+      font-family: var(--font-display);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wider);
+      margin-bottom: var(--space-3);
+      color: var(--text-primary);
+    }
+
+    .philosophy-grid__text {
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      line-height: var(--leading-relaxed);
+    }
+
+    @media (max-width: 768px) {
+      .philosophy-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-5);
+      }
+    }
+
+    /* ── WORKS STRIP ── */
+    .works-strip {
+      padding: var(--space-10) 0;
+      overflow: hidden;
+    }
+
+    .works-strip__grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--space-2);
+    }
+
+    .works-strip__item {
+      aspect-ratio: 1;
+      overflow: hidden;
+      border-radius: var(--radius-sm);
+    }
+
+    .works-strip__item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(30%);
+      transition: transform var(--duration-slow) var(--ease-out),
+                  filter var(--duration-normal) var(--ease-out);
+    }
+
+    .works-strip__item:hover img {
+      transform: scale(1.08);
+      filter: grayscale(0%);
+    }
+
+    @media (max-width: 768px) {
+      .works-strip__grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .works-strip__item:nth-child(n+4) {
+        display: none;
+      }
+    }
+
+    /* ── CTA SECTION ── */
+    .cta-section {
+      text-align: center;
+      padding: var(--space-20) var(--gutter);
+      background: linear-gradient(
+        to bottom,
+        var(--color-black) 0%,
+        var(--color-charcoal) 50%,
+        var(--color-black) 100%
+      );
+    }
+
+    .cta-section__title {
+      font-family: var(--font-display);
+      font-size: var(--text-3xl);
+      font-weight: var(--weight-bold);
+      margin-bottom: var(--space-4);
+    }
+
+    .cta-section__subtitle {
+      color: var(--text-secondary);
+      font-size: var(--text-lg);
+      margin-bottom: var(--space-8);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .footer__logo-img {
+      width: 120px;
+      margin-bottom: var(--space-4);
+    }
+  </style>
+</head>
+<body>
+  <!-- Grain texture overlay -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Navigation -->
+  <nav class="nav nav--scrolled" id="nav">
+    <div class="container nav__inner">
+      <a href="index.html" class="nav__logo">CARLAY ART</a>
+
+      <ul class="nav__links">
+        <li><a href="index.html#collections" class="nav__link">Œuvres</a></li>
+        <li><a href="a-propos.html" class="nav__link nav__link--active">L'Artiste</a></li>
+        <li><a href="boutique.html" class="nav__link">Boutique</a></li>
+        <li><a href="contact.html" class="nav__link">Contact</a></li>
+      </ul>
+
+      <button class="nav__cart" data-cart-toggle>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 6h15l-1.5 9h-12z"/>
+          <circle cx="9" cy="20" r="1"/>
+          <circle cx="18" cy="20" r="1"/>
+          <path d="M6 6L5 3H2"/>
+        </svg>
+        <span class="cart-count">0</span>
+      </button>
+
+      <button class="nav__menu-btn" id="menuBtn" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#collections" class="mobile-menu__link">Œuvres</a>
+    <a href="a-propos.html" class="mobile-menu__link mobile-menu__link--active">L'Artiste</a>
+    <a href="boutique.html" class="mobile-menu__link">Boutique</a>
+    <a href="contact.html" class="mobile-menu__link">Contact</a>
+    <button class="btn btn--primary" data-cart-toggle>
+      Panier (<span class="cart-count">0</span>)
+    </button>
+  </div>
+
+  <main>
+    <!-- Hero -->
+    <section class="page-hero">
+      <div class="page-hero__artwork" aria-hidden="true"></div>
+      <div class="page-hero__vignette" aria-hidden="true"></div>
+      <div class="page-hero__gradient" aria-hidden="true"></div>
+
+      <div class="page-hero__content">
+        <h1 class="page-hero__title">L'Artiste</h1>
+        <p class="page-hero__subtitle">Art Abstrait &middot; France &amp; New York</p>
+      </div>
+    </section>
+
+    <!-- Artist Introduction -->
+    <section class="section" id="biographie">
+      <div class="container">
+        <div class="bio-section">
+          <div>
+            <span class="section-header__eyebrow">Biographie</span>
+            <h2 class="section-header__title">CARLAY</h2>
+            <p class="text-body">
+              Carlay est une artiste émergente française, elle évolue dans l'univers de l'art abstrait.
+              Sa technique est d'utiliser principalement de l'acrylique sur toile.
+            </p>
+            <p class="text-body">
+              Inspirée par les paysages urbains et les scènes du quotidien, elle transforme des moments
+              ordinaires en expériences visuelles extraordinaires. Ses œuvres colorées capturent des
+              moments de vie avec une intensité émotionnelle unique.
+            </p>
+            <p class="text-body">
+              Active principalement en France et à New York, sa présence croissante sur ces marchés
+              artistiques majeurs témoigne de son talent exceptionnel.
+            </p>
+            <img
+              src="original-site/images/Carlay-art-signature.png"
+              alt="Signature Carlay"
+              class="bio-section__signature"
+            >
+          </div>
+          <div class="bio-section__image">
+            <img
+              src="original-site/images/Carlay-art.jpg"
+              alt="Carlay - Artiste contemporaine"
+              loading="lazy"
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Philosophy / Approach -->
+    <section class="section philosophy-section" id="demarche">
+      <div class="container">
+        <header class="section-header section-header--center">
+          <span class="section-header__eyebrow">Démarche Artistique</span>
+          <h2 class="section-header__title">L'Art comme Émotion</h2>
+        </header>
+
+        <blockquote class="philosophy-section__quote">
+          Chaque toile est une exploration de la couleur et du mouvement. L'acrylique me permet
+          de capturer l'énergie d'un instant — la lumière d'un coucher de soleil, le rythme
+          d'une ville, la douceur d'un dimanche matin.
+        </blockquote>
+
+        <div class="philosophy-grid">
+          <div class="philosophy-grid__item">
+            <h3 class="philosophy-grid__title">Acrylique sur Toile</h3>
+            <p class="philosophy-grid__text">
+              Technique principale permettant des superpositions de couleurs vibrantes et des textures riches.
+            </p>
+          </div>
+          <div class="philosophy-grid__item">
+            <h3 class="philosophy-grid__title">Abstrait &amp; Gestuel</h3>
+            <p class="philosophy-grid__text">
+              Un style caractérisé par des lignes dynamiques, des formes organiques et une énergie émotionnelle.
+            </p>
+          </div>
+          <div class="philosophy-grid__item">
+            <h3 class="philosophy-grid__title">France &amp; New York</h3>
+            <p class="philosophy-grid__text">
+              Une double influence culturelle qui nourrit chaque création.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Selected Works Strip -->
+    <section class="works-strip" aria-label="Sélection d'œuvres">
+      <div class="works-strip__grid">
+        <div class="works-strip__item">
+          <img src="original-site/images/Romeo-1-680x680.jpg" alt="Romeo 1" loading="lazy">
+        </div>
+        <div class="works-strip__item">
+          <img src="original-site/images/VORTEX-5.jpg" alt="Vortex 5" loading="lazy">
+        </div>
+        <div class="works-strip__item">
+          <img src="original-site/images/insomnia-1-680x680.jpg" alt="Insomnia 1" loading="lazy">
+        </div>
+        <div class="works-strip__item">
+          <img src="original-site/images/PURPLE-GALAXY-7-680x680.jpg" alt="Purple Galaxy 7" loading="lazy">
+        </div>
+        <div class="works-strip__item">
+          <img src="original-site/images/Juliette-2-680x680.jpg" alt="Juliette 2" loading="lazy">
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <h2 class="cta-section__title">Découvrir les Œuvres</h2>
+      <p class="cta-section__subtitle">
+        Chaque pièce est une peinture acrylique originale sur toile, accompagnée d'un certificat d'authenticité.
+      </p>
+      <a href="boutique.html" class="btn btn--primary">
+        Voir la Boutique
+      </a>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__top">
+        <div class="footer__brand">
+          <img
+            src="original-site/images/logo-carlay-BLANC-300x175.png"
+            alt="Carlay Art"
+            class="footer__logo-img"
+          >
+          <p class="footer__tagline">Art Contemporain Français</p>
+        </div>
+
+        <div>
+          <h4 class="footer__heading">Collections</h4>
+          <ul class="footer__links">
+            <li><a href="boutique.html?collection=romeo" class="footer__link">Romeo</a></li>
+            <li><a href="boutique.html?collection=juliette" class="footer__link">Juliette</a></li>
+            <li><a href="boutique.html?collection=vortex" class="footer__link">Vortex</a></li>
+            <li><a href="boutique.html?collection=insomnia" class="footer__link">Insomnia</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__heading">Info</h4>
+          <ul class="footer__links">
+            <li><a href="a-propos.html" class="footer__link">L'Artiste</a></li>
+            <li><a href="boutique.html" class="footer__link">Boutique</a></li>
+            <li><a href="contact.html" class="footer__link">Contact</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__heading">Paiements</h4>
+          <ul class="footer__links">
+            <li><span class="footer__link">Carte Bancaire</span></li>
+            <li><span class="footer__link">Crypto (BTC/ETH)</span></li>
+            <li><span class="footer__link">iDEAL &middot; Bancontact</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <p>&copy; 2025 Carlay Art. Tous droits réservés.</p>
+        <div class="footer__social">
+          <a href="https://instagram.com/carlayart" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Navigation scroll effect (keep class but allow extra blur on further scroll)
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('nav--scrolled', true);
+    });
+
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    let menuOpen = false;
+
+    menuBtn.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('mobile-menu--open', menuOpen);
+      document.body.style.overflow = menuOpen ? 'hidden' : '';
+    });
+
+    // Close mobile menu when clicking a link
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuOpen = false;
+        mobileMenu.classList.remove('mobile-menu--open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // Intersection Observer for fade-in animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const fadeInObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0) scale(1)';
+        }
+      });
+    }, observerOptions);
+
+    // Section headers: fast opacity fade only
+    document.querySelectorAll('.section-header').forEach((header) => {
+      header.style.opacity = '0';
+      header.style.transition = 'opacity 0.4s ease';
+      fadeInObserver.observe(header);
+    });
+
+    // Bio section content: subtle translateY
+    document.querySelectorAll('.bio-section > div').forEach((el, index) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = `opacity 0.6s ease ${index * 0.15}s, transform 0.6s ease ${index * 0.15}s`;
+      fadeInObserver.observe(el);
+    });
+
+    // Philosophy grid items: staggered scale
+    document.querySelectorAll('.philosophy-grid__item').forEach((item, index) => {
+      item.style.opacity = '0';
+      item.style.transform = 'scale(0.97)';
+      item.style.transition = `opacity 0.5s ease ${index * 0.1}s, transform 0.5s ease ${index * 0.1}s`;
+      fadeInObserver.observe(item);
+    });
+
+    // Philosophy quote
+    const quote = document.querySelector('.philosophy-section__quote');
+    if (quote) {
+      quote.style.opacity = '0';
+      quote.style.transform = 'translateY(15px)';
+      quote.style.transition = 'opacity 0.6s ease 0.1s, transform 0.6s ease 0.1s';
+      fadeInObserver.observe(quote);
+    }
+
+    // Works strip items: staggered
+    document.querySelectorAll('.works-strip__item').forEach((item, index) => {
+      item.style.opacity = '0';
+      item.style.transform = 'scale(0.95)';
+      item.style.transition = `opacity 0.5s ease ${index * 0.08}s, transform 0.5s ease ${index * 0.08}s`;
+      fadeInObserver.observe(item);
+    });
+
+    // CTA section
+    const ctaTitle = document.querySelector('.cta-section__title');
+    if (ctaTitle) {
+      ctaTitle.style.opacity = '0';
+      ctaTitle.style.transition = 'opacity 0.5s ease';
+      fadeInObserver.observe(ctaTitle);
+    }
+  </script>
+</body>
+</html>

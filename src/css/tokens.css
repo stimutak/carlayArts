@@ -28,7 +28,7 @@
   /* Text */
   --text-primary: var(--color-white);
   --text-secondary: rgba(250, 250, 250, 0.7);
-  --text-muted: rgba(250, 250, 250, 0.4);
+  --text-muted: rgba(250, 250, 250, 0.55);
 
   /* ─────────────────────────────────────────────────────────
      TYPOGRAPHY
