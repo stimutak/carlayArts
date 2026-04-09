@@ -359,16 +359,30 @@
       width: 120px;
       margin-bottom: var(--space-4);
     }
+
+    .nav__logo-img {
+      height: 32px;
+      width: auto;
+    }
+
+    .footer__signature {
+      width: 100px;
+      opacity: 0.3;
+      margin-bottom: var(--space-4);
+    }
   </style>
 </head>
 <body>
   <!-- Grain texture overlay -->
   <div class="grain" aria-hidden="true"></div>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
   <!-- Navigation -->
   <nav class="nav" id="nav">
     <div class="container nav__inner">
-      <a href="/" class="nav__logo">CARLAY ART</a>
+      <a href="/" class="nav__logo">
+        <img src="original-site/images/logo-carlay-BLANC-300x175.png" alt="Carlay Art" class="nav__logo-img">
+      </a>
 
       <ul class="nav__links">
         <li><a href="#collections" class="nav__link">Œuvres</a></li>
@@ -441,7 +455,7 @@
 
       <div class="bento-grid">
         <!-- Featured: Romeo 1 -->
-        <article class="artwork-card bento-grid__item">
+        <a href="oeuvre?id=romeo-1" class="artwork-card bento-grid__item">
           <span class="artwork-card__badge">Vendu</span>
           <div class="artwork-card__image-wrapper">
             <img src="original-site/images/Romeo-1-680x680.jpg" alt="Romeo 1" loading="lazy">
@@ -450,10 +464,10 @@
             <span class="artwork-card__info-title">Romeo 1</span>
             <span class="artwork-card__info-price">€3,000</span>
           </div>
-        </article>
+        </a>
 
         <!-- Vortex 5 -->
-        <article class="artwork-card bento-grid__item">
+        <a href="oeuvre?id=vortex-5" class="artwork-card bento-grid__item">
           <div class="artwork-card__image-wrapper">
             <img src="original-site/images/VORTEX-5.jpg" alt="Vortex 5" loading="lazy">
           </div>
@@ -461,10 +475,10 @@
             <span class="artwork-card__info-title">Vortex 5</span>
             <span class="artwork-card__info-price">€1,000</span>
           </div>
-        </article>
+        </a>
 
         <!-- Insomnia 1 -->
-        <article class="artwork-card bento-grid__item">
+        <a href="oeuvre?id=insomnia-1" class="artwork-card bento-grid__item">
           <div class="artwork-card__image-wrapper">
             <img src="original-site/images/insomnia-1-680x680.jpg" alt="Insomnia 1" loading="lazy">
           </div>
@@ -472,10 +486,10 @@
             <span class="artwork-card__info-title">Insomnia 1</span>
             <span class="artwork-card__info-price">€1,000</span>
           </div>
-        </article>
+        </a>
 
         <!-- Purple Galaxy 7 -->
-        <article class="artwork-card bento-grid__item">
+        <a href="oeuvre?id=purple-galaxy-7" class="artwork-card bento-grid__item">
           <span class="artwork-card__badge">Vendu</span>
           <div class="artwork-card__image-wrapper">
             <img src="original-site/images/PURPLE-GALAXY-7-680x680.jpg" alt="Purple Galaxy 7" loading="lazy">
@@ -484,10 +498,10 @@
             <span class="artwork-card__info-title">Purple Galaxy 7</span>
             <span class="artwork-card__info-price">€1,000</span>
           </div>
-        </article>
+        </a>
 
         <!-- Juliette 2 -->
-        <article class="artwork-card bento-grid__item">
+        <a href="oeuvre?id=juliette-2" class="artwork-card bento-grid__item">
           <div class="artwork-card__image-wrapper">
             <img src="original-site/images/Juliette-2-680x680.jpg" alt="Juliette 2" loading="lazy">
           </div>
@@ -495,7 +509,7 @@
             <span class="artwork-card__info-title">Juliette 2</span>
             <span class="artwork-card__info-price">€3,000</span>
           </div>
-        </article>
+        </a>
       </div>
 
       <div class="bento-grid__cta">
@@ -664,6 +678,7 @@
       </div>
 
       <div class="footer__bottom">
+        <img src="original-site/images/Carlay-art-signature.png" alt="" aria-hidden="true" class="footer__signature">
         <p>© 2025 Carlay Art. Tous droits réservés.</p>
         <div class="footer__social">
           <a href="https://instagram.com/carlayart" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener">
@@ -690,6 +705,7 @@
 
     menuBtn.addEventListener('click', () => {
       menuOpen = !menuOpen;
+      menuBtn.classList.toggle('nav__menu-btn--open', menuOpen);
       mobileMenu.classList.toggle('mobile-menu--open', menuOpen);
       document.body.style.overflow = menuOpen ? 'hidden' : '';
     });
@@ -753,6 +769,25 @@
       header.style.opacity = '0';
       header.style.transition = 'opacity 0.4s ease';
       fadeInObserver.observe(header);
+    });
+
+    // Scroll progress bar
+    const scrollProgress = document.getElementById('scrollProgress');
+    if (scrollProgress) {
+      window.addEventListener('scroll', () => {
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? window.scrollY / docHeight : 0;
+        scrollProgress.style.transform = `scaleX(${progress})`;
+      }, { passive: true });
+    }
+
+    // Lazy image fade-in
+    document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+      if (img.complete) {
+        img.classList.add('loaded');
+      } else {
+        img.addEventListener('load', () => img.classList.add('loaded'));
+      }
     });
 
   </script>

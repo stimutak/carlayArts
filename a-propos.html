@@ -297,16 +297,28 @@
       width: 120px;
       margin-bottom: var(--space-4);
     }
+
+    .nav__logo-img {
+      height: 32px;
+      width: auto;
+    }
+
+    .footer__signature {
+      width: 100px;
+      opacity: 0.3;
+      margin-bottom: var(--space-4);
+    }
   </style>
 </head>
 <body>
   <!-- Grain texture overlay -->
   <div class="grain" aria-hidden="true"></div>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
   <!-- Navigation -->
   <nav class="nav nav--scrolled" id="nav">
     <div class="container nav__inner">
-      <a href="index.html" class="nav__logo">CARLAY ART</a>
+      <a href="index.html" class="nav__logo"><img src="original-site/images/logo-carlay-BLANC-300x175.png" alt="Carlay Art" class="nav__logo-img"></a>
 
       <ul class="nav__links">
         <li><a href="index.html#collections" class="nav__link">Œuvres</a></li>
@@ -507,6 +519,7 @@
       </div>
 
       <div class="footer__bottom">
+        <img src="original-site/images/Carlay-art-signature.png" alt="" aria-hidden="true" class="footer__signature">
         <p>&copy; 2025 Carlay Art. Tous droits réservés.</p>
         <div class="footer__social">
           <a href="https://instagram.com/carlayart" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener">
@@ -533,6 +546,7 @@
 
     menuBtn.addEventListener('click', () => {
       menuOpen = !menuOpen;
+      menuBtn.classList.toggle('nav__menu-btn--open', menuOpen);
       mobileMenu.classList.toggle('mobile-menu--open', menuOpen);
       document.body.style.overflow = menuOpen ? 'hidden' : '';
     });
@@ -608,6 +622,25 @@
       ctaTitle.style.transition = 'opacity 0.5s ease';
       fadeInObserver.observe(ctaTitle);
     }
+
+    // Scroll progress bar
+    const scrollProgress = document.getElementById('scrollProgress');
+    if (scrollProgress) {
+      window.addEventListener('scroll', () => {
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? window.scrollY / docHeight : 0;
+        scrollProgress.style.transform = `scaleX(${progress})`;
+      }, { passive: true });
+    }
+
+    // Lazy image fade-in
+    document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+      if (img.complete) {
+        img.classList.add('loaded');
+      } else {
+        img.addEventListener('load', () => img.classList.add('loaded'));
+      }
+    });
   </script>
 </body>
 </html>

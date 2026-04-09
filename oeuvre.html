@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Carlay Art - Peinture acrylique originale sur toile. Certificat d'authenticité inclus.">
+
+  <title>Oeuvre — CARLAY ART</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="src/css/tokens.css">
+  <link rel="stylesheet" href="src/css/base.css">
+  <link rel="stylesheet" href="src/css/components.css">
+
+  <!-- Cart -->
+  <script src="src/js/cart.js" defer></script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+
+  <style>
+    .nav__logo-img {
+      height: 32px;
+      width: auto;
+    }
+
+    .footer__logo-img {
+      width: 120px;
+      margin-bottom: var(--space-4);
+    }
+
+    .footer__signature {
+      width: 100px;
+      opacity: 0.3;
+      margin-bottom: var(--space-4);
+    }
+
+    /* ── DETAIL LAYOUT ── */
+
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 55% 45%;
+      gap: var(--space-12);
+      padding: var(--space-20) 0 var(--space-16);
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .detail-layout {
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+        padding: calc(var(--space-20) + var(--space-4)) 0 var(--space-12);
+      }
+    }
+
+    /* ── IMAGE ── */
+
+    .detail-image {
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      cursor: zoom-in;
+      max-height: 80vh;
+      position: relative;
+      background: var(--color-charcoal);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .detail-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* ── INFO PANEL ── */
+
+    .detail-info {
+      padding-top: var(--space-4);
+    }
+
+    .detail-breadcrumb {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      letter-spacing: var(--tracking-wider);
+      text-transform: uppercase;
+      margin-bottom: var(--space-6);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    .detail-breadcrumb a {
+      color: var(--text-muted);
+      transition: color var(--duration-fast) var(--ease-out);
+    }
+
+    .detail-breadcrumb a:hover {
+      color: var(--color-rose);
+    }
+
+    .detail-breadcrumb__sep {
+      color: var(--color-ghost-20);
+    }
+
+    .detail-series {
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-widest);
+      color: var(--color-rose);
+      margin-bottom: var(--space-3);
+    }
+
+    .detail-title {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: var(--weight-bold);
+      line-height: var(--leading-tight);
+      margin-bottom: var(--space-6);
+    }
+
+    .detail-price {
+      font-size: var(--text-xl);
+      font-weight: var(--weight-semibold);
+      margin-bottom: var(--space-6);
+    }
+
+    .detail-price--sold {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    .detail-price__sold-label {
+      display: inline-block;
+      margin-left: var(--space-3);
+      font-size: var(--text-sm);
+      color: var(--color-rose);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wider);
+    }
+
+    .detail-desc {
+      font-size: var(--text-body);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-6);
+      line-height: var(--leading-relaxed);
+    }
+
+    .detail-note {
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-3);
+    }
+
+    .detail-note svg {
+      flex-shrink: 0;
+      color: var(--color-rose);
+    }
+
+    .detail-actions {
+      margin-top: var(--space-8);
+      margin-bottom: var(--space-8);
+    }
+
+    .detail-actions .btn {
+      width: 100%;
+    }
+
+    .detail-actions .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: var(--color-ghost-20);
+      color: var(--text-muted);
+    }
+
+    .detail-actions .btn:disabled:hover {
+      transform: none;
+      box-shadow: none;
+      background: var(--color-ghost-20);
+      color: var(--text-muted);
+    }
+
+    .detail-shipping {
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: var(--space-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+    }
+
+    .detail-divider {
+      border: none;
+      border-top: 1px solid var(--color-ghost-10);
+      margin: var(--space-8) 0;
+    }
+
+    /* ── RELATED WORKS ── */
+
+    .detail-related__heading {
+      font-size: var(--text-sm);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wider);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-5);
+    }
+
+    .detail-related__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+    }
+
+    .detail-related__item {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: var(--color-charcoal);
+      transition: transform var(--duration-fast) var(--ease-out);
+    }
+
+    .detail-related__item:hover {
+      transform: scale(1.05);
+    }
+
+    .detail-related__item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .detail-related__item-name {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: var(--space-2) var(--space-3);
+      background: linear-gradient(to top, rgba(10, 10, 10, 0.85), transparent);
+      font-size: var(--text-xs);
+      color: var(--text-primary);
+      letter-spacing: var(--tracking-wide);
+    }
+
+    .detail-related__item--sold::after {
+      content: 'Vendu';
+      position: absolute;
+      top: var(--space-2);
+      right: var(--space-2);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wider);
+      padding: 2px 6px;
+      background: var(--color-rose);
+      color: var(--color-white);
+      border-radius: var(--radius-sm);
+    }
+
+    /* ── NOT FOUND ── */
+
+    .detail-not-found {
+      text-align: center;
+      padding: var(--space-20) var(--gutter);
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-6);
+    }
+
+    .detail-not-found__title {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: var(--weight-bold);
+    }
+
+    .detail-not-found__text {
+      color: var(--text-muted);
+      font-size: var(--text-lg);
+    }
+
+    /* ── ZOOM OVERLAY ── */
+
+    .zoom-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(0, 0, 0, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity var(--duration-normal) var(--ease-out),
+                  visibility var(--duration-normal) var(--ease-out);
+    }
+
+    .zoom-overlay--visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .zoom-overlay img {
+      max-width: 92vw;
+      max-height: 92vh;
+      object-fit: contain;
+      border-radius: var(--radius-sm);
+    }
+
+    .zoom-overlay__close {
+      position: absolute;
+      top: var(--space-6);
+      right: var(--space-6);
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: var(--space-2);
+      transition: color var(--duration-fast) var(--ease-out);
+    }
+
+    .zoom-overlay__close:hover {
+      color: var(--color-rose);
+    }
+  </style>
+</head>
+<body>
+  <!-- Grain texture overlay -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- Navigation -->
+  <nav class="nav nav--scrolled" id="nav">
+    <div class="container nav__inner">
+      <a href="index.html" class="nav__logo">
+        <img src="original-site/images/logo-carlay-BLANC-300x175.png" alt="Carlay Art" class="nav__logo-img">
+      </a>
+
+      <ul class="nav__links">
+        <li><a href="index.html#collections" class="nav__link">Oeuvres</a></li>
+        <li><a href="a-propos.html" class="nav__link">L'Artiste</a></li>
+        <li><a href="boutique.html" class="nav__link nav__link--active">Boutique</a></li>
+        <li><a href="contact.html" class="nav__link">Contact</a></li>
+      </ul>
+
+      <button class="nav__cart" data-cart-toggle>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 6h15l-1.5 9h-12z"/>
+          <circle cx="9" cy="20" r="1"/>
+          <circle cx="18" cy="20" r="1"/>
+          <path d="M6 6L5 3H2"/>
+        </svg>
+        <span class="cart-count">0</span>
+      </button>
+
+      <button class="nav__menu-btn" id="menuBtn" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#collections" class="mobile-menu__link">Oeuvres</a>
+    <a href="a-propos.html" class="mobile-menu__link">L'Artiste</a>
+    <a href="boutique.html" class="mobile-menu__link">Boutique</a>
+    <a href="contact.html" class="mobile-menu__link">Contact</a>
+    <button class="btn btn--primary" data-cart-toggle>
+      Panier (<span class="cart-count">0</span>)
+    </button>
+  </div>
+
+  <main>
+    <!-- Detail content injected by JS -->
+    <div id="detailContent"></div>
+  </main>
+
+  <!-- Zoom Overlay -->
+  <div class="zoom-overlay" id="zoomOverlay">
+    <button class="zoom-overlay__close" aria-label="Fermer">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+    <img id="zoomImage" src="" alt="">
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__top">
+        <div class="footer__brand">
+          <img
+            src="original-site/images/logo-carlay-BLANC-300x175.png"
+            alt="Carlay Art"
+            class="footer__logo-img"
+          >
+          <p class="footer__tagline">Art Contemporain Fran&ccedil;ais</p>
+        </div>
+
+        <div>
+          <h4 class="footer__heading">Collections</h4>
+          <ul class="footer__links">
+            <li><a href="boutique.html?collection=romeo" class="footer__link">Romeo</a></li>
+            <li><a href="boutique.html?collection=juliette" class="footer__link">Juliette</a></li>
+            <li><a href="boutique.html?collection=vortex" class="footer__link">Vortex</a></li>
+            <li><a href="boutique.html?collection=insomnia" class="footer__link">Insomnia</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__heading">Info</h4>
+          <ul class="footer__links">
+            <li><a href="a-propos.html" class="footer__link">L'Artiste</a></li>
+            <li><a href="boutique.html" class="footer__link">Boutique</a></li>
+            <li><a href="contact.html" class="footer__link">Contact</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__heading">Paiements</h4>
+          <ul class="footer__links">
+            <li><span class="footer__link">Carte Bancaire</span></li>
+            <li><span class="footer__link">Crypto (BTC/ETH)</span></li>
+            <li><span class="footer__link">iDEAL &middot; Bancontact</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <img src="original-site/images/Carlay-art-signature.png" alt="" aria-hidden="true" class="footer__signature">
+        <p>&copy; 2025 Carlay Art. Tous droits r&eacute;serv&eacute;s.</p>
+        <div class="footer__social">
+          <a href="https://instagram.com/carlayart" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ── Artwork Data ──
+    const artworks = [
+      // Romeo
+      { id: 'romeo-1', name: 'Romeo 1', series: 'Romeo', price: 3000, dimensions: '76 \u00d7 102 cm', sold: true, image: 'original-site/images/Romeo-1-680x680.jpg' },
+      { id: 'romeo-2', name: 'Romeo 2', series: 'Romeo', price: 3000, dimensions: '76 \u00d7 102 cm', sold: true, image: 'original-site/images/Romeo-2-680x680.jpg' },
+      { id: 'romeo-3', name: 'Romeo 3', series: 'Romeo', price: 3000, dimensions: '76 \u00d7 102 cm', sold: true, image: 'original-site/images/Romeo-3-680x680.jpg' },
+      // Juliette
+      { id: 'juliette-1', name: 'Juliette 1', series: 'Juliette', price: 3000, dimensions: '76 \u00d7 102 cm', sold: true, image: 'original-site/images/Juliette-1-680x680.jpg' },
+      { id: 'juliette-2', name: 'Juliette 2', series: 'Juliette', price: 3000, dimensions: '76 \u00d7 102 cm', sold: true, image: 'original-site/images/Juliette-2-680x680.jpg' },
+      { id: 'juliette-3', name: 'Juliette 3', series: 'Juliette', price: 3000, dimensions: '76 \u00d7 102 cm', sold: true, image: 'original-site/images/Juliette-3-680x680.jpg' },
+      // Vortex
+      { id: 'vortex-1', name: 'Vortex 1', series: 'Vortex', price: 1000, dimensions: '32 \u00d7 32 cm', sold: false, image: 'original-site/images/vortex1-680x680.jpeg' },
+      { id: 'vortex-2', name: 'Vortex 2', series: 'Vortex', price: 1000, dimensions: '32 \u00d7 32 cm', sold: true, image: 'original-site/images/vortex-2-680x680.jpeg' },
+      { id: 'vortex-3', name: 'Vortex 3', series: 'Vortex', price: 1000, dimensions: '32 \u00d7 32 cm', sold: true, image: 'original-site/images/vortex-6-680x680.jpeg' },
+      { id: 'vortex-4', name: 'Vortex 4', series: 'Vortex', price: 1000, dimensions: '32 \u00d7 32 cm', sold: true, image: 'original-site/images/vortex--680x680.jpeg' },
+      { id: 'vortex-5', name: 'Vortex 5', series: 'Vortex', price: 1000, dimensions: '32 \u00d7 32 cm', sold: false, image: 'original-site/images/VORTEX-5.jpg' },
+      { id: 'vortex-6', name: 'Vortex 6', series: 'Vortex', price: 1000, dimensions: '32 \u00d7 32 cm', sold: true, image: 'original-site/images/VORTEX-6.jpg' },
+      { id: 'vortex-7', name: 'Vortex 7', series: 'Vortex', price: 1000, dimensions: '32 \u00d7 32 cm', sold: true, image: 'original-site/images/vortex-2-680x680.jpeg' },
+      { id: 'vortex-8', name: 'Vortex 8', series: 'Vortex', price: 1000, dimensions: '32 \u00d7 32 cm', sold: true, image: 'original-site/images/VORTEX-8.jpg' },
+      { id: 'vortex-9', name: 'Vortex 9', series: 'Vortex', price: 1000, dimensions: '32 \u00d7 32 cm', sold: true, image: 'original-site/images/VORTEX-9.jpg' },
+      // Insomnia
+      { id: 'insomnia-1', name: 'Insomnia 1', series: 'Insomnia', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/insomnia-1-680x680.jpg' },
+      { id: 'insomnia-2', name: 'Insomnia 2', series: 'Insomnia', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/insomnia-2-680x680.jpg' },
+      { id: 'insomnia-3', name: 'Insomnia 3', series: 'Insomnia', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/insomnia-3-680x680.jpg' },
+      { id: 'insomnia-4', name: 'Insomnia 4', series: 'Insomnia', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/insomnia-4-680x680.jpg' },
+      { id: 'insomnia-5', name: 'Insomnia 5', series: 'Insomnia', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/insomnia-5-680x680.jpg' },
+      { id: 'insomnia-6', name: 'Insomnia 6', series: 'Insomnia', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/insomnia-6-680x680.jpg' },
+      // Purple Galaxy
+      { id: 'purple-galaxy-2', name: 'Purple Galaxy 2', series: 'Purple Galaxy', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/PURPLE-GALAXY-2-680x680.jpg' },
+      { id: 'purple-galaxy-4', name: 'Purple Galaxy 4', series: 'Purple Galaxy', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/PURPLE-GALAXY-4-680x680.jpg' },
+      { id: 'purple-galaxy-5', name: 'Purple Galaxy 5', series: 'Purple Galaxy', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/PURPLE-GALAXY-5-680x680.jpg' },
+      { id: 'purple-galaxy-7', name: 'Purple Galaxy 7', series: 'Purple Galaxy', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/PURPLE-GALAXY-7-680x680.jpg' },
+      { id: 'purple-galaxy-8', name: 'Purple Galaxy 8', series: 'Purple Galaxy', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/PURPLE-GALAXY-8-680x680.jpg' },
+      { id: 'purple-galaxy-9', name: 'Purple Galaxy 9', series: 'Purple Galaxy', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/PURPLE-GALAXY-9-680x680.jpg' },
+      // Cosmic
+      { id: 'cosmic-1', name: 'Cosmic 1', series: 'Cosmic', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/COSMIC-1-680x680.jpg' },
+      { id: 'cosmic-2', name: 'Cosmic 2', series: 'Cosmic', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/COSMIC-2-680x680.jpg' },
+      { id: 'cosmic-3', name: 'Cosmic 3', series: 'Cosmic', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/COSMIC-3-680x680.jpg' },
+      // Evolution
+      { id: 'evolution-1', name: 'Evolution 1', series: 'Evolution', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/EVOLUTION-1-680x680.jpg' },
+      { id: 'evolution-2', name: 'Evolution 2', series: 'Evolution', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/EVOLUTION-2-680x680.jpg' },
+      { id: 'evolution-3', name: 'Evolution 3', series: 'Evolution', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/EVOLUTION-3-680x680.jpg' },
+      // Golden Sunset
+      { id: 'golden-sunset-1', name: 'Golden Sunset 1', series: 'Golden Sunset', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/GLODEN-SUNSET-1-680x680.jpg' },
+      { id: 'golden-sunset-2', name: 'Golden Sunset 2', series: 'Golden Sunset', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/GOLDEN-SUNSET-2-680x680.jpg' },
+      { id: 'golden-sunset-3', name: 'Golden Sunset 3', series: 'Golden Sunset', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/GOLDEN-SUNSET-3-680x680.jpg' },
+      // Sweet Life
+      { id: 'sweet-life-1', name: 'Sweet Life 1', series: 'Sweet Life', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/SWEET-LIFE-1-680x680.jpg' },
+      { id: 'sweet-life-2', name: 'Sweet Life 2', series: 'Sweet Life', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/SWEET-LIFE-2-680x680.jpg' },
+      { id: 'sweet-life-3', name: 'Sweet Life 3', series: 'Sweet Life', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/SWEET-LIFE-3-680x680.jpg' },
+      // Free Spirit
+      { id: 'free-spirit-1', name: 'Free Spirit 1', series: 'Free Spirit', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/elastic-1-2-680x680.jpg' },
+      { id: 'free-spirit-2', name: 'Free Spirit 2', series: 'Free Spirit', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/elastic-2-680x680.jpg' },
+      { id: 'free-spirit-3', name: 'Free Spirit 3', series: 'Free Spirit', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/elastic-3-680x680.jpg' },
+      // Elastic
+      { id: 'elastic-1', name: 'Elastic 1', series: 'Elastic', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/elastic-1-2-680x680.jpg' },
+      { id: 'elastic-2', name: 'Elastic 2', series: 'Elastic', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/elastic-2-680x680.jpg' },
+      { id: 'elastic-3', name: 'Elastic 3', series: 'Elastic', price: 1000, dimensions: 'Acrylique sur toile', sold: false, image: 'original-site/images/elastic-3-680x680.jpg' },
+      // Sunday Morning
+      { id: 'sunday-morning-1', name: 'Sunday Morning 1', series: 'Sunday Morning', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/sundaymorning1-680x680.jpg' },
+      { id: 'sunday-morning-2', name: 'Sunday Morning 2', series: 'Sunday Morning', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/sunday-morning-2-680x680.jpg' },
+      { id: 'sunday-morning-3', name: 'Sunday Morning 3', series: 'Sunday Morning', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/sunday-morning-3-680x680.jpg' },
+      // Splatsh
+      { id: 'splatsh-1', name: 'Splatsh 1', series: 'Splatsh', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/Splatsh-1.png' },
+      { id: 'splatsh-2', name: 'Splatsh 2', series: 'Splatsh', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/Splatsh-3-680x680.png' },
+      { id: 'splatsh-3', name: 'Splatsh 3', series: 'Splatsh', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/Splatsh-3-680x680.png' },
+      // Œuvres Uniques
+      { id: 'blue-dreams', name: 'Blue Dreams', series: 'Œuvre Unique', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/BLUE-DREAMS-680x680.jpg' },
+      { id: 'rainbow-tears', name: 'Rainbow Tears', series: 'Œuvre Unique', price: 1500, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/Rainbow-tears-680x680.jpg' },
+      { id: 'hope', name: 'Hope', series: 'Œuvre Unique', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/Hope-680x680.webp' },
+      { id: 'pink-dream', name: 'Pink Dream', series: 'Œuvre Unique', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/PINK-DREAM-680x680.jpg' },
+      { id: 'purple-dream', name: 'Purple Dream', series: 'Œuvre Unique', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/PURPLE-DREAM-680x680.jpg' },
+      { id: 'humble', name: 'Humble', series: 'Œuvre Unique', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/HUMBLE-1-e1737499014597-680x680.jpeg' },
+      { id: 'positivity', name: 'Positivity', series: 'Œuvre Unique', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/POSITIVITY-e1737499176943-680x680.jpg' },
+      { id: 'silver-waves', name: 'Silver Waves', series: 'Œuvre Unique', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/Silver-waves.png' },
+      { id: 'baby-blues', name: 'Baby Blues', series: 'Œuvre Unique', price: 1000, dimensions: 'Acrylique sur toile', sold: true, image: 'original-site/images/BABY-BLUES-680x680.jpg' },
+    ];
+
+    // ── Page Logic ──
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      const container = document.getElementById('detailContent');
+
+      if (!id) {
+        renderNotFound(container);
+        return;
+      }
+
+      const artwork = artworks.find(a => a.id === id);
+
+      if (!artwork) {
+        renderNotFound(container);
+        return;
+      }
+
+      // Update page title
+      document.title = artwork.name + ' — CARLAY ART';
+
+      // Get related works (same series, exclude current)
+      const related = artworks.filter(a => a.series === artwork.series && a.id !== artwork.id).slice(0, 3);
+
+      // Series slug for boutique link
+      const seriesSlug = artwork.series.toLowerCase().replace(/\s+/g, '-');
+
+      // Format price
+      const priceFormatted = '\u20AC' + artwork.price.toLocaleString('fr-FR');
+
+      // Build HTML
+      let html = `
+        <div class="container detail-layout">
+          <div class="detail-image" id="detailImage">
+            <img src="${artwork.image}" alt="${artwork.name}" loading="lazy">
+          </div>
+
+          <div class="detail-info">
+            <nav class="detail-breadcrumb" aria-label="Fil d'Ariane">
+              <a href="boutique.html">Boutique</a>
+              <span class="detail-breadcrumb__sep">/</span>
+              <a href="boutique.html?collection=${seriesSlug}">S\u00e9rie ${artwork.series}</a>
+              <span class="detail-breadcrumb__sep">/</span>
+              <span>${artwork.name}</span>
+            </nav>
+
+            <p class="detail-series">${artwork.series}</p>
+            <h1 class="detail-title">${artwork.name}</h1>
+
+            <p class="detail-price${artwork.sold ? ' detail-price--sold' : ''}">
+              ${priceFormatted}${artwork.sold ? '<span class="detail-price__sold-label">Vendu</span>' : ''}
+            </p>
+
+            <p class="detail-desc">Acrylique sur toile &middot; ${artwork.dimensions}</p>
+
+            <div class="detail-note">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span>Certificat d'authenticit\u00e9 inclus</span>
+            </div>
+
+            <div class="detail-actions">
+              ${artwork.sold
+                ? '<button class="btn btn--primary" disabled>Vendu</button>'
+                : `<button class="btn btn--primary" id="addToCartBtn"
+                    data-add-to-cart
+                    data-item-id="${artwork.id}"
+                    data-item-name="${artwork.name}"
+                    data-item-price="${artwork.price}"
+                    data-item-image="${artwork.image}"
+                    data-item-description="Acrylique sur toile \u00b7 ${artwork.dimensions}">
+                    Ajouter au Panier
+                  </button>`
+              }
+            </div>
+
+            ${!artwork.sold ? `
+            <p class="detail-shipping">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="3" width="15" height="13"/>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                <circle cx="5.5" cy="18.5" r="2.5"/>
+                <circle cx="18.5" cy="18.5" r="2.5"/>
+              </svg>
+              Livraison gratuite &middot; Mondiale
+            </p>
+            ` : ''}
+      `;
+
+      // Related works section
+      if (related.length > 0) {
+        html += `
+            <hr class="detail-divider">
+
+            <div class="detail-related">
+              <h2 class="detail-related__heading">Autres oeuvres de cette s\u00e9rie</h2>
+              <div class="detail-related__grid">
+                ${related.map(r => `
+                  <a href="oeuvre?id=${r.id}" class="detail-related__item${r.sold ? ' detail-related__item--sold' : ''}">
+                    <img src="${r.image}" alt="${r.name}" loading="lazy">
+                    <span class="detail-related__item-name">${r.name}</span>
+                  </a>
+                `).join('')}
+              </div>
+            </div>
+        `;
+      }
+
+      html += `
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = html;
+
+      // Wire up image zoom
+      const detailImage = document.getElementById('detailImage');
+      const zoomOverlay = document.getElementById('zoomOverlay');
+      const zoomImage = document.getElementById('zoomImage');
+
+      if (detailImage) {
+        detailImage.addEventListener('click', () => {
+          zoomImage.src = artwork.image;
+          zoomImage.alt = artwork.name;
+          zoomOverlay.classList.add('zoom-overlay--visible');
+          document.body.style.overflow = 'hidden';
+        });
+      }
+
+      zoomOverlay.addEventListener('click', closeZoom);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeZoom();
+      });
+
+      function closeZoom() {
+        zoomOverlay.classList.remove('zoom-overlay--visible');
+        document.body.style.overflow = '';
+      }
+
+      // Lazy image fade-in for dynamically added images
+      container.querySelectorAll('img[loading="lazy"]').forEach(img => {
+        if (img.complete) {
+          img.classList.add('loaded');
+        } else {
+          img.addEventListener('load', () => img.classList.add('loaded'));
+        }
+      });
+
+      // Wire up add-to-cart (cart.js auto-wires data-add-to-cart on DOMContentLoaded,
+      // but since we inject after that, we wire manually)
+      const addBtn = document.getElementById('addToCartBtn');
+      if (addBtn && typeof Cart !== 'undefined') {
+        addBtn.addEventListener('click', () => {
+          Cart.add({
+            id: addBtn.dataset.itemId,
+            name: addBtn.dataset.itemName,
+            price: addBtn.dataset.itemPrice,
+            image: addBtn.dataset.itemImage,
+            description: addBtn.dataset.itemDescription || ''
+          });
+
+          const original = addBtn.textContent;
+          addBtn.textContent = '\u2713 Ajout\u00e9';
+          addBtn.style.background = 'var(--color-rose)';
+          addBtn.style.color = 'var(--color-white)';
+          setTimeout(() => {
+            addBtn.textContent = original;
+            addBtn.style.background = '';
+            addBtn.style.color = '';
+          }, 1500);
+        });
+      }
+    })();
+
+    function renderNotFound(container) {
+      document.title = 'Oeuvre non trouv\u00e9e — CARLAY ART';
+      container.innerHTML = `
+        <div class="detail-not-found">
+          <h1 class="detail-not-found__title">Oeuvre non trouv\u00e9e</h1>
+          <p class="detail-not-found__text">Cette oeuvre n'existe pas ou a \u00e9t\u00e9 retir\u00e9e.</p>
+          <a href="boutique.html" class="btn btn--primary">Retour \u00e0 la Boutique</a>
+        </div>
+      `;
+    }
+
+    // ── Mobile menu toggle ──
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    let menuOpen = false;
+
+    menuBtn.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      menuBtn.classList.toggle('nav__menu-btn--open', menuOpen);
+      mobileMenu.classList.toggle('mobile-menu--open', menuOpen);
+      document.body.style.overflow = menuOpen ? 'hidden' : '';
+    });
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuOpen = false;
+        menuBtn.classList.remove('nav__menu-btn--open');
+        mobileMenu.classList.remove('mobile-menu--open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // ── Scroll progress bar ──
+    const scrollProgress = document.getElementById('scrollProgress');
+    if (scrollProgress) {
+      window.addEventListener('scroll', () => {
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? window.scrollY / docHeight : 0;
+        scrollProgress.style.transform = `scaleX(${progress})`;
+      }, { passive: true });
+    }
+
+    // ── Lazy image fade-in (for footer/static images) ──
+    document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+      if (img.complete) {
+        img.classList.add('loaded');
+      } else {
+        img.addEventListener('load', () => img.classList.add('loaded'));
+      }
+    });
+  </script>
+</body>
+</html>

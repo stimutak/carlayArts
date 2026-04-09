@@ -19,15 +19,27 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
 
   <link rel="stylesheet" href="src/css/boutique.css">
+  <style>
+    .nav__logo-img {
+      height: 32px;
+      width: auto;
+    }
+    .footer__signature {
+      width: 100px;
+      opacity: 0.3;
+      margin-bottom: var(--space-4);
+    }
+  </style>
 </head>
 <body>
   <!-- Grain texture overlay -->
   <div class="grain" aria-hidden="true"></div>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
   <!-- Navigation -->
   <nav class="nav nav--scrolled" id="nav">
     <div class="container nav__inner">
-      <a href="index.html" class="nav__logo">CARLAY ART</a>
+      <a href="index.html" class="nav__logo"><img src="original-site/images/logo-carlay-BLANC-300x175.png" alt="Carlay Art" class="nav__logo-img"></a>
 
       <ul class="nav__links">
         <li><a href="index.html#collections" class="nav__link">Œuvres</a></li>
@@ -86,21 +98,21 @@
         <button class="filter-btn" data-filter="insomnia">Insomnia</button>
         <button class="filter-btn" data-filter="purple-galaxy">Purple Galaxy</button>
         <div class="filter-dropdown" style="position: relative;">
-          <button class="filter-btn filter-dropdown__toggle" id="filterMore">
+          <button class="filter-btn filter-dropdown__toggle" id="filterMore" aria-haspopup="true" aria-expanded="false" aria-controls="filterDropdown">
             Plus
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 4px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 4px;" aria-hidden="true">
               <path d="M6 9l6 6 6-6"/>
             </svg>
           </button>
-          <div class="filter-dropdown__menu" id="filterDropdown" style="display: none; position: absolute; top: 100%; left: 0; margin-top: 4px; background: var(--color-charcoal); border: 1px solid var(--color-ghost-20); border-radius: var(--radius-sm); padding: var(--space-2); min-width: 180px; z-index: 60;">
-            <button class="filter-btn" data-filter="cosmic" style="display: block; width: 100%; text-align: left;">Cosmic</button>
-            <button class="filter-btn" data-filter="evolution" style="display: block; width: 100%; text-align: left;">Evolution</button>
-            <button class="filter-btn" data-filter="golden-sunset" style="display: block; width: 100%; text-align: left;">Golden Sunset</button>
-            <button class="filter-btn" data-filter="sweet-life" style="display: block; width: 100%; text-align: left;">Sweet Life</button>
-            <button class="filter-btn" data-filter="free-spirit" style="display: block; width: 100%; text-align: left;">Free Spirit</button>
-            <button class="filter-btn" data-filter="elastic" style="display: block; width: 100%; text-align: left;">Elastic</button>
-            <button class="filter-btn" data-filter="sunday-morning" style="display: block; width: 100%; text-align: left;">Sunday Morning</button>
-            <button class="filter-btn" data-filter="splatsh" style="display: block; width: 100%; text-align: left;">Splatsh</button>
+          <div class="filter-dropdown__menu" id="filterDropdown" role="menu" aria-label="Plus de collections" style="display: none; position: absolute; top: 100%; left: 0; margin-top: 4px; background: var(--color-charcoal); border: 1px solid var(--color-ghost-20); border-radius: var(--radius-sm); padding: var(--space-2); min-width: 180px; z-index: 60;">
+            <button class="filter-btn" data-filter="cosmic" role="menuitem" style="display: block; width: 100%; text-align: left;">Cosmic</button>
+            <button class="filter-btn" data-filter="evolution" role="menuitem" style="display: block; width: 100%; text-align: left;">Evolution</button>
+            <button class="filter-btn" data-filter="golden-sunset" role="menuitem" style="display: block; width: 100%; text-align: left;">Golden Sunset</button>
+            <button class="filter-btn" data-filter="sweet-life" role="menuitem" style="display: block; width: 100%; text-align: left;">Sweet Life</button>
+            <button class="filter-btn" data-filter="free-spirit" role="menuitem" style="display: block; width: 100%; text-align: left;">Free Spirit</button>
+            <button class="filter-btn" data-filter="elastic" role="menuitem" style="display: block; width: 100%; text-align: left;">Elastic</button>
+            <button class="filter-btn" data-filter="sunday-morning" role="menuitem" style="display: block; width: 100%; text-align: left;">Sunday Morning</button>
+            <button class="filter-btn" data-filter="splatsh" role="menuitem" style="display: block; width: 100%; text-align: left;">Splatsh</button>
           </div>
         </div>
         <span class="results-count"><span id="resultsCount">0</span> œuvres</span>
@@ -125,7 +137,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Romeo</span>
-        <h2 class="product-card__title">ROMEO 1</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=romeo-1">ROMEO 1</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">76 × 102 cm</span>
           <span class="product-card__price product-card__price--sold">€3,000</span>
@@ -141,7 +153,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Romeo</span>
-        <h2 class="product-card__title">ROMEO 2</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=romeo-2">ROMEO 2</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">76 × 102 cm</span>
           <span class="product-card__price product-card__price--sold">€3,000</span>
@@ -157,7 +169,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Romeo</span>
-        <h2 class="product-card__title">ROMEO 3</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=romeo-3">ROMEO 3</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">76 × 102 cm</span>
           <span class="product-card__price product-card__price--sold">€3,000</span>
@@ -182,7 +194,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Juliette</span>
-        <h2 class="product-card__title">JULIETTE 1</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=juliette-1">JULIETTE 1</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">76 × 102 cm</span>
           <span class="product-card__price product-card__price--sold">€3,000</span>
@@ -198,7 +210,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Juliette</span>
-        <h2 class="product-card__title">JULIETTE 2</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=juliette-2">JULIETTE 2</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">76 × 102 cm</span>
           <span class="product-card__price product-card__price--sold">€3,000</span>
@@ -214,7 +226,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Juliette</span>
-        <h2 class="product-card__title">JULIETTE 3</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=juliette-3">JULIETTE 3</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">76 × 102 cm</span>
           <span class="product-card__price product-card__price--sold">€3,000</span>
@@ -238,7 +250,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Vortex</span>
-        <h2 class="product-card__title">VORTEX 1</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=vortex-1">VORTEX 1</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">32 × 32 cm</span>
           <span class="product-card__price">€1,000</span>
@@ -262,7 +274,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Vortex</span>
-        <h2 class="product-card__title">VORTEX 2</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=vortex-2">VORTEX 2</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">32 × 32 cm</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -278,7 +290,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Vortex</span>
-        <h2 class="product-card__title">VORTEX 3</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=vortex-3">VORTEX 3</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">32 × 32 cm</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -294,7 +306,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Vortex</span>
-        <h2 class="product-card__title">VORTEX 4</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=vortex-4">VORTEX 4</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">32 × 32 cm</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -309,7 +321,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Vortex</span>
-        <h2 class="product-card__title">VORTEX 5</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=vortex-5">VORTEX 5</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">32 × 32 cm</span>
           <span class="product-card__price">€1,000</span>
@@ -333,7 +345,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Vortex</span>
-        <h2 class="product-card__title">VORTEX 6</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=vortex-6">VORTEX 6</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">32 × 32 cm</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -349,7 +361,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Vortex</span>
-        <h2 class="product-card__title">VORTEX 7</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=vortex-7">VORTEX 7</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">32 × 32 cm</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -365,7 +377,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Vortex</span>
-        <h2 class="product-card__title">VORTEX 8</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=vortex-8">VORTEX 8</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">32 × 32 cm</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -381,7 +393,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Vortex</span>
-        <h2 class="product-card__title">VORTEX 9</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=vortex-9">VORTEX 9</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">32 × 32 cm</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -405,7 +417,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Insomnia</span>
-        <h2 class="product-card__title">INSOMNIA 1</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=insomnia-1">INSOMNIA 1</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -428,7 +440,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Insomnia</span>
-        <h2 class="product-card__title">INSOMNIA 2</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=insomnia-2">INSOMNIA 2</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -451,7 +463,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Insomnia</span>
-        <h2 class="product-card__title">INSOMNIA 3</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=insomnia-3">INSOMNIA 3</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -474,7 +486,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Insomnia</span>
-        <h2 class="product-card__title">INSOMNIA 4</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=insomnia-4">INSOMNIA 4</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -497,7 +509,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Insomnia</span>
-        <h2 class="product-card__title">INSOMNIA 5</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=insomnia-5">INSOMNIA 5</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -520,7 +532,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Insomnia</span>
-        <h2 class="product-card__title">INSOMNIA 6</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=insomnia-6">INSOMNIA 6</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -553,7 +565,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Purple Galaxy</span>
-        <h2 class="product-card__title">PURPLE GALAXY 2</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=purple-galaxy-2">PURPLE GALAXY 2</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">22 × 30 cm</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -568,7 +580,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Purple Galaxy</span>
-        <h2 class="product-card__title">PURPLE GALAXY 4</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=purple-galaxy-4">PURPLE GALAXY 4</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">22 × 30 cm</span>
           <span class="product-card__price">€1,000</span>
@@ -592,7 +604,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Purple Galaxy</span>
-        <h2 class="product-card__title">PURPLE GALAXY 5</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=purple-galaxy-5">PURPLE GALAXY 5</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">22 × 30 cm</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -608,7 +620,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Purple Galaxy</span>
-        <h2 class="product-card__title">PURPLE GALAXY 7</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=purple-galaxy-7">PURPLE GALAXY 7</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">22 × 30 cm</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -624,7 +636,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Purple Galaxy</span>
-        <h2 class="product-card__title">PURPLE GALAXY 8</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=purple-galaxy-8">PURPLE GALAXY 8</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">22 × 30 cm</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -640,7 +652,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Purple Galaxy</span>
-        <h2 class="product-card__title">PURPLE GALAXY 9</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=purple-galaxy-9">PURPLE GALAXY 9</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">22 × 30 cm</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -665,7 +677,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Cosmic</span>
-        <h2 class="product-card__title">COSMIC 1</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=cosmic-1">COSMIC 1</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -681,7 +693,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Cosmic</span>
-        <h2 class="product-card__title">COSMIC 2</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=cosmic-2">COSMIC 2</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -697,7 +709,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Cosmic</span>
-        <h2 class="product-card__title">COSMIC 3</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=cosmic-3">COSMIC 3</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -721,7 +733,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Evolution</span>
-        <h2 class="product-card__title">EVOLUTION 1</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=evolution-1">EVOLUTION 1</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -744,7 +756,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Evolution</span>
-        <h2 class="product-card__title">EVOLUTION 2</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=evolution-2">EVOLUTION 2</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -767,7 +779,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Evolution</span>
-        <h2 class="product-card__title">EVOLUTION 3</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=evolution-3">EVOLUTION 3</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -799,7 +811,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Golden Sunset</span>
-        <h2 class="product-card__title">GOLDEN SUNSET 1</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=golden-sunset-1">GOLDEN SUNSET 1</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -822,7 +834,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Golden Sunset</span>
-        <h2 class="product-card__title">GOLDEN SUNSET 2</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=golden-sunset-2">GOLDEN SUNSET 2</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -845,7 +857,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Golden Sunset</span>
-        <h2 class="product-card__title">GOLDEN SUNSET 3</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=golden-sunset-3">GOLDEN SUNSET 3</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -878,7 +890,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Sweet Life</span>
-        <h2 class="product-card__title">SWEET LIFE 1</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=sweet-life-1">SWEET LIFE 1</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -894,7 +906,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Sweet Life</span>
-        <h2 class="product-card__title">SWEET LIFE 2</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=sweet-life-2">SWEET LIFE 2</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -910,7 +922,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Sweet Life</span>
-        <h2 class="product-card__title">SWEET LIFE 3</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=sweet-life-3">SWEET LIFE 3</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -934,7 +946,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Free Spirit</span>
-        <h2 class="product-card__title">FREE SPIRIT 1</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=free-spirit-1">FREE SPIRIT 1</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -957,7 +969,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Free Spirit</span>
-        <h2 class="product-card__title">FREE SPIRIT 2</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=free-spirit-2">FREE SPIRIT 2</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -980,7 +992,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Free Spirit</span>
-        <h2 class="product-card__title">FREE SPIRIT 3</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=free-spirit-3">FREE SPIRIT 3</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -1012,7 +1024,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Elastic</span>
-        <h2 class="product-card__title">ELASTIC 1</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=elastic-1">ELASTIC 1</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -1035,7 +1047,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Elastic</span>
-        <h2 class="product-card__title">ELASTIC 2</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=elastic-2">ELASTIC 2</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -1058,7 +1070,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Elastic</span>
-        <h2 class="product-card__title">ELASTIC 3</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=elastic-3">ELASTIC 3</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price">€1,000</span>
@@ -1091,7 +1103,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Sunday Morning</span>
-        <h2 class="product-card__title">SUNDAY MORNING 1</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=sunday-morning-1">SUNDAY MORNING 1</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -1107,7 +1119,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Sunday Morning</span>
-        <h2 class="product-card__title">SUNDAY MORNING 3</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=sunday-morning-3">SUNDAY MORNING 3</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -1123,7 +1135,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Sunday Morning</span>
-        <h2 class="product-card__title">SUNDAY MORNING 2</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=sunday-morning-2">SUNDAY MORNING 2</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -1148,7 +1160,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Splatsh</span>
-        <h2 class="product-card__title">SPLATSH 1</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=splatsh-1">SPLATSH 1</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -1164,7 +1176,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Splatsh</span>
-        <h2 class="product-card__title">SPLATSH 2</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=splatsh-2">SPLATSH 2</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -1180,7 +1192,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Série Splatsh</span>
-        <h2 class="product-card__title">SPLATSH 3</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=splatsh-3">SPLATSH 3</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -1205,7 +1217,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Œuvre Unique</span>
-        <h2 class="product-card__title">BLUE DREAMS</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=blue-dreams">BLUE DREAMS</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -1221,7 +1233,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Œuvre Unique</span>
-        <h2 class="product-card__title">RAINBOW TEARS</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=rainbow-tears">RAINBOW TEARS</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,500</span>
@@ -1237,7 +1249,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Œuvre Unique</span>
-        <h2 class="product-card__title">HOPE</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=hope">HOPE</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -1253,7 +1265,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Œuvre Unique</span>
-        <h2 class="product-card__title">PINK DREAM</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=pink-dream">PINK DREAM</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -1269,7 +1281,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Œuvre Unique</span>
-        <h2 class="product-card__title">PURPLE DREAM</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=purple-dream">PURPLE DREAM</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -1285,7 +1297,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Œuvre Unique</span>
-        <h2 class="product-card__title">HUMBLE</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=humble">HUMBLE</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -1301,7 +1313,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Œuvre Unique</span>
-        <h2 class="product-card__title">POSITIVITY</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=positivity">POSITIVITY</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -1317,7 +1329,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Œuvre Unique</span>
-        <h2 class="product-card__title">SILVER WAVES</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=silver-waves">SILVER WAVES</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -1333,7 +1345,7 @@
       </div>
       <div class="product-card__content">
         <span class="product-card__series">Œuvre Unique</span>
-        <h2 class="product-card__title">BABY BLUES</h2>
+        <h2 class="product-card__title"><a href="oeuvre?id=baby-blues">BABY BLUES</a></h2>
         <div class="product-card__meta">
           <span class="product-card__dimensions">Acrylique sur toile</span>
           <span class="product-card__price product-card__price--sold">€1,000</span>
@@ -1397,7 +1409,7 @@
           <img
             src="original-site/images/logo-carlay-BLANC-300x175.png"
             alt="Carlay Art"
-            style="width: 120px; margin-bottom: var(--space-4);"
+            class="footer__logo-img"
           >
           <p class="footer__tagline">Art Contemporain Français</p>
         </div>
@@ -1405,10 +1417,10 @@
         <div>
           <h4 class="footer__heading">Collections</h4>
           <ul class="footer__links">
-            <li><a href="/boutique.html?collection=romeo" class="footer__link">Romeo</a></li>
-            <li><a href="/boutique.html?collection=juliette" class="footer__link">Juliette</a></li>
-            <li><a href="/boutique.html?collection=vortex" class="footer__link">Vortex</a></li>
-            <li><a href="/boutique.html?collection=insomnia" class="footer__link">Insomnia</a></li>
+            <li><a href="boutique.html?collection=romeo" class="footer__link">Romeo</a></li>
+            <li><a href="boutique.html?collection=juliette" class="footer__link">Juliette</a></li>
+            <li><a href="boutique.html?collection=vortex" class="footer__link">Vortex</a></li>
+            <li><a href="boutique.html?collection=insomnia" class="footer__link">Insomnia</a></li>
           </ul>
         </div>
 
@@ -1424,14 +1436,15 @@
         <div>
           <h4 class="footer__heading">Paiements</h4>
           <ul class="footer__links">
-            <li><span class="footer__link" style="cursor: default;">Carte Bancaire</span></li>
-            <li><span class="footer__link" style="cursor: default;">Crypto (BTC/ETH)</span></li>
-            <li><span class="footer__link" style="cursor: default;">iDEAL · Bancontact</span></li>
+            <li><span class="footer__link">Carte Bancaire</span></li>
+            <li><span class="footer__link">Crypto (BTC/ETH)</span></li>
+            <li><span class="footer__link">iDEAL · Bancontact</span></li>
           </ul>
         </div>
       </div>
 
       <div class="footer__bottom">
+        <img src="original-site/images/Carlay-art-signature.png" alt="" aria-hidden="true" class="footer__signature">
         <p>© 2025 Carlay Art. Tous droits réservés.</p>
         <div class="footer__social">
           <a href="https://instagram.com/carlayart" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener">
@@ -1465,6 +1478,7 @@
 
     menuBtn.addEventListener('click', () => {
       menuOpen = !menuOpen;
+      menuBtn.classList.toggle('nav__menu-btn--open', menuOpen);
       mobileMenu.classList.toggle('mobile-menu--open', menuOpen);
       document.body.style.overflow = menuOpen ? 'hidden' : '';
     });
@@ -1478,24 +1492,55 @@
       });
     });
 
-    // Filter dropdown toggle
+    // Filter dropdown toggle with ARIA
     const filterMore = document.getElementById('filterMore');
     const filterDropdown = document.getElementById('filterDropdown');
+    const dropdownItems = filterDropdown ? [...filterDropdown.querySelectorAll('[role="menuitem"]')] : [];
+
+    function openDropdown() {
+      filterDropdown.style.display = 'block';
+      filterMore.setAttribute('aria-expanded', 'true');
+      if (dropdownItems.length) dropdownItems[0].focus();
+    }
+
+    function closeDropdown() {
+      filterDropdown.style.display = 'none';
+      filterMore.setAttribute('aria-expanded', 'false');
+    }
+
     if (filterMore && filterDropdown) {
       filterMore.addEventListener('click', (e) => {
         e.stopPropagation();
-        const isVisible = filterDropdown.style.display !== 'none';
-        filterDropdown.style.display = isVisible ? 'none' : 'block';
+        const isOpen = filterMore.getAttribute('aria-expanded') === 'true';
+        isOpen ? closeDropdown() : openDropdown();
       });
-      document.addEventListener('click', (e) => {
-        if (!e.target.closest('.filter-dropdown')) {
-          filterDropdown.style.display = 'none';
+
+      // Keyboard navigation inside dropdown
+      filterDropdown.addEventListener('keydown', (e) => {
+        const idx = dropdownItems.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          dropdownItems[(idx + 1) % dropdownItems.length].focus();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          dropdownItems[(idx - 1 + dropdownItems.length) % dropdownItems.length].focus();
+        } else if (e.key === 'Escape') {
+          closeDropdown();
+          filterMore.focus();
         }
       });
+
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.filter-dropdown')) {
+          closeDropdown();
+        }
+      });
+
       // Close dropdown when a filter inside is clicked
-      filterDropdown.querySelectorAll('.filter-btn').forEach(btn => {
+      dropdownItems.forEach(btn => {
         btn.addEventListener('click', () => {
-          filterDropdown.style.display = 'none';
+          closeDropdown();
+          filterMore.focus();
         });
       });
     }
@@ -1530,6 +1575,9 @@
 
         // Filter collections
         filterCollections(btn.dataset.filter);
+
+        // Scroll to top of products
+        document.getElementById('productsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
 
@@ -1661,9 +1709,9 @@
     lightboxPrev.addEventListener('click', (e) => { e.stopPropagation(); showPrevImage(); });
     lightboxNext.addEventListener('click', (e) => { e.stopPropagation(); showNextImage(); });
 
-    // Close on background click
+    // Close on background or image click
     lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) {
+      if (e.target === lightbox || e.target === lightboxImage) {
         closeLightbox();
       }
     });
@@ -1675,6 +1723,25 @@
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowLeft') showPrevImage();
       if (e.key === 'ArrowRight') showNextImage();
+    });
+
+    // Scroll progress bar
+    const scrollProgress = document.getElementById('scrollProgress');
+    if (scrollProgress) {
+      window.addEventListener('scroll', () => {
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? window.scrollY / docHeight : 0;
+        scrollProgress.style.transform = `scaleX(${progress})`;
+      }, { passive: true });
+    }
+
+    // Lazy image fade-in
+    document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+      if (img.complete) {
+        img.classList.add('loaded');
+      } else {
+        img.addEventListener('load', () => img.classList.add('loaded'));
+      }
     });
   </script>
 </body>

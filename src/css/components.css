@@ -88,6 +88,19 @@
   transition: all var(--duration-normal) var(--ease-out);
 }
 
+.nav__menu-btn--open span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.nav__menu-btn--open span:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.nav__menu-btn--open span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
 .nav__cart {
   position: relative;
   display: flex;
@@ -126,6 +139,20 @@
   .nav__menu-btn {
     display: flex;
   }
+}
+
+/* Scroll progress indicator */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: var(--color-rose);
+  z-index: calc(var(--z-nav) + 1);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: none;
+  pointer-events: none;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -444,6 +471,21 @@
   text-decoration: line-through;
 }
 
+.artwork-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px transparent;
+  transition: box-shadow var(--duration-normal) var(--ease-out);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.artwork-card:hover::after {
+  box-shadow: inset 0 0 0 1px var(--color-rose-glow-20), 0 0 30px var(--color-rose-glow);
+}
+
 .artwork-card__badge {
   position: absolute;
   top: var(--space-4);
@@ -455,6 +497,19 @@
   text-transform: uppercase;
   letter-spacing: var(--tracking-wider);
   border-radius: var(--radius-sm);
+}
+
+/* ─────────────────────────────────────────────────────────
+   IMAGE LOADING
+   ───────────────────────────────────────────────────────── */
+
+img[loading="lazy"] {
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+img[loading="lazy"].loaded {
+  opacity: 1;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -860,4 +915,34 @@
 
 .cart-item__remove:hover {
   color: var(--color-rose);
+}
+
+/* ─────────────────────────────────────────────────────────
+   PAGE TRANSITIONS
+   ───────────────────────────────────────────────────────── */
+
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: fadeOut 200ms ease-in;
+}
+
+::view-transition-new(root) {
+  animation: fadeIn 300ms ease-out;
+}
+
+/* Fallback for browsers without View Transitions */
+body {
+  animation: pageEnter 0.4s var(--ease-out);
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
