@@ -429,6 +429,36 @@
     // Render checkout page
     function renderCheckout() {
       const container = document.getElementById('checkoutContent');
+
+      // Handle payment return status
+      const urlParams = new URLSearchParams(window.location.search);
+      const status = urlParams.get('status');
+
+      if (status === 'success') {
+        Cart.clear();
+        container.innerHTML = `
+          <div class="checkout-empty" style="padding: var(--space-20) var(--space-4);">
+            <div style="font-size: 3rem; margin-bottom: var(--space-6);">✓</div>
+            <h2 style="font-family: var(--font-display); font-size: var(--text-2xl); font-weight: var(--weight-bold); margin-bottom: var(--space-4);">Merci pour votre commande</h2>
+            <p class="checkout-empty__text">Vous recevrez un email de confirmation sous peu.</p>
+            <p style="color: var(--text-muted); font-size: var(--text-sm); margin-bottom: var(--space-8);">
+              Certificat d'authenticité inclus · Livraison assurée dans le monde entier
+            </p>
+            <a href="boutique.html" class="btn btn--primary">Continuer à Explorer</a>
+          </div>`;
+        return;
+      }
+
+      if (status === 'cancelled') {
+        // Show cart normally but with a cancellation notice at the top
+        const notice = document.createElement('div');
+        notice.style.cssText = 'background: var(--color-smoke); border: 1px solid var(--color-ghost-20); color: var(--text-secondary); padding: var(--space-4); border-radius: var(--radius-sm); margin-bottom: var(--space-6); text-align: center; font-size: var(--text-sm);';
+        notice.textContent = 'Paiement annulé. Votre panier est toujours disponible.';
+        container.parentNode.insertBefore(notice, container);
+        // Clean URL
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+
       const items = Cart.getItems();
 
       if (!items.length) {
@@ -545,7 +575,7 @@
     }
 
     // Payment handler
-    function handlePayment(method) {
+    async function handlePayment(method) {
       const items = Cart.getItems();
       if (!items.length) return;
 
@@ -555,48 +585,63 @@
           id: i.id,
           name: i.name,
           price: i.price,
-          qty: i.qty
+          qty: i.qty,
+          description: i.description || '',
+          image: i.image || ''
         })),
         total,
         currency: 'EUR'
       };
 
-      switch (method) {
-        case 'stripe':
-          // In production: POST to /api/checkout/stripe with orderData
-          // Server creates a Stripe Checkout Session and returns the URL
-          alert(
-            `Stripe Checkout\n\n` +
-            `Total: €${total.toLocaleString()}\n` +
-            `${items.length} œuvre(s)\n\n` +
-            `La passerelle de paiement Stripe sera connectée prochainement.\n` +
-            `Contactez carlayart369@gmail.com pour acheter.`
-          );
-          break;
+      // Disable buttons during processing
+      document.querySelectorAll('.payment-btn').forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+      });
 
-        case 'mollie':
-          // In production: POST to /api/checkout/mollie with orderData
-          // Server creates a Mollie payment and returns redirect URL
-          alert(
-            `Mollie Checkout\n\n` +
-            `Total: €${total.toLocaleString()}\n` +
-            `Méthodes: iDEAL, Bancontact, SEPA, Carte\n\n` +
-            `La passerelle Mollie sera connectée prochainement.\n` +
-            `Contactez carlayart369@gmail.com pour acheter.`
-          );
-          break;
+      const endpoints = {
+        stripe: '/api/checkout-stripe',
+        mollie: '/api/checkout-mollie',
+        crypto: '/api/checkout-crypto'
+      };
 
-        case 'crypto':
-          // In production: POST to /api/checkout/coinbase with orderData
-          // Server creates a Coinbase Commerce charge and returns checkout URL
-          alert(
-            `Coinbase Commerce\n\n` +
-            `Total: €${total.toLocaleString()}\n` +
-            `Crypto: BTC, ETH, USDC, LTC\n\n` +
-            `Le paiement crypto sera connecté prochainement.\n` +
-            `Contactez carlayart369@gmail.com pour acheter.`
-          );
-          break;
+      try {
+        const response = await fetch(endpoints[method], {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        });
+
+        const data = await response.json();
+
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          throw new Error(data.error || 'Payment failed');
+        }
+      } catch (error) {
+        console.error('Payment error:', error);
+
+        // Re-enable buttons
+        document.querySelectorAll('.payment-btn').forEach(btn => {
+          btn.disabled = false;
+          btn.style.opacity = '';
+        });
+
+        // Show user-friendly error
+        const errorEl = document.createElement('div');
+        errorEl.style.cssText = 'background: var(--color-rose); color: white; padding: var(--space-4); border-radius: var(--radius-sm); margin-top: var(--space-4); text-align: center; font-size: var(--text-sm);';
+        errorEl.textContent = 'Erreur de paiement. Veuillez réessayer ou contacter carlayart369@gmail.com';
+
+        const summary = document.querySelector('.checkout-summary');
+        // Remove any previous error
+        const existing = summary.querySelector('.payment-error');
+        if (existing) existing.remove();
+        errorEl.className = 'payment-error';
+        summary.appendChild(errorEl);
+
+        // Auto-remove after 5s
+        setTimeout(() => errorEl.remove(), 5000);
       }
     }
 

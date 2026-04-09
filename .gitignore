@@ -1,2 +1,4 @@
 original-site/
 node_modules/
+.env
+.vercel
