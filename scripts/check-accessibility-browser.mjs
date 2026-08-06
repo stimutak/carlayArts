@@ -84,19 +84,19 @@ try {
 
   for (const [path, label] of [
     ['/', 'route: accueil'],
-    ['/boutique', 'route: boutique'],
-    ['/a-propos', 'route: artiste'],
-    ['/contact', 'route: contact'],
-    ['/panier', 'route: panier vide'],
-    ['/commande', 'route: commande vide'],
-    ['/confirmation', 'route: confirmation sans session'],
-    ['/oeuvre/vortex-5', 'route: œuvre représentative'],
+    ['/boutique/', 'route: boutique'],
+    ['/a-propos/', 'route: artiste'],
+    ['/contact/', 'route: contact'],
+    ['/panier/', 'route: panier vide'],
+    ['/commande/', 'route: commande vide'],
+    ['/confirmation/', 'route: confirmation sans session'],
+    ['/oeuvre/vortex-5/', 'route: œuvre représentative'],
   ]) {
     await goto(page, path);
     await scan(page, label);
   }
 
-  await goto(page, '/boutique');
+  await goto(page, '/boutique/');
   await page.locator('[data-filter-series="vortex"]').click();
   await scan(page, 'état: filtre série actif');
   await page.locator('[data-filter-availability]').click();
@@ -113,12 +113,12 @@ try {
   await blockExternalFonts(mobile);
   const mobilePage = await mobile.newPage();
   mobilePage.on('pageerror', (error) => pageErrors.push(error.message));
-  for (const path of ['/', '/boutique', '/a-propos', '/contact', '/panier', '/commande', '/confirmation', '/oeuvre/vortex-5']) {
+  for (const path of ['/', '/boutique/', '/a-propos/', '/contact/', '/panier/', '/commande/', '/confirmation/', '/oeuvre/vortex-5/']) {
     await goto(mobilePage, path);
     verify(!(await hasHorizontalOverflow(mobilePage)), '1.4.10', `${path} reflows without document overflow at 320 CSS px`);
   }
 
-  await goto(mobilePage, '/boutique');
+  await goto(mobilePage, '/boutique/');
   await mobilePage.addStyleTag({ content: `
     body * { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; }
     p { margin-bottom: 2em !important; }
@@ -169,7 +169,7 @@ try {
   await blockExternalFonts(journey);
   const demo = await journey.newPage();
   demo.on('pageerror', (error) => pageErrors.push(error.message));
-  await goto(demo, '/boutique');
+  await goto(demo, '/boutique/');
   await demo.waitForFunction(() => document.querySelector('[data-filter-shell]')?.classList.contains('is-enhanced'));
   await demo.locator('[data-filter-availability]').click();
   await demo.locator('[data-result-count]').filter({ hasText: '1 œuvre affichée' }).waitFor();
@@ -186,7 +186,7 @@ try {
   verify(await demo.locator('main').evaluate((node) => node.inert), '4.1.2', 'populated cart dialog inerts main content');
   await scan(demo, 'état: tiroir panier rempli');
   await demo.locator('[data-cart-close]').click();
-  await goto(demo, '/commande');
+  await goto(demo, '/commande/');
   await scan(demo, 'état: commande prête');
 
   await demo.locator('[data-checkout-submit]').click();
@@ -212,7 +212,7 @@ try {
 
   await demo.uncheck('input[name="simulate_failure"]');
   await demo.locator('[data-checkout-submit]').click();
-  await demo.waitForURL('**/confirmation');
+  await demo.waitForURL('**/confirmation/');
   await scan(demo, 'état: confirmation démo');
   await journey.close();
 
