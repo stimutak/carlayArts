@@ -32,7 +32,7 @@ const seriesCount = new Set(artworks.map((artwork) => artwork.seriesSlug)).size;
   <section class="home-hero">
     <div class="home-hero__inner reveal">
       <h1 class="sr-only">Carlay Art — peintures contemporaines</h1>
-      <img class="home-hero__logo" src="/site/logo-carlay-BLANC.png" alt="Monogramme CA — Carlay Art" width="469" height="274" fetchpriority="high" />
+      <img class="home-hero__logo" src="/site/logo-carlay-BLANC.png" alt="Monogramme CA — Carlay Art" width="469" height="274" loading="eager" fetchpriority="high" decoding="async" />
       <p class="accent-line">Peintures contemporaines · catalogue en validation</p>
       <a class="btn" href="/boutique/">Découvrir la galerie</a>
     </div>
@@ -62,11 +62,11 @@ const seriesCount = new Set(artworks.map((artwork) => artwork.seriesSlug)).size;
         <h2 class="display" style="font-size: var(--text-2xl); text-transform: uppercase;">Carlay</h2>
         <p class="lead">Les sources historiques décrivent un travail principalement réalisé à l’acrylique sur toile. La biographie, le processus et les inspirations attendent encore la validation directe de l’artiste.</p>
         <p class="review-note"><strong>Contenu éditorial en révision.</strong> Aucun récit curatorial ni contexte géographique non vérifié n’est présenté comme un fait.</p>
-        <img class="home-artist__signature" src="/site/Carlay-art-signature.png" alt="Signature visuelle de Carlay" width="300" height="145" loading="lazy" />
+        <img class="home-artist__signature" src="/site/Carlay-art-signature.png" alt="Signature visuelle de Carlay" width="300" height="145" loading="lazy" decoding="async" />
         <div><a class="btn btn--ghost" href="/a-propos/">Découvrir le dossier artiste →</a></div>
       </Reveal>
       <Reveal class="home-artist__photo">
-        <img src="/site/Carlay-art.jpg" alt="Portrait de Carlay avec une peinture" width="960" height="1280" loading="lazy" />
+        <img src="/site/Carlay-art.jpg" alt="Portrait de Carlay avec une peinture" width="960" height="1280" loading="lazy" decoding="async" />
       </Reveal>
     </div>
   </section>
@@ -85,7 +85,7 @@ const seriesCount = new Set(artworks.map((artwork) => artwork.seriesSlug)).size;
             class={`collection-card${collection.wide ? ' collection-card--wide' : ''}`}
             href={`/boutique/?serie=${collection.slug}`}
           >
-            <img src={collection.artwork.images.card.src} alt={`Aperçu de la série ${collection.name}`} width="680" height="680" loading="lazy" />
+            <img src={collection.artwork.images.card.src} alt={`Aperçu de la série ${collection.name}`} width="680" height="680" loading="lazy" decoding="async" />
             <div class="collection-card__copy">
               <h3>{collection.name}</h3>
               <p>{collection.count} {collection.count > 1 ? 'œuvres' : 'œuvre'} →</p>

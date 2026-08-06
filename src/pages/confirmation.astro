@@ -2,7 +2,11 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Confirmation démo" currentPath="/confirmation">
+<Base
+  title="Confirmation démo"
+  currentPath="/confirmation"
+  description="Résultat local du parcours Carlay Art en mode démonstration — aucun paiement réel n’est traité."
+>
   <section class="commerce-page confirmation-page">
     <header class="commerce-header">
       <p class="eyebrow">Résultat local</p>
@@ -26,15 +30,15 @@ import Base from '../layouts/Base.astro';
         <p>La disponibilité et les politiques de livraison, taxes, droits, retours et dommages doivent être approuvées par l’artiste avant toute commande réelle.</p>
       </div>
       <div class="button-row">
-        <a class="button button--primary" href="/boutique">Retour aux œuvres</a>
-        <a class="button button--secondary" href="/contact">Contacter l’atelier</a>
+        <a class="button button--primary" href="/boutique/">Retour aux œuvres</a>
+        <a class="button button--secondary" href="/contact/">Contacter l’atelier</a>
       </div>
     </div>
 
     <div class="empty-state empty-state--large" data-confirmation-empty>
       <h2>Aucun résultat démo dans cet onglet</h2>
       <p>Cette page seule ne confirme ni commande ni paiement. Commencez depuis un panier contenant une œuvre disponible.</p>
-      <a class="button button--primary" href="/panier">Voir le panier</a>
+      <a class="button button--primary" href="/panier/">Voir le panier</a>
     </div>
   </section>
 
@@ -59,7 +63,7 @@ import Base from '../layouts/Base.astro';
       const items = confirmation.items.map((item) => {
         const li = document.createElement('li');
         const link = document.createElement('a');
-        link.href = `/oeuvre/${item.slug}`;
+        link.href = `/oeuvre/${item.slug}/`;
         link.textContent = item.title;
         const price = document.createElement('strong');
         price.textContent = money(item.price.amount, item.price.currency);

@@ -18,11 +18,12 @@ interface Props {
 
 const {
   title,
-  description = 'Carlay Art — artiste contemporaine française. Œuvres originales.',
+  description = 'Catalogue Carlay Art — œuvres et informations en cours de validation.',
   currentPath = Astro.url.pathname.replace(/\/$/, '') || '/',
   draft = true,
 } = Astro.props;
 const canonical = new URL(canonicalPath(Astro.url.pathname), Astro.site);
+const fullTitle = pageTitle(title);
 ---
 
 <!doctype html>
@@ -31,22 +32,25 @@ const canonical = new URL(canonicalPath(Astro.url.pathname), Astro.site);
     <meta charset="UTF-8" />
     <script is:inline>document.documentElement.classList.add('js')</script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="description" content={description} />
     {draft && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
+    <meta property="og:site_name" content="CARLAY ART" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
     <link rel="icon" href="/site/logo-carlay-BLANC.png" type="image/png" />
-    <link rel="preconnect" href="https://api.fontshare.com" crossorigin="anonymous" />
-    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin="anonymous" />
-    <link
-      rel="stylesheet"
-      href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap"
-    />
-    <title>{pageTitle(title)}</title>
+    <title>{fullTitle}</title>
   </head>
   <body>
     <a class="skip-link" href="#main-content">Aller au contenu</a>
     <Nav currentPath={currentPath} />
-    <main id="main-content">
+    <main id="main-content" tabindex="-1">
       <slot />
     </main>
     <Footer />

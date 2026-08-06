@@ -13,7 +13,7 @@ const seriesCount = new Set(artworks.map((entry) => entry.data.seriesSlug)).size
   description="Carlay — dossier artiste et processus éditorial en cours de validation directe."
 >
   <header class="about-hero">
-    <img src="/site/Carlay-art.jpg" alt="Portrait de Carlay avec une peinture" width="960" height="1280" fetchpriority="high" />
+    <img src="/site/Carlay-art.jpg" alt="Portrait de Carlay avec une peinture" width="960" height="1280" loading="eager" fetchpriority="high" decoding="async" />
     <div class="about-hero__text">
       <p class="eyebrow">L’Artiste</p>
       <h1 class="display">Carlay</h1>
@@ -29,7 +29,7 @@ const seriesCount = new Set(artworks.map((entry) => entry.data.seriesSlug)).size
       </aside>
       <p>Le processus, les inspirations, la chronologie des séries et les contextes géographiques sont encore à documenter avec l’artiste. Les aperçus visuels du catalogue ne permettent pas, à eux seuls, de formuler des intentions curatoriales.</p>
       <p class="review-note"><strong>TODO éditorial.</strong> Obtenir une biographie, une déclaration de processus, une citation et les repères France/New York directement approuvés avant publication indexable.</p>
-      <img class="bio__signature" src="/site/Carlay-art-signature.png" alt="Signature visuelle de Carlay" width="300" height="145" loading="lazy" />
+      <img class="bio__signature" src="/site/Carlay-art-signature.png" alt="Signature visuelle de Carlay" width="300" height="145" loading="lazy" decoding="async" />
     </Reveal>
   </section>
 

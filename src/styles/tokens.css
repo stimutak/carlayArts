@@ -15,9 +15,9 @@
   --gold: #d4a574;
   --magenta: #d946ef;
 
-  /* Clash remains the preferred display face. The locally bundled Space
-     Grotesk fallback prevents layout collapse if Fontshare is unavailable. */
-  --font-display: 'Clash Display', 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif;
+  /* Display and body text use the same locally bundled variable family so the
+     first render never depends on a third-party font stylesheet. */
+  --font-display: 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif;
   --font-body: 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif;
   --font-accent: 'Playfair Display', Georgia, serif;
 

@@ -27,7 +27,7 @@ describe('checkout validation and demo-only adapter', () => {
     expect(CHECKOUT_TRANSPORT).toBe('none');
     expect(fetchSpy).not.toHaveBeenCalled();
     fetchSpy.mockRestore();
-    expect(result.redirect).toBe('/confirmation');
+    expect(result.redirect).toBe('/confirmation/');
     expect(result.confirmation).toMatchObject({ paymentTaken: false, total: 1250 });
     expect(result.confirmation).not.toHaveProperty('customer');
   });

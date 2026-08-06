@@ -1,17 +1,17 @@
 ---
 const { currentPath } = Astro.props;
 const links = [
-  { href: '/boutique', label: 'Œuvres' },
-  { href: '/a-propos', label: "L’Artiste" },
-  { href: '/contact', label: 'Contact' },
-  { href: '/panier', label: 'Panier', cart: true },
+  { path: '/boutique', href: '/boutique/', label: 'Œuvres' },
+  { path: '/a-propos', href: '/a-propos/', label: "L’Artiste" },
+  { path: '/contact', href: '/contact/', label: 'Contact' },
+  { path: '/panier', href: '/panier/', label: 'Panier', cart: true },
 ];
 ---
 
 <div id="site-mobile-menu" class="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation mobile" hidden>
   <button class="mobile-menu__close" type="button" data-menu-close aria-label="Fermer le menu">×</button>
   {links.map((link) => (
-    <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
+    <a href={link.href} aria-current={currentPath === link.path ? 'page' : undefined}>
       {link.label} {link.cart && <span data-cart-count aria-label="Statut du panier en cours de chargement">—</span>}
     </a>
   ))}

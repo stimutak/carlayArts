@@ -13,7 +13,7 @@ const first = media[0];
       aria-label={`Ouvrir la vue intégrale de ${title}`}
     >
       <span class="artwork-stage__canvas">
-        <img src={first.src} alt={first.alt} width="680" height="680" loading="eager" fetchpriority="high" />
+        <img src={first.src} alt={first.alt} width="680" height="680" loading="eager" fetchpriority="high" decoding="async" />
       </span>
       <span class="artwork-stage__hint">Ouvrir la vue intégrale</span>
     </button>
@@ -30,7 +30,7 @@ const first = media[0];
         <div class="lightbox__viewport" data-lightbox-viewport>
           {media.map((item, index) => (
             <figure data-lightbox-slide={index} hidden={index !== 0}>
-              <img src={item.src} alt={item.alt} width="680" height="680" />
+              <img src={item.src} alt={item.alt} width="680" height="680" loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
               {item.caption && <figcaption>{item.caption}</figcaption>}
             </figure>
           ))}
@@ -52,7 +52,7 @@ const first = media[0];
 ) : (
   <figure class="artwork-stage artwork-stage--static reveal" data-unverified-media>
     <span class="artwork-stage__canvas">
-      <img src={first.src} alt={first.alt} width="680" height="680" loading="eager" fetchpriority="high" />
+      <img src={first.src} alt={first.alt} width="680" height="680" loading="eager" fetchpriority="high" decoding="async" />
     </span>
     <figcaption class="artwork-stage__hint">Aperçu catalogue · agrandissement indisponible</figcaption>
   </figure>

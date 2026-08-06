@@ -10,7 +10,7 @@ const sold = artwork.availability === 'sold';
 ---
 
 <Reveal as="article" class="artwork-card" data-artwork-card data-availability={purchasable ? 'available' : artwork.availability}>
-  <a class="artwork-card__link" href={`/oeuvre/${artwork.slug}/`} aria-label={`${artwork.title}, ${state}`}>
+  <a class="artwork-card__link" href={`/oeuvre/${artwork.slug}/`}>
     <div class="artwork-card__media" style={`--card-ratio: ${ratio};`}>
       <img
         src={artwork.images.card.src}
@@ -19,6 +19,7 @@ const sold = artwork.availability === 'sold';
         height="680"
         loading={eager ? 'eager' : 'lazy'}
         fetchpriority={eager ? 'high' : 'auto'}
+        decoding="async"
       />
       <span class:list={['artwork-card__badge', sold && 'artwork-card__badge--sold']}>
         {state}

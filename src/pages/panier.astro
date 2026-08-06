@@ -2,7 +2,11 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Panier" currentPath="/panier">
+<Base
+  title="Panier"
+  currentPath="/panier"
+  description="Panier de démonstration Carlay Art — aucune commande ni aucun paiement réel n’est activé."
+>
   <section class="commerce-page commerce-page--cart">
     <header class="commerce-header">
       <p class="eyebrow">Pièces uniques</p>
@@ -23,7 +27,7 @@ import Base from '../layouts/Base.astro';
       <div class="empty-state empty-state--large" data-cart-page-empty>
         <h2>Votre panier est vide</h2>
         <p>Explorez le catalogue. Seules les œuvres dont la disponibilité est validée peuvent être ajoutées.</p>
-        <a class="button button--primary" href="/boutique">Découvrir les œuvres</a>
+        <a class="button button--primary" href="/boutique/">Découvrir les œuvres</a>
       </div>
 
       <div class="cart-review" data-cart-page-review hidden>
@@ -38,7 +42,7 @@ import Base from '../layouts/Base.astro';
         <div class="cart-review__total">
           <p class="cart-total"><span>Sous-total des œuvres</span><strong data-cart-page-total></strong></p>
           <p class="policy-review">Ce sous-total n’inclut aucun montant de livraison, taxe ou droit non vérifié.</p>
-          <a class="button button--primary" href="/commande">Continuer en mode démo</a>
+          <a class="button button--primary" href="/commande/">Continuer en mode démo</a>
         </div>
       </div>
     </div>
@@ -59,10 +63,12 @@ import Base from '../layouts/Base.astro';
       image.alt = item.image?.alt || '';
       image.width = 112;
       image.height = 112;
+      image.loading = 'lazy';
+      image.decoding = 'async';
       const copy = document.createElement('div');
       copy.className = 'cart-line__copy';
       const link = document.createElement('a');
-      link.href = `/oeuvre/${item.slug}`;
+      link.href = `/oeuvre/${item.slug}/`;
       link.textContent = item.title;
       const series = document.createElement('span');
       series.textContent = `Série ${item.series}`;

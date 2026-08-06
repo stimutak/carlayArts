@@ -45,6 +45,10 @@ main {
   min-height: calc(100vh - var(--nav-h));
 }
 
+main:focus {
+  outline: none;
+}
+
 img {
   display: block;
   max-width: 100%;

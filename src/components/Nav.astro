@@ -3,9 +3,9 @@ import MobileMenu from './MobileMenu.astro';
 
 const { currentPath } = Astro.props;
 const links = [
-  { href: '/boutique', label: 'Œuvres' },
-  { href: '/a-propos', label: "L’Artiste" },
-  { href: '/contact', label: 'Contact' },
+  { path: '/boutique', href: '/boutique/', label: 'Œuvres' },
+  { path: '/a-propos', href: '/a-propos/', label: "L’Artiste" },
+  { path: '/contact', href: '/contact/', label: 'Contact' },
 ];
 ---
 
@@ -13,13 +13,13 @@ const links = [
   <a class="nav__logo" href="/" aria-label="Carlay Art, accueil">CARLAY ART</a>
   <nav class="nav__links" aria-label="Navigation principale">
     {links.map((link) => (
-      <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>{link.label}</a>
+      <a href={link.href} aria-current={currentPath === link.path ? 'page' : undefined}>{link.label}</a>
     ))}
   </nav>
   <div class="nav__actions">
     <a
       class="nav__cart-link"
-      href="/panier"
+      href="/panier/"
       aria-current={currentPath === '/panier' ? 'page' : undefined}
       aria-controls="cart-drawer"
       aria-expanded="false"
@@ -49,19 +49,35 @@ const links = [
 
   if (toggle instanceof HTMLButtonElement && menu instanceof HTMLElement) {
     const closeButton = menu.querySelector('[data-menu-close]');
+    const toggleLabel = toggle.querySelector('.sr-only');
     const focusableSelector = 'a[href], button:not([disabled])';
+    const backgroundElements = [
+      document.querySelector('.skip-link'),
+      document.querySelector('.nav'),
+      document.querySelector('main'),
+      document.querySelector('.footer'),
+      document.querySelector('[data-cart-shell]'),
+    ].filter((node) => node instanceof HTMLElement);
+
+    const setBackgroundInert = (inert) => {
+      backgroundElements.forEach((node) => { node.inert = inert; });
+    };
 
     const closeMenu = ({ returnFocus = true } = {}) => {
       menu.hidden = true;
       toggle.setAttribute('aria-expanded', 'false');
+      if (toggleLabel) toggleLabel.textContent = 'Ouvrir le menu';
       document.body.classList.remove('menu-open');
+      setBackgroundInert(false);
       if (returnFocus) toggle.focus();
     };
 
     const openMenu = () => {
       menu.hidden = false;
       toggle.setAttribute('aria-expanded', 'true');
+      if (toggleLabel) toggleLabel.textContent = 'Fermer le menu';
       document.body.classList.add('menu-open');
+      setBackgroundInert(true);
       menu.querySelector(focusableSelector)?.focus();
     };
 

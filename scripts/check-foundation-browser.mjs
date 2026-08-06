@@ -31,7 +31,7 @@ try {
   const mobile = await browser.newPage({ viewport: { width: 320, height: 800 } });
   const pageErrors = [];
   mobile.on('pageerror', (error) => pageErrors.push(error.message));
-  for (const route of ['/', '/boutique', '/a-propos', '/contact', '/panier', '/commande', '/confirmation', '/oeuvre/vortex-5']) {
+  for (const route of ['/', '/boutique/', '/a-propos/', '/contact/', '/panier/', '/commande/', '/confirmation/', '/oeuvre/vortex-5/']) {
     const response = await mobile.goto(`${origin}${route}`);
     if (!response?.ok()) throw new Error(`${route} returned ${response?.status() ?? 'no response'}`);
     const overflows = await mobile.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
@@ -43,15 +43,17 @@ try {
   await toggle.click();
   if ((await toggle.getAttribute('aria-expanded')) !== 'true') throw new Error('Mobile menu did not expose expanded state.');
   if (await mobile.locator('#site-mobile-menu').getAttribute('hidden')) throw new Error('Mobile menu remained hidden.');
+  if (!await mobile.locator('main').evaluate((element) => element.inert)) throw new Error('Mobile menu did not make background content inert.');
   await mobile.keyboard.press('Shift+Tab');
   const wrappedHref = await mobile.evaluate(() => document.activeElement?.getAttribute('href'));
-  if (wrappedHref !== '/panier') throw new Error('Mobile menu focus did not wrap to its last link.');
+  if (wrappedHref !== '/panier/') throw new Error('Mobile menu focus did not wrap to its last link.');
   await mobile.keyboard.press('Escape');
   if ((await toggle.getAttribute('aria-expanded')) !== 'false') throw new Error('Escape did not collapse the mobile menu.');
   if (!(await toggle.evaluate((element) => element === document.activeElement))) throw new Error('Focus did not return to the menu button.');
+  if (await mobile.locator('main').evaluate((element) => element.inert)) throw new Error('Mobile menu did not restore background interactivity.');
 
   await mobile.setViewportSize({ width: 390, height: 844 });
-  await mobile.goto(`${origin}/boutique`);
+  await mobile.goto(`${origin}/boutique/`);
   if (await mobile.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)) {
     throw new Error('/boutique overflows horizontally at 390px.');
   }
@@ -69,13 +71,13 @@ try {
   await mobile.goBack();
   if ((await mobile.locator('[data-result-count]').textContent())?.trim() !== '9 œuvres affichées') throw new Error('Back navigation did not restore the series filter.');
 
-  await mobile.goto(`${origin}/oeuvre/vortex-5`);
+  await mobile.goto(`${origin}/oeuvre/vortex-5/`);
   const stage = mobile.locator('[data-unverified-media]');
   if ((await stage.locator('img').evaluate((image) => getComputedStyle(image).objectFit)) !== 'contain') throw new Error('Artwork stage does not use object-fit: contain.');
   if (await mobile.locator('[data-lightbox-open], [data-lightbox]').count()) throw new Error('Unverified media incorrectly exposes enlargement controls.');
 
   await mobile.setViewportSize({ width: 1440, height: 900 });
-  await mobile.goto(`${origin}/oeuvre/vortex-5`);
+  await mobile.goto(`${origin}/oeuvre/vortex-5/`);
   if (await mobile.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)) {
     throw new Error('/oeuvre/vortex-5 overflows horizontally at 1440px.');
   }
@@ -91,7 +93,7 @@ try {
   const revealOpacity = await noJavaScriptPage.locator('.reveal').first().evaluate((element) => getComputedStyle(element).opacity);
   if (revealOpacity !== '1') throw new Error(`Reveal content opacity without JavaScript was ${revealOpacity}.`);
   if (!(await noJavaScriptPage.locator('.nav__links').isVisible())) throw new Error('Primary navigation is hidden without JavaScript at 320px.');
-  await noJavaScriptPage.goto(`${origin}/boutique`);
+  await noJavaScriptPage.goto(`${origin}/boutique/`);
   if ((await noJavaScriptPage.locator('[data-artwork-card]').count()) !== 60) throw new Error('Essential catalog content is hidden without JavaScript.');
   await noJavaScript.close();
 

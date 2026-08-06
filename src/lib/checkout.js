@@ -59,7 +59,7 @@ async function demoAdapter(order, options) {
   if (options.simulateFailure) throw new Error('Échec simulé. Aucune donnée n’a été transmise et aucun paiement n’a été pris.');
   return {
     ok: true,
-    redirect: '/confirmation',
+    redirect: '/confirmation/',
     confirmation: {
       version: 1,
       reference: createReference(),

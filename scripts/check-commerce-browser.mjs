@@ -33,36 +33,33 @@ const assertNoOverflow = async (page, route, width) => {
 };
 
 const patchInventory = async (route) => {
-  if (route.request().resourceType() !== 'document') return route.continue();
+  if (!route.request().url().endsWith('/data/cart-inventory.json')) return route.continue();
   const response = await route.fetch();
-  const type = response.headers()['content-type'] || '';
-  if (!type.includes('text/html')) return route.fulfill({ response });
-  const body = await response.text();
-  const patched = body.replace(
-    /(<script id="carlay-cart-inventory" type="application\/json">)([\s\S]*?)(<\/script>)/,
-    (_, start, json, end) => {
-      const records = JSON.parse(json);
-      const work = records.find((record) => record.id === 'legacy-vortex-5');
-      if (work) {
-        const approved = (value) => ({ value, reviewStatus: 'owner-approved' });
-        work.availability = 'available';
-        work.availabilityReviewStatus = 'owner-approved';
-        work.price.reviewStatus = 'owner-approved';
-        work.medium = approved('Acrylique sur toile');
-        work.year = approved(2026);
-        work.dimensions.reviewStatus = 'owner-approved';
-        work.signaturePlacement = approved('Dos de la toile');
-        work.condition = approved('Neuve');
-        work.framingStatus = approved('Non encadrée');
-        work.certificateStatus = approved('Inclus');
-        work.images.full = { src: work.image.src, alt: `${work.title}, vue intégrale test`, reviewStatus: 'owner-approved' };
-        work.images.details = [{ src: work.image.src, alt: `${work.title}, détail test`, reviewStatus: 'owner-approved' }];
-      }
-      return `${start}${JSON.stringify(records)}${end}`;
-    },
-  );
-  return route.fulfill({ response, body: patched, headers: { ...response.headers(), 'content-type': 'text/html; charset=utf-8' } });
+  const records = await response.json();
+  const work = records.find((record) => record.id === 'legacy-vortex-5');
+  if (work) {
+    const approved = (value) => ({ value, reviewStatus: 'owner-approved' });
+    work.availability = 'available';
+    work.availabilityReviewStatus = 'owner-approved';
+    work.price.reviewStatus = 'owner-approved';
+    work.medium = approved('Acrylique sur toile');
+    work.year = approved(2026);
+    work.dimensions.reviewStatus = 'owner-approved';
+    work.signaturePlacement = approved('Dos de la toile');
+    work.condition = approved('Neuve');
+    work.framingStatus = approved('Non encadrée');
+    work.certificateStatus = approved('Inclus');
+    work.images.full = { src: work.image.src, alt: `${work.title}, vue intégrale test`, reviewStatus: 'owner-approved' };
+    work.images.details = [{ src: work.image.src, alt: `${work.title}, détail test`, reviewStatus: 'owner-approved' }];
+  }
+  return route.fulfill({
+    response,
+    body: JSON.stringify(records),
+    headers: { ...response.headers(), 'content-type': 'application/json; charset=utf-8' },
+  });
 };
+
+const waitForCart = (page) => page.waitForFunction(() => document.documentElement.dataset.cartReady === 'true');
 
 let browser;
 try {
@@ -75,7 +72,8 @@ try {
   page.on('console', (message) => message.type() === 'error' && errors.push(message.text()));
   page.on('pageerror', (error) => errors.push(error.message));
 
-  await page.goto(`${origin}/oeuvre/vortex-5`);
+  await page.goto(`${origin}/oeuvre/vortex-5/`);
+  await waitForCart(page);
   assert(
     (await page.locator('[data-cart-actions] [data-availability="not-for-sale"]').count()) === 1,
     'Not-for-sale commerce state is not visible on the work page.',
@@ -83,6 +81,7 @@ try {
   assert((await page.locator('[data-cart-add]').count()) === 0, 'Not-for-sale work exposed an add control.');
   await page.evaluate(() => localStorage.setItem('carlay-cart-v2', JSON.stringify({ version: 2, itemIds: ['legacy-vortex-5', 'invented'] })));
   await page.reload();
+  await waitForCart(page);
   assert((await page.locator('[data-cart-count]').first().textContent()) === '0', 'Unavailable or unknown persisted work was not removed.');
 
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -92,26 +91,29 @@ try {
   assert(await page.locator('main').evaluate((node) => node.inert), 'Drawer did not make background content inert.');
   assert(await page.locator('[data-cart-close]').evaluate((node) => node === document.activeElement), 'Drawer focus did not move to the close button.');
   await page.keyboard.press('Shift+Tab');
-  assert((await page.evaluate(() => document.activeElement?.getAttribute('href'))) === '/boutique', 'Drawer focus did not wrap to its final control.');
+  assert((await page.evaluate(() => document.activeElement?.getAttribute('href'))) === '/boutique/', 'Drawer focus did not wrap to its final control.');
   await page.keyboard.press('Escape');
   assert(await open.evaluate((node) => node === document.activeElement), 'Drawer focus did not return to its trigger.');
   assert(!await page.locator('main').evaluate((node) => node.inert), 'Drawer did not restore background interactivity.');
 
   await page.setViewportSize({ width: 320, height: 800 });
-  for (const route of ['/panier', '/commande', '/confirmation']) {
+  for (const route of ['/panier/', '/commande/', '/confirmation/']) {
     await page.goto(`${origin}${route}`);
+    await waitForCart(page);
     await assertNoOverflow(page, route, 320);
   }
-  await page.goto(`${origin}/panier`);
+  await page.goto(`${origin}/panier/`);
+  await waitForCart(page);
   assert(!await page.locator('[data-cart-page-review]').isVisible(), 'Empty cart exposed checkout totals or CTA.');
-  await page.goto(`${origin}/commande`);
+  await page.goto(`${origin}/commande/`);
+  await waitForCart(page);
   assert(await page.locator('[data-checkout-cart-error]').isVisible(), 'Empty checkout did not expose a recovery state.');
   assert(await page.locator('[data-checkout-submit]').isDisabled(), 'Empty checkout submit remained enabled.');
   const bodyText = await page.locator('body').innerText();
   assert(!/Stripe|Mollie|Coinbase/i.test(bodyText), 'Checkout implies a named live provider.');
   const noJavaScript = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 320, height: 800 } });
   const noJavaScriptCheckout = await noJavaScript.newPage();
-  await noJavaScriptCheckout.goto(`${origin}/commande`);
+  await noJavaScriptCheckout.goto(`${origin}/commande/`);
   assert(await noJavaScriptCheckout.locator('[data-checkout-form]').isVisible(), 'Checkout essentials disappear when JavaScript does not initialize.');
   assert(await noJavaScriptCheckout.locator('[data-checkout-submit]').isDisabled(), 'Non-enhanced checkout exposed an actionable submit.');
   assert((await noJavaScriptCheckout.locator('noscript').innerText()).includes('Aucun paiement'), 'Non-enhanced checkout lacks an accurate no-payment message.');
@@ -124,7 +126,8 @@ try {
   const journeyErrors = [];
   demo.on('console', (message) => message.type() === 'error' && journeyErrors.push(message.text()));
   demo.on('pageerror', (error) => journeyErrors.push(error.message));
-  await demo.goto(`${origin}/oeuvre/vortex-5`);
+  await demo.goto(`${origin}/oeuvre/vortex-5/`);
+  await waitForCart(demo);
   await demo.evaluate(() => {
     const button = document.createElement('button');
     button.type = 'button';
@@ -143,12 +146,15 @@ try {
   assert((await demo.locator('[data-cart-count]').first().textContent()) === '1', 'Duplicate add changed the unique-work count.');
   assert((await demo.locator('[data-cart-announcer]').textContent()).includes('déjà'), 'Duplicate add was not announced.');
   await demo.reload();
+  await waitForCart(demo);
   assert((await demo.locator('[data-cart-count]').first().textContent()) === '1', 'Cart did not persist across reload.');
 
-  await demo.goto(`${origin}/panier`);
+  await demo.goto(`${origin}/panier/`);
+  await waitForCart(demo);
   assert((await demo.locator('[data-cart-page-items] .cart-line').count()) === 1, 'Full cart did not render the persisted work.');
   await assertNoOverflow(demo, '/panier', 390);
-  await demo.locator('main a[href="/commande"]').filter({ hasText: 'Continuer' }).click();
+  await demo.locator('main a[href="/commande/"]').filter({ hasText: 'Continuer' }).click();
+  await waitForCart(demo);
   assert(!await demo.locator('[data-order-summary]').getAttribute('open'), 'Mobile order summary should begin collapsed.');
 
   await demo.locator('[data-checkout-submit]').click();
@@ -174,14 +180,16 @@ try {
 
   await demo.uncheck('input[name="simulate_failure"]');
   await demo.locator('[data-checkout-submit]').click();
-  await demo.waitForURL('**/confirmation');
+  await demo.waitForURL('**/confirmation/');
+  await waitForCart(demo);
   assert(await demo.getByRole('heading', { name: 'Aucun paiement n’a été pris' }).isVisible(), 'Confirmation lacks the no-payment outcome.');
   assert((await demo.locator('[data-confirmation-items]').innerText()).includes('Vortex 5'), 'Confirmation does not repeat the selected work.');
   assert((await demo.locator('[data-cart-count]').first().textContent()) === '0', 'Successful demo did not clear the cart.');
   await assertNoOverflow(demo, '/confirmation', 390);
 
   await demo.setViewportSize({ width: 1440, height: 900 });
-  await demo.goto(`${origin}/commande`);
+  await demo.goto(`${origin}/commande/`);
+  await waitForCart(demo);
   await assertNoOverflow(demo, '/commande', 1440);
 
   assert(errors.length === 0, `Guarded journey produced console errors:\n${errors.join('\n')}`);

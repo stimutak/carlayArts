@@ -2,7 +2,11 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Commande démo" currentPath="/commande">
+<Base
+  title="Commande démo"
+  currentPath="/commande"
+  description="Parcours de commande local en mode démonstration — aucune donnée de paiement n’est demandée ni transmise."
+>
   <section class="commerce-page commerce-page--checkout">
     <header class="commerce-header">
       <p class="eyebrow">Étape 2 sur 2 · Démonstration</p>
@@ -136,7 +140,7 @@ import Base from '../layouts/Base.astro';
         <div class="order-summary__content">
           <ul class="summary-lines" data-summary-items></ul>
           <p class="cart-total"><span>Sous-total des œuvres</span><strong data-summary-total></strong></p>
-          <a class="text-link" href="/panier">Modifier le panier</a>
+          <a class="text-link" href="/panier/">Modifier le panier</a>
         </div>
       </details>
     </div>
@@ -199,7 +203,7 @@ import Base from '../layouts/Base.astro';
       const items = snapshot.items.map((item) => {
         const li = document.createElement('li');
         const link = document.createElement('a');
-        link.href = `/oeuvre/${item.slug}`;
+        link.href = `/oeuvre/${item.slug}/`;
         link.textContent = item.title;
         const price = document.createElement('strong');
         price.textContent = money(item.price.amount, item.price.currency);

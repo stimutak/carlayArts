@@ -633,16 +633,13 @@
   border-block: 1px solid var(--line);
 }
 
-.artwork-story h2,
-.artwork-review h2 {
+.artwork-story h2 {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-base);
 }
 
-.artwork-story p,
-.artwork-review p,
-.artwork-review li {
+.artwork-story p {
   margin: 0;
   color: var(--muted);
   font-size: var(--text-sm);
@@ -706,21 +703,6 @@
   margin: 0;
   color: var(--muted);
   font-size: var(--text-sm);
-}
-
-.artwork-review {
-  display: grid;
-  gap: 0.8rem;
-  padding: 1rem;
-  border-left: 2px solid var(--rose);
-  background: rgb(255 255 255 / 3%);
-}
-
-.artwork-review ul {
-  display: grid;
-  gap: 0.35rem;
-  padding-left: 1rem;
-  margin: 0;
 }
 
 .related {
