@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
 import { CHECKOUT_TRANSPORT, createCheckout, readDemoConfirmation, saveDemoConfirmation, validateCustomer } from '../src/lib/checkout.js';
 
 const approvedFact = (value) => ({ value, reviewStatus: 'owner-approved' });
@@ -54,5 +55,15 @@ describe('checkout validation and demo-only adapter', () => {
     saveDemoConfirmation(confirmation, storage);
     expect(readDemoConfirmation(storage)).toEqual(confirmation);
     expect(() => saveDemoConfirmation({ ...confirmation, paymentTaken: true }, storage)).toThrow(/Invalid/);
+  });
+});
+
+describe('checkout reading and focus order', () => {
+  it('keeps the mobile summary before the form in source and visual order', () => {
+    const page = readFileSync('src/pages/commande.astro', 'utf8');
+    const css = readFileSync('src/styles/components.css', 'utf8');
+    expect(page.indexOf('class="order-summary"')).toBeLessThan(page.indexOf('class="checkout-form"'));
+    expect(css).toMatch(/\.order-summary \{[\s\S]*?grid-column: 2;[\s\S]*?grid-row: 1;/);
+    expect(css).toMatch(/\.checkout-layout \.checkout-form \{[\s\S]*?grid-column: 1;[\s\S]*?grid-row: 2;/);
   });
 });

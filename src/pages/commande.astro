@@ -18,6 +18,15 @@ import Base from '../layouts/Base.astro';
     <noscript><p class="notice notice--error">JavaScript est nécessaire pour utiliser la commande de démonstration. Aucun paiement n’est disponible.</p></noscript>
 
     <div class="checkout-layout" data-checkout-content>
+      <details class="order-summary" data-order-summary>
+        <summary>Récapitulatif <span data-summary-count></span></summary>
+        <div class="order-summary__content">
+          <ul class="summary-lines" data-summary-items></ul>
+          <p class="cart-total"><span>Sous-total des œuvres</span><strong data-summary-total></strong></p>
+          <a class="text-link" href="/panier/">Modifier le panier</a>
+        </div>
+      </details>
+
       <form class="checkout-form" data-checkout-form novalidate>
         <div class="notice notice--error error-summary" data-error-summary role="alert" tabindex="-1" hidden>
           <h2>Vérifiez les informations indiquées</h2>
@@ -135,14 +144,6 @@ import Base from '../layouts/Base.astro';
         <p class="policy-review">Les politiques de livraison, taxes, droits, retours et dommages ne sont pas encore approuvées et ne sont pas présentées comme des conditions commerciales.</p>
       </form>
 
-      <details class="order-summary" data-order-summary>
-        <summary>Récapitulatif <span data-summary-count></span></summary>
-        <div class="order-summary__content">
-          <ul class="summary-lines" data-summary-items></ul>
-          <p class="cart-total"><span>Sous-total des œuvres</span><strong data-summary-total></strong></p>
-          <a class="text-link" href="/panier/">Modifier le panier</a>
-        </div>
-      </details>
     </div>
   </section>
 

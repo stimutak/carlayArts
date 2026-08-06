@@ -1451,6 +1451,8 @@
 
 .checkout-form {
   display: grid;
+  grid-column: 1;
+  grid-row: 1;
   gap: 1.5rem;
 }
 
@@ -1620,6 +1622,8 @@
 .order-summary {
   position: sticky;
   top: calc(var(--nav-h) + 1rem);
+  grid-column: 2;
+  grid-row: 1;
 }
 
 .order-summary__content {
@@ -1674,7 +1678,13 @@
 
   .checkout-layout .order-summary {
     position: static;
+    grid-column: 1;
     grid-row: 1;
+  }
+
+  .checkout-layout .checkout-form {
+    grid-column: 1;
+    grid-row: 2;
   }
 }
 
