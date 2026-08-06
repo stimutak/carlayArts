@@ -1,160 +1,587 @@
-# Noir Gallery v2 — Design Spec
+# Noir Gallery v2 — Implementation and Expert Approval Plan
 
-**Date:** 2026-08-05
-**Status:** Approved by Oliver (previews reviewed in browser + Figma)
-**Previews:** `previews/` (served at `/previews/` by `npm run dev`)
+**Created:** 2026-08-05
+
+**Revised:** 2026-08-06 after desktop, mobile, visual, commerce, accessibility, and technical audit
+
+**Status:** Design direction approved; implementation and expert sign-off pending
+
+**Design previews:** `previews/` (five static reference screens, not production behavior)
+
 **Figma record:** https://www.figma.com/design/E9RTsRpBfwwk94SiOBp3o2
 
-## Goal
+## 1. Executive decision
 
-Complete the Carlay Art redesign: keep the Noir Gallery direction, fix its
-execution flaws, and build the missing 60% of the user journey — artwork
-detail, about, contact, and a working cart/checkout — by migrating to Astro.
+Keep the Noir Gallery v2 direction and build it. The visual concept is strong: it
+feels premium, gives the paintings visual priority, and presents Carlay more
+distinctively than the existing site.
 
-## Audit findings this spec addresses
+Do **not** treat the current previews as an approved product or launch candidate.
+They demonstrate art direction only. They do not yet provide a trustworthy,
+accessible, mobile-complete, or functional purchase journey.
 
-1. Purchase flow dead-ends in a JS `alert()`; Snipcart referenced but never configured.
-2. No artwork detail pages; cards are not clickable.
-3. Dead links: `/a-propos`, `/livraison`, `/mentions-legales`; Instagram points at generic instagram.com.
-4. Scroll-reveals render sections invisible during normal scrolling.
-5. Headings fall back to Space Grotesk (Clash Display never loaded) — soft, not architectural.
-6. Inconsistent nav (cart icon only on boutique), © 2024, orphan card in collections grid (3+1).
-7. Low-contrast body gray; desaturated-until-hover art stays dim on touch devices.
+The work will be accepted in two stages:
 
-## Architecture — Astro migration
+1. **Design and implementation approval in demo mode.** Every route and interaction
+   works end to end without taking a real payment. This is the scope of this plan.
+2. **Live-commerce activation.** Real providers, legal/policy content, production
+   inventory controls, monitoring, and payment security are separately approved
+   before money can be taken.
 
-```
+## 2. Current-state truth
+
+### What exists
+
+- Five static previews: Accueil, Boutique, one Vortex 5 detail page, L'Artiste,
+  and Commande.
+- A coherent visual system using Noir, rose, restrained series colors, Clash
+  Display, Space Grotesk, and Playfair Display.
+- Responsive compositions with no page-level horizontal overflow in audited
+  1440px, 390px, and 320px viewports.
+- A fail-visible reveal concept, reduced-motion rules, meaningful image alt text,
+  and generally sound contrast choices.
+
+### What does not exist yet
+
+- No Astro application, build pipeline, content collection, or production routes.
+- No unique page per artwork. Every preview card points to the same Vortex 5 page.
+- No working filters, mobile menu, accessible lightbox, cart, cart drawer, checkout
+  validation, confirmation, or failure/recovery states.
+- No Contact, Panier, or Confirmation implementation.
+- No automated test suite; `npm test` currently reports "No tests yet."
+- No complete product imagery, approved curatorial copy, real Instagram URL,
+  shipping/returns/duties policy, or live payment integration.
+
+### Audit conclusion
+
+- **Art direction:** approximately 8/10 and worth implementing.
+- **Launch readiness:** approximately 2–4/10 depending on the surface.
+- **Primary risk:** the previews look finished enough to imply behaviors and trust
+  that the product does not yet provide.
+
+## 3. Product goal and design principles
+
+Build a French-first artist and commerce site that lets a visitor:
+
+1. Recognize Carlay's world within five seconds.
+2. Understand enough about the artist, series, process, and individual work to
+   make the mystery feel intentional rather than underexplained.
+3. Browse all works, distinguish available from sold works, and reach the correct
+   detail page every time.
+4. Inspect an artwork faithfully, including texture and physical details.
+5. Add one unique work to the cart and complete a clear demo checkout.
+6. Understand certificate, condition, framing, shipping, duties, returns, and
+   damage procedures before committing.
+7. Complete the full journey by keyboard, touch, screen reader, reduced motion,
+   and mobile navigation.
+
+Design principles:
+
+- **Art first.** UI remains quiet; paintings supply most of the color.
+- **Mystery with evidence.** Use concise, concrete curatorial and process detail,
+  not generic superlatives or exhaustive explanation.
+- **Product truth over mood.** Editorial crops may be used for discovery, but the
+  detail page must show the full, uncropped work and accurate physical information.
+- **Premium means dependable.** Every visible control must work; no false zoom,
+  dead card, decorative filter, or checkout button.
+- **Fail visible and fail closed.** Content remains visible without JavaScript;
+  unavailable or unverified works cannot be purchased.
+- **Mobile is a primary surface.** Navigation, filters, artwork inspection, cart,
+  and checkout must be complete at 320px and above.
+
+## 4. Scope
+
+### Routes required for design and implementation approval
+
+| Route | Purpose | Required behavior |
+|---|---|---|
+| `/` | Accueil | Hero, featured works, artist introduction, collection discovery, acquisition reassurance |
+| `/boutique` | All works | Filterable collection catalog, availability filter, result count, correct work links |
+| `/oeuvre/[slug]` | Artwork detail | Faithful media, story/specifications, lightbox, availability-specific actions, related works |
+| `/a-propos` | Artist story | Artist hero, concrete biography/process, facts, signature, contact handoff |
+| `/contact` | Contact | Press/gallery contact, acquisition routing, real social link |
+| `/panier` | Cart | Unique line items, removal, totals, reassurance, checkout CTA |
+| `/commande` | Demo checkout | Validated shipping form, payment choice, order summary, demo submission |
+| `/confirmation` | Demo result | Order summary, explicit demo status, next steps, return navigation |
+
+Every artwork in the authoritative inventory must generate its own
+`/oeuvre/[slug]` route. Sold works keep useful, shareable pages but expose no
+purchase CTA.
+
+### Out of scope for the design-approval release
+
+- Taking a real payment.
+- Customer accounts.
+- English translation.
+- A CMS.
+- Shipment purchasing or fulfillment automation.
+
+The architecture must leave clean integration points for these later additions.
+
+## 5. Inputs that must be resolved
+
+These are dependencies, not implementation details to guess.
+
+| Input | Needed by | Acceptance condition |
+|---|---|---|
+| Authoritative inventory and sold state | Phase 1 | Every work has one stable ID and owner-approved availability |
+| Full-resolution, uncropped artwork files | Phase 2 | Hero, detail, texture, back/signature, and optional room-scale views mapped to each work |
+| Artist-approved series statements and work notes | Phase 3 | At least one concrete series premise and one specific note per available work |
+| Real Instagram/profile URL | Phase 3 | No generic `instagram.com` destination remains |
+| Shipping, duties, returns, framing, condition, and damage policy | Phase 4 | Copy is approved for display before checkout |
+| Demo-versus-live payment decision | Phase 4 | Demo mode is unmistakable; no real charge path exists in this release |
+| Live provider/legal ownership | Live-commerce gate | Named owner approves Stripe/Mollie/Coinbase and required legal documents |
+
+If an input is missing, use visibly labeled draft content in development. Do not
+invent factual claims or ship placeholders.
+
+## 6. Technical architecture
+
+Migrate to Astro with fully static output.
+
+```text
 src/
-├── content/artworks/        # one JSON entry per artwork (~40): title, series,
-│   └── romeo-1.json         # price, size cm, year, image, sold, description
-├── components/              # Nav, Footer, ArtworkCard, CartDrawer, Reveal
-├── layouts/Base.astro       # fonts, tokens, grain overlay, meta, OG tags
+├── content/
+│   └── artworks/             # validated record per artwork
+├── components/
+│   ├── Nav.astro
+│   ├── MobileMenu.astro
+│   ├── Footer.astro
+│   ├── ArtworkCard.astro
+│   ├── ArtworkMedia.astro
+│   ├── Lightbox.astro
+│   ├── FilterBar.astro
+│   ├── CartDrawer.astro
+│   ├── CartLineItem.astro
+│   ├── CheckoutForm.astro
+│   └── Reveal.astro
+├── layouts/
+│   └── Base.astro
+├── lib/
+│   ├── cart.ts               # unique-work cart and persistence
+│   ├── inventory.ts          # validation and availability rules
+│   ├── checkout.ts           # demo adapter; future provider interface
+│   └── format.ts
 ├── pages/
 │   ├── index.astro
-│   ├── boutique.astro       # all 22 series, sections per series
-│   ├── oeuvre/[slug].astro  # static page per artwork at build time
+│   ├── boutique.astro
+│   ├── oeuvre/[slug].astro
 │   ├── a-propos.astro
-│   ├── contact.astro        # minimal: mailto + Instagram (no form)
+│   ├── contact.astro
 │   ├── panier.astro
-│   ├── commande.astro       # checkout
-│   └── confirmation.astro   # demo-mode confirmation
-└── styles/                  # tokens.css / base.css / components.css (carried over)
+│   ├── commande.astro
+│   └── confirmation.astro
+└── styles/
+    ├── tokens.css
+    ├── base.css
+    └── components.css
 ```
 
-- **Content collections** give every artwork a real URL (`/oeuvre/romeo-1`) — SEO + shareability.
-- **Fully static output.** No server. Images run through Astro's asset pipeline
-  (current site serves original multi-MB scans).
-- **Cart is an island**: small vanilla JS module + localStorage, hydrated on every page.
-- **Checkout provider adapter**: `demo` mode now (full flow, styled confirmation with a
-  visible "mode démonstration" notice), `stripe` / `mollie` / `coinbase` slots activate
-  later via keys — UI unchanged. Aligns with PAYMENTS.md multi-provider strategy.
-- Cart rules: originals are unique — adding a work twice is a no-op with a
-  "pièce unique" toast; sold works cannot be added.
+Architecture rules:
 
-## Design system (v2 changes)
+- Content is rendered server-side/static-first; JavaScript enhances rather than
+  reveals essential information.
+- Cart state is a small client island persisted in versioned `localStorage`.
+- A work may appear only once in the cart. Duplicate add attempts produce an
+  accessible "pièce unique" notice without changing quantity.
+- Sold or unknown inventory fails closed and cannot be added.
+- Checkout uses an adapter interface. Only the explicit `demo` adapter is enabled
+  until the live-commerce gate passes.
+- Components, navigation, footer, metadata, and cart count are shared across every
+  route rather than duplicated in page files.
 
-**Typography.**
-- Display: **Clash Display 600/700** via Fontshare (free commercial license) —
-  headings, artwork titles, hero. `letter-spacing: -0.02em`, sentence case for titles,
-  uppercase reserved for small labels/eyebrows. (Figma stand-in: Schibsted Grotesk.)
-- Body/UI: Space Grotesk 400/500. Accent: Playfair Display Italic (French accent lines only).
+## 7. Artwork data contract
 
-**Color.**
-- UI stays grayscale: `#0A0A0A` noir, `#141414` surface, `#FAFAFA` text,
-  `#B8B8B8` muted (AA on noir), `#8A8A8A` faint, `rgba(255,255,255,.08/.16)` lines.
-- One UI accent: rose `#FF3366` (CTAs, active states, VENDU). Text sitting ON a rose
-  fill is always noir `#0A0A0A` (5.58:1, AA) — never white (3.40:1, fails AA at UI sizes).
-- **Signature: series accents** — each series owns a hue sampled from its paintings,
-  used ONLY as a 2px rule under series headers + series eyebrow on detail pages:
-  Romeo `#87CEEB` · Vortex `#2DD4BF` · Purple Galaxy `#8B5CF6` · Insomnia `#4ADE80` ·
-  Golden Sunset `#D4A574` · Sweet Life `#D946EF`. (Series without an assigned hue
-  default to the neutral line color until sampled.)
+Each artwork record must be schema-validated at build time. Required fields:
 
-**Motion — fail-visible reveals.**
-- The dimmed initial state is JS-gated: an inline script adds `class="js"` to `<html>`,
-  and only `html.js .reveal` is dimmed. **No JS (or failed JS) = everything fully
-  visible.** This is a hard requirement, not an implementation detail.
-- `.reveal`: opacity 0.25 → 1, translateY 16px → 0, 500ms ease-out.
-- IntersectionObserver `rootMargin: 0 0 -8% 0`; elements already in viewport on load
-  reveal immediately; observers unobserve after firing (reveal once).
-- Desaturation capped at `saturate(0.85)`, disabled on `(hover: none)` devices.
-- `prefers-reduced-motion`: kills ALL transitions and animations (including card
-  hover scale), full opacity.
+- Stable ID and slug.
+- Title, series, and sort order.
+- Price, currency, and availability: `available`, `sold`, or `not-for-sale`.
+- Medium, year, width, height, optional depth, and unit.
+- Full-work orientation and aspect ratio.
+- Signature placement, condition, framing status, and certificate status.
+- Concise card description, specific work note, and series statement reference.
+- Main uncropped image, card crop, at least one detail image for available works,
+  and optional back/signature/room-scale images.
+- Alt text for every meaningful image.
+- Featured/related-work metadata.
 
-**Components.**
-- Nav (all pages): logo left; **three links — Œuvres → `/boutique`, L'Artiste →
-  `/a-propos`, Contact → `/contact`** (no separate "Boutique" item; Œuvres IS the
-  boutique); cart pill with count right; transparent → blur on scroll; active link in
-  rose (`aria-current="page"` only when the destination is the current page).
-  Nav height is the shared token `--nav-h`, consumed by anything sticky beneath it.
-- Mobile nav (<900px): hamburger → fullscreen overlay (per CLAUDE.md), links + cart,
-  focus-trapped, Esc/overlay-tap to close.
-- Artwork card: media (hover: saturate + scale 1.03), body row (title + size left,
-  price right), VENDU badge (rose outline chip, top-left) + struck price.
-- Buttons: primary (white → rose on hover), ghost (hairline border), disabled (surface).
-- Footer: logo + Playfair tagline, Collections / Info / Paiements columns,
-  current year, real Instagram URL (get from artist), no links to nonexistent pages.
+Build must fail for duplicate IDs/slugs, missing required fields, invalid prices,
+unresolved image paths, or an available work without a faithful full-work image.
 
-## Pages
+## 8. Design system requirements
 
-- **Accueil**: hero (CA monogram, starfield/gradient atmosphere, Playfair accent line,
-  primary CTA) → Œuvres sélectionnées (1 large + 4 grid) → L'Artiste band (bio + NYC
-  photo + signature) → Collections bento on a 12-col grid (2 wide + 4 standard — no
-  orphans) + "Voir les 22 séries" → Acquérir band → footer.
-- **Boutique**: header band, sticky filter chips (offset by `--nav-h`), per-series
-  sections with accent rule + count, cards link to detail pages. **Chips are
-  `<button aria-pressed>` elements that filter series sections client-side** ("Tout"
-  resets); with JS unavailable all sections simply remain visible.
-- **Œuvre `/oeuvre/[slug]`** ("viewing room"): left stage (artwork on soft-lit surface;
-  the stage is a `<button>` opening a full-screen lightbox with zoom — keyboard and
-  touch accessible); right sticky info column (series eyebrow in
-  accent color, title, description, specs table, price, AJOUTER AU PANIER + ACHETER
-  MAINTENANT, certificate/shipping/payment reassurance); "Plus de la série X" (3 related).
-  Sold works keep pages: VENDU state, no cart CTA, link to similar works.
-- **A-propos**: full-bleed artist photo hero (gradient scrim, CARLAY display title,
-  "Paris · New York" accent) → editorial bio with rose-bar pull quote → signature →
-  3 facts row (Médium / Séries / Marchés) → contact band (Presse & galeries; purchases
-  route to boutique; mailto + Instagram).
-- **Contact**: same content as the contact band, standalone page for the nav link.
-- **Panier**: cart page — line items (thumb, title, series, size, remove), totals,
-  "certificat inclus" note, CTA to commande. CartDrawer is the slide-in sibling on
-  all pages.
-- **Commande**: shipping form (autocomplete attributes), payment method selector
-  (Carte via Stripe/Mollie · iDEAL/Bancontact via Mollie · Crypto via Coinbase),
-  sticky order summary, demo-mode notice, Payer button → confirmation page.
+### Typography
 
-## Data & copy decisions
+- Display: Clash Display 600/700 for hero, page titles, and artwork titles.
+- Body/UI: Space Grotesk 400/500.
+- Accent: Playfair Display Italic only for restrained editorial lines.
+- Fonts must be self-hosted or have a documented resilient loading strategy so the
+  brand does not collapse when third-party font CSS is blocked.
+- Mobile microcopy must remain comfortably readable; avoid combining approximately
+  11px text with extreme tracking for essential navigation, filters, or assurance.
 
-- **Inventory source of truth**: the artwork JSON collection is seeded from the
-  current `boutique.html` sold states (all Romeo/Juliette SOLD; Vortex 1 & 5 available,
-  rest of Vortex SOLD; all Insomnia available; etc.). Preview sample data matches this.
-- **Price format**: keep `€3,000` (symbol-first, comma separator) for parity with the
-  current site — an explicit decision, not an oversight of the French "3 000 €" form.
-- **Instagram URL**: placeholder `https://instagram.com` is marked `data-todo` in
-  previews; the artist's real profile URL must be obtained before launch.
-- **Footer**: the full columned footer is a shared component on ALL pages (subpage
-  previews show only the bottom bar as shorthand).
+### Color
 
-## Out of scope (this phase)
+- Core UI: Noir `#0A0A0A`, surface `#141414`, primary `#FAFAFA`, muted `#B8B8B8`,
+  faint `#8A8A8A`, and line colors at 8%/16% white.
+- Rose `#FF3366` is the only global UI accent. Text on a rose fill is Noir, not white.
+- Series hues remain limited to a thin section rule and detail-page eyebrow unless
+  expert review approves another use.
+- All text and interactive states must meet WCAG 2.2 AA contrast requirements.
 
-- Real payment processing (needs API keys) — adapter ships in demo mode.
-- EN translation (FR only; structure should not block a future toggle).
-- Account page (`/mon-compte`), livraison & mentions légales content pages
-  (footer/nav must not link to them until they exist).
-- CMS — artworks are JSON files in the repo.
+### Motion
 
-## Acceptance criteria
+- Reveal effects are gated by `html.js`; no JavaScript means full opacity.
+- Initial enhanced state is never fully invisible: opacity starts at 0.25 or higher.
+- Observed elements reveal once and are then unobserved.
+- `prefers-reduced-motion` removes reveal, hover scale, smooth scrolling, and other
+  nonessential motion while preserving content and state changes.
+- No purchase, validation, or availability information depends on animation.
 
-1. All 8 routes build statically via Astro (index, boutique, oeuvre/[slug], a-propos,
-   contact, panier, commande, confirmation); every artwork in the JSON collection gets
-   a working `/oeuvre/[slug]` page.
-2. Lighthouse: no images served over 300KB; headings render in Clash Display.
-3. Scrolling any page at normal speed never shows a fully invisible section —
-   **including with JavaScript disabled**.
-4. Cart: add → drawer updates on every page; duplicate add no-ops with toast; sold
-   works not addable; checkout completes in demo mode and ends on confirmation page.
-5. No dead links anywhere; nav identical on all pages; © year current.
-6. `prefers-reduced-motion` and keyboard focus states respected.
-7. Existing pages' content parity: nothing from the current index/boutique is lost.
-8. All text meets WCAG AA in every state (default, hover, active, pressed) —
-   including text on rose fills (noir, never white).
+### Touch and focus
+
+- Primary navigation, cart, filter, lightbox, and checkout controls provide at least
+  a 44px comfortable touch target.
+- Every interactive element has a visible keyboard focus state with more than a
+  subtle one-pixel color change.
+- Hover-only information is also exposed on focus and touch.
+
+## 9. Page and interaction requirements
+
+### Accueil
+
+- Retain the approved monogram hero, atmosphere, artistic descriptor, and primary CTA.
+- Use one large plus four supporting featured works, each linked to the correct work.
+- Present the artist with one concrete process statement, not only market positioning.
+- Use a balanced six-collection bento with no orphan card.
+- Footer payment labels are informational or route to payment information; they must
+  never open a checkout containing a work the visitor did not select.
+
+### Boutique
+
+- Include all authoritative series and works; preview-only sample notices are removed.
+- Filters are real `<button aria-pressed>` controls. "Tout" resets the catalog.
+- Add a commercially useful "Disponibles" filter and a live result count.
+- Preserve selected filters in the URL so Back and shared links restore state.
+- On mobile, use a scroll container with visible continuation cues or an equivalent
+  accessible compact control. Do not hide overflow without indicating more options.
+- Cards clearly distinguish sold state and always link to the matching artwork.
+- Card imagery may be editorially cropped, but metadata and the linked detail page
+  must present the full, accurate work.
+
+### Artwork detail
+
+- Main stage displays the full artwork with `object-fit: contain`; it must not crop.
+- The stage is a real `<button>` with an accessible name and opens a modal lightbox.
+- Lightbox supports keyboard, touch, close button, Escape, focus trap, focus return,
+  next/previous media, and zoom appropriate to the available source resolution.
+- Provide full-work, texture/detail, edge, signature/back, and room-scale views when
+  available. Do not promise zoom when source resolution cannot support it.
+- Content order: series premise, specific work note, specifications, price/state,
+  actions, and trust/policy summary.
+- Available work: Add to cart and Buy now. Sold work: Vendu state and relevant
+  available alternatives, with no add action.
+- Related cards use real artwork routes and never `href="#"`.
+
+### A-propos and Contact
+
+- Retain the approved monochrome artist hero and restrained use of the colored canvas.
+- Replace generic claims with verified, concrete biography, process, inspirations,
+  series development, and France/New York context.
+- Keep the mystery by editing tightly, not by withholding all substance.
+- A-propos includes an artist-approved pull quote, signature, medium/series/market
+  facts, and a clear contact handoff.
+- Contact exists as a separate route with press/gallery context, acquisition routing,
+  mailto link, and real Instagram profile.
+
+### Cart
+
+- Cart drawer is available from every page and exposes count, work, price, remove,
+  subtotal, and links to cart/checkout.
+- Full cart page explains unique-work behavior, certificate, shipping summary, and
+  what happens next.
+- Empty-cart state has a useful return-to-works action.
+- State is consistent across reloads and routes.
+
+### Checkout and confirmation
+
+- Checkout is a semantic `<form>` with named and required inputs, labels,
+  autocomplete, country selection, appropriate region/address fields, inline errors,
+  error summary, and retained values after correction.
+- Payment methods are properly grouped radios with distinct values and descriptions.
+- Demo submission has disabled/loading/success/failure states and revalidates cart
+  and inventory before confirmation.
+- The first mobile viewport starts with page title and progress context; the order
+  summary is compact/collapsible rather than displacing the form by an entire screen.
+- Confirmation repeats the selected work and clearly states that no payment was taken.
+- Real provider branding is not used to imply a live integration before activation.
+
+### Mobile navigation
+
+- Below 900px, replace hidden desktop links with a visible menu button.
+- Fullscreen menu contains Œuvres, L'Artiste, Contact, and cart.
+- Implement `aria-expanded`, focus trap, Escape close, overlay close, body scroll lock,
+  and focus return to the menu button.
+- All primary routes remain reachable without relying on the footer.
+
+## 10. Implementation phases and exit gates
+
+### Phase 0 — Resolve inputs and freeze the acceptance baseline
+
+Deliverables:
+
+- Inventory/image audit with one row per work.
+- Approved route map and data schema.
+- Draft series/work copy clearly labeled for artist review.
+- Baseline screenshots of the five approved visual references.
+- Automated acceptance checklist committed to the repository.
+
+Exit gate: no duplicate inventory identity; missing facts and media are explicitly
+tracked; nobody treats preview placeholders as source-of-truth content.
+
+### Phase 1 — Application, content, and test foundation
+
+Deliverables:
+
+- Astro static project, shared layout, design tokens, self-hosted/resilient fonts,
+  content schema, generated routes, metadata helpers, and CI scripts.
+- Tests for schema validation, route generation, internal links, and missing assets.
+
+Exit gate: all required routes build; every artwork URL is unique and correct; build
+fails on invalid content; no UI behavior is claimed yet.
+
+### Phase 2 — Navigation, responsive system, and accessible primitives
+
+Deliverables:
+
+- Shared desktop/mobile navigation, footer, buttons, filters, dialogs, focus states,
+  fail-visible reveals, and reduced-motion behavior.
+- Responsive visual-regression baselines at 1440×900, 390×844, and 320×800.
+
+Exit gate: every route is keyboard- and mobile-navigable; no content is hidden when
+JavaScript is unavailable; no critical touch target is undersized.
+
+### Phase 3 — Gallery, product truth, and storytelling
+
+Deliverables:
+
+- Accueil, full Boutique, every artwork detail page, A-propos, and Contact.
+- Correct filters/URLs, faithful full-work imagery, accessible lightbox, approved
+  series statements, specific work notes, and real related-work routes.
+
+Exit gate: selecting any card always opens that work; available/sold state matches
+the inventory; reviewers can distinguish major series and explain Carlay's process
+without the experience becoming overexplained.
+
+### Phase 4 — Cart and demo checkout
+
+Deliverables:
+
+- Versioned cart state, drawer, cart page, validated checkout, adapter-backed demo
+  submission, confirmation, and all empty/error/loading/retry states.
+- Purchase-policy summaries placed before commitment.
+
+Exit gate: a visitor can find an available work, add it once, review it, correct
+checkout errors, complete demo checkout, and reach accurate confirmation on desktop,
+mobile, keyboard, and screen reader. No payment can be taken.
+
+### Phase 5 — Performance, SEO, and reliability hardening
+
+Deliverables:
+
+- Responsive AVIF/WebP/JPEG assets, width/height attributes, below-fold lazy loading,
+  prioritized LCP imagery, canonical URLs, descriptions, OG/Twitter cards, artwork
+  structured data, sitemap, robots policy, favicon, and 404 page.
+- Playwright journey tests, automated accessibility checks, link checks, and
+  performance budgets in CI.
+
+Exit gate: technical acceptance criteria in Section 11 pass on a production build.
+
+### Phase 6 — Expert review and release candidate
+
+Deliverables:
+
+- Review package with deployed demo, route/content inventory, representative desktop
+  and mobile screenshots, automated results, known limitations, and decision log.
+- Findings triaged by severity and resolved or explicitly accepted by the owner.
+
+Exit gate: every required expert gate in Section 12 is signed off; zero unresolved
+blockers or high-severity findings remain.
+
+## 11. Definition of done and measurable acceptance criteria
+
+### Functional
+
+- All required routes build statically and return the intended page.
+- Every card and related-work link opens the correct artwork.
+- Filters update visible results, count, `aria-pressed`, and shareable URL state.
+- Mobile navigation reaches every primary route and satisfies its keyboard behavior.
+- Lightbox works by mouse, keyboard, touch, and screen reader.
+- Cart persists correctly, rejects duplicates, rejects sold/unknown works, and stays
+  consistent across pages and reloads.
+- Demo checkout validates, reports errors, preserves corrections, completes, and
+  reaches confirmation containing the selected work.
+- No dead links, placeholder destinations, false affordances, or silent no-op controls.
+
+### Visual and content
+
+- The approved Noir Gallery hierarchy and restrained color use survive implementation.
+- Artwork detail never crops the full work; card crops do not imply false proportions.
+- Available works include sufficient resolution and supporting views for inspection.
+- Each series has an approved concrete premise; each available work has a specific note.
+- Claims about location, market activity, certificate, shipping, condition, and
+  payment are verified and owner-approved.
+- Full footer and current year appear consistently on every page.
+
+### Accessibility
+
+- WCAG 2.2 AA is the target for content, interaction, states, and responsive behavior.
+- Automated accessibility scan reports zero critical or serious violations on every
+  representative route.
+- Manual keyboard review passes navigation, filters, lightbox, cart, checkout, errors,
+  and confirmation.
+- Screen-reader review confirms names, roles, state changes, error association, modal
+  behavior, and meaningful reading order.
+- Layout remains usable at 200% zoom, 320px width, reduced motion, high contrast where
+  supported, and with JavaScript disabled for essential content.
+
+### Performance and SEO
+
+- No delivered image variant exceeds 300KB without a documented, approved exception.
+- All images have explicit dimensions; below-fold imagery is lazy loaded; the LCP
+  image is not lazy loaded and is appropriately prioritized.
+- Production Lighthouse targets on representative mobile and desktop routes:
+  Performance ≥90; Accessibility ≥95; Best Practices ≥95; SEO ≥95.
+- No console errors, failed local resources, duplicate titles/descriptions, missing
+  canonicals, or broken structured-data references.
+
+### Automated quality
+
+- Unit tests cover content validation, availability rules, price formatting, and cart
+  invariants.
+- End-to-end tests cover browse/filter, correct artwork routing, sold state, add/remove,
+  duplicate prevention, cart persistence, checkout validation, and confirmation.
+- Visual regression covers all primary page types at desktop and mobile viewports.
+- CI runs build, unit, end-to-end, accessibility, link, and asset-budget checks.
+
+## 12. Expert approval gates
+
+Passing means obtaining evidence from the right reviewers, not declaring the work
+"expert quality" internally.
+
+### Gate A — Art direction and brand
+
+Reviewer: independent art director or senior digital designer with art/fashion/luxury
+portfolio experience.
+
+They approve:
+
+- Visual hierarchy, typography, spacing, image treatment, mobile composition, and
+  consistency across every route.
+- That the noir treatment feels specific to Carlay rather than a generic luxury theme.
+- That UI accents support rather than compete with the paintings.
+
+Evidence: annotated review, before/after screenshots, and zero unresolved high-severity
+visual findings.
+
+### Gate B — Curatorial and art-commerce content
+
+Reviewer: curator, gallery professional, art advisor, or experienced artist-commerce
+editor, plus Carlay/owner approval for factual claims.
+
+They approve:
+
+- Series statements, individual work notes, biography, process, and artist voice.
+- Balance between intrigue and concrete understanding.
+- Product fidelity, terminology, provenance/condition/framing information, and buyer
+  reassurance appropriate to €1,000–€3,000 original works.
+
+Evidence: approved copy and image inventory with factual owner sign-off.
+
+### Gate C — UX and commerce
+
+Reviewer: senior product/UX designer with ecommerce checkout experience.
+
+They review these tasks on desktop and mobile:
+
+1. Identify the artist and medium from the first screen.
+2. Find an available work in a chosen series.
+3. Open the correct work and understand size, availability, and what is included.
+4. Inspect full artwork and detail media.
+5. Add the work, review the cart, correct checkout errors, and finish demo checkout.
+6. Find shipping, duties, returns, damage, and contact information.
+
+Evidence: expert heuristic review plus at least five representative usability sessions.
+Critical-task completion target is at least 90%, with no repeated product-identity,
+navigation, availability, or checkout misunderstanding.
+
+### Gate D — Accessibility
+
+Reviewer: accessibility specialist experienced with WCAG 2.2 and transactional flows.
+
+They approve keyboard, screen-reader, contrast, zoom/reflow, reduced-motion, touch,
+modal, form-error, and dynamic cart/filter announcements.
+
+Evidence: manual audit report, automated results, and zero unresolved critical or
+serious issues.
+
+### Gate E — Frontend, performance, and SEO
+
+Reviewers: senior frontend/performance engineer and technical SEO reviewer.
+
+They approve architecture, static generation, content validation, asset delivery,
+metadata, structured data, test coverage, failure handling, and production budgets.
+
+Evidence: production-build report, CI results, Lighthouse reports, crawl/link report,
+and zero unexplained console or network failures.
+
+### Gate F — Owner release acceptance
+
+Reviewer: Oliver/Carlay project owner.
+
+They confirm:
+
+- Inventory, prices, sold state, artwork images, biography, contact details, and
+  policies are correct.
+- Expert findings are resolved or explicitly accepted with documented rationale.
+- Demo mode is appropriate for release and cannot charge real money.
+
+## 13. Live-commerce activation gate
+
+This gate is intentionally outside the demo implementation approval.
+
+Before real payments are enabled:
+
+- Select and configure production payment provider(s) using public/client-safe keys
+  only in the frontend and server-side secrets only in approved infrastructure.
+- Complete provider domain verification, webhook signature validation, idempotency,
+  inventory reservation, duplicate-order prevention, refunds, failure recovery, and
+  monitoring.
+- Approve privacy, terms, returns/cancellation, shipping, duties/taxes, and legal
+  identity content with appropriate professional review.
+- Verify real prices/currency, tax behavior, fulfillment ownership, confirmation
+  email, support process, analytics consent, and incident response.
+- Run sandbox and limited production transaction tests with explicit owner approval.
+
+No live-payment credential, customer financial data, or one-time code belongs in the
+repository or in review artifacts.
+
+## 14. Review operating rules
+
+- Keep one severity-ranked issue log across all experts: Blocker, High, Medium, Low.
+- Blockers and High findings must be fixed and retested before release-candidate sign-off.
+- Medium findings require a fix or owner-accepted rationale with a follow-up owner/date.
+- A fix is not closed by code review alone; reproduce the original scenario and attach
+  the new evidence.
+- Preserve separate evidence for desktop, mobile, keyboard, screen reader, automated
+  tests, production build, and deployed demo. Each proves a different boundary.
+- Do not change the approved art direction during implementation without recording the
+  reason, affected routes/components, and owner decision.
+
+## 15. Completion statement
+
+The redesign is complete only when the production-built demo satisfies Section 11,
+passes all expert gates in Section 12, and has owner-approved content and inventory.
+The five preview pages and their Figma record remain visual references; they are not
+the completion evidence.
