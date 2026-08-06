@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accueil — Preview · CARLAY ART</title>
+<link rel="stylesheet" href="preview.css">
+<style>
+  /* hero */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--pad);
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 60% 45% at 78% 82%, rgba(139, 92, 246, 0.14), transparent 65%),
+      radial-gradient(ellipse 50% 40% at 18% 20%, rgba(255, 51, 102, 0.06), transparent 60%),
+      var(--noir);
+  }
+  .hero__logo { width: clamp(180px, 26vw, 300px); margin-bottom: 2.5rem; }
+  .hero__title {
+    font-size: var(--text-hero);
+    text-transform: uppercase;
+    line-height: 0.95;
+  }
+  .hero__title span { display: block; font-size: 0.32em; letter-spacing: 0.5em; font-weight: 600; color: var(--muted); margin-top: 0.8rem; }
+  .hero__accent { font-size: var(--text-lg); margin: 1.75rem 0 2.5rem; }
+  .hero__scroll {
+    position: absolute;
+    bottom: 2.2rem; left: 50%;
+    transform: translateX(-50%);
+    color: var(--faint);
+    font-size: var(--text-xs);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+  .hero__scroll::after {
+    content: '';
+    display: block;
+    width: 1px; height: 2.4rem;
+    margin: 0.7rem auto 0;
+    background: linear-gradient(var(--rose), transparent);
+    animation: drip 2s ease-in-out infinite;
+  }
+  @keyframes drip { 50% { transform: scaleY(0.4); transform-origin: top; } }
+
+  /* featured */
+  .feat-note { display: flex; justify-content: center; margin-top: 2.75rem; }
+
+  /* artist band */
+  .artist { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 6vw, 5rem); align-items: center; }
+  .artist__photo img { filter: none; }
+  .artist__sig { width: 130px; margin-top: 1.75rem; opacity: 0.85; }
+  .artist p { color: var(--muted); margin-bottom: 1.1rem; }
+  @media (max-width: 900px) { .artist { grid-template-columns: 1fr; } }
+
+  /* buy band */
+  .buy { text-align: center; border-top: 1px solid var(--line); }
+  .buy h2 { font-size: var(--text-2xl); }
+  .buy p { margin: 1.25rem auto 2.25rem; }
+  .buy__methods { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.6rem; margin-top: 2.25rem; color: var(--faint); font-size: var(--text-xs); letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a class="nav__logo" href="accueil.html">CARLAY ART</a>
+  <nav class="nav__links">
+    <a href="boutique.html">Œuvres</a>
+    <a href="a-propos.html">L'Artiste</a>
+    <a href="boutique.html">Boutique</a>
+    <a href="a-propos.html#contact">Contact</a>
+  </nav>
+  <button class="nav__cart" aria-label="Panier, 1 œuvre">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l1 14H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+    1
+  </button>
+</header>
+
+<section class="hero">
+  <img class="hero__logo" src="../original-site/images/logo-carlay-BLANC.png" alt="Monogramme CA — Carlay Art">
+  <p class="hero__accent accent-line">Art Contemporain · Acrylique sur Toile</p>
+  <a class="btn btn--primary" href="boutique.html">Découvrir la galerie</a>
+  <div class="hero__scroll">Scroll</div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">La Galerie</p>
+      <h2 class="display">Œuvres sélectionnées</h2>
+      <p class="lead">Chaque pièce est une peinture acrylique originale sur toile, accompagnée d'un certificat d'authenticité.</p>
+    </div>
+    <div class="grid-featured">
+      <a class="card reveal" href="oeuvre.html" style="--ratio: 3/4;">
+        <div class="card__media">
+          <span class="badge-sold">Vendu</span>
+          <img src="../original-site/images/Romeo-1-840x1137.jpg" alt="Romeo 1 — lignes d'or sur bleu ciel">
+        </div>
+        <div class="card__body">
+          <div><div class="card__title">Romeo 1</div><div class="card__meta">76 × 102 cm</div></div>
+          <div class="card__price card__price--sold">€3,000</div>
+        </div>
+      </a>
+      <a class="card reveal" href="oeuvre.html" style="--ratio: 1/1;">
+        <div class="card__media"><img src="../original-site/images/vortex-2-680x680.jpeg" alt="Vortex 2 — spirale violette sur teal"></div>
+        <div class="card__body">
+          <div><div class="card__title">Vortex 2</div><div class="card__meta">32 × 32 cm</div></div>
+          <div class="card__price">€1,000</div>
+        </div>
+      </a>
+      <a class="card reveal" href="oeuvre.html" style="--ratio: 1/1;">
+        <div class="card__media"><img src="../original-site/images/insomnia-1-680x680.jpg" alt="Insomnia 1 — rayures néon sur fond sombre"></div>
+        <div class="card__body">
+          <div><div class="card__title">Insomnia 1</div><div class="card__meta">61 × 76 cm</div></div>
+          <div class="card__price">€1,000</div>
+        </div>
+      </a>
+      <a class="card reveal" href="oeuvre.html" style="--ratio: 1/1;">
+        <div class="card__media"><img src="../original-site/images/Juliette-1-680x680.jpg" alt="Juliette 1 — éclats d'or sur magenta"></div>
+        <div class="card__body">
+          <div><div class="card__title">Juliette 1</div><div class="card__meta">76 × 102 cm</div></div>
+          <div class="card__price">€3,000</div>
+        </div>
+      </a>
+      <a class="card reveal" href="oeuvre.html" style="--ratio: 1/1;">
+        <div class="card__media"><img src="../original-site/images/VORTEX-5.jpg" alt="Vortex 5 — croisements or, rose et bleu"></div>
+        <div class="card__body">
+          <div><div class="card__title">Vortex 5</div><div class="card__meta">32 × 32 cm</div></div>
+          <div class="card__price">€1,000</div>
+        </div>
+      </a>
+    </div>
+    <div class="feat-note reveal">
+      <a class="btn btn--ghost" href="boutique.html">Voir toutes les œuvres →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section--tight" style="background: var(--surface);">
+  <div class="wrap artist">
+    <div class="reveal">
+      <p class="eyebrow">L'Artiste</p>
+      <h2 class="display" style="font-size: var(--text-2xl); text-transform: uppercase;">Carlay</h2>
+      <p style="margin-top: 1.5rem;">Carlay est une artiste émergente française, elle évolue dans l'univers de l'art abstrait. Sa technique est d'utiliser principalement de l'acrylique sur toile.</p>
+      <p>Inspirée par les paysages urbains et les scènes du quotidien, elle transforme des moments ordinaires en expériences visuelles extraordinaires.</p>
+      <p>Active principalement en France et à New York.</p>
+      <img class="artist__sig" src="../original-site/images/Carlay-art-signature.png" alt="Signature de Carlay">
+      <div><a class="btn btn--ghost" href="a-propos.html">En savoir plus →</a></div>
+    </div>
+    <div class="artist__photo reveal">
+      <img src="../original-site/images/Carlay-art-840x1120.jpg" alt="Carlay dans son atelier face à la skyline de New York">
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal" style="text-align: center;">
+      <p class="eyebrow">Explorer</p>
+      <h2 class="display">Collections</h2>
+    </div>
+    <div class="grid-bento">
+      <a class="card card--wide reveal" href="boutique.html" style="--ratio: 16/10; --series: var(--sky);">
+        <div class="card__media"><img src="../original-site/images/Romeo-2-840x1120.jpg" alt="Série Romeo"></div>
+        <div class="card__body">
+          <div><div class="card__title">Romeo</div><div class="card__meta">3 œuvres · à partir de €3,000</div></div>
+        </div>
+      </a>
+      <a class="card card--wide reveal" href="boutique.html" style="--ratio: 16/10; --series: var(--teal);">
+        <div class="card__media"><img src="../original-site/images/vortex-2-680x680.jpeg" alt="Série Vortex"></div>
+        <div class="card__body">
+          <div><div class="card__title">Vortex</div><div class="card__meta">9 œuvres · à partir de €1,000</div></div>
+        </div>
+      </a>
+      <a class="card reveal" href="boutique.html" style="--ratio: 1/1; --series: var(--neon);">
+        <div class="card__media"><img src="../original-site/images/insomnia-3-680x680.jpg" alt="Série Insomnia"></div>
+        <div class="card__body">
+          <div><div class="card__title">Insomnia</div><div class="card__meta">6 œuvres</div></div>
+        </div>
+      </a>
+      <a class="card reveal" href="boutique.html" style="--ratio: 1/1; --series: var(--violet);">
+        <div class="card__media"><img src="../original-site/images/PURPLE-GALAXY-7-680x680.jpg" alt="Série Purple Galaxy"></div>
+        <div class="card__body">
+          <div><div class="card__title">Purple Galaxy</div><div class="card__meta">6 œuvres</div></div>
+        </div>
+      </a>
+      <a class="card reveal" href="boutique.html" style="--ratio: 1/1; --series: var(--magenta);">
+        <div class="card__media"><img src="../original-site/images/Juliette-2-680x680.jpg" alt="Série Juliette"></div>
+        <div class="card__body">
+          <div><div class="card__title">Juliette</div><div class="card__meta">3 œuvres</div></div>
+        </div>
+      </a>
+      <a class="card reveal" href="boutique.html" style="--ratio: 1/1; --series: var(--gold);">
+        <div class="card__media"><img src="../original-site/images/GOLDEN-SUNSET-2-680x680.jpg" alt="Série Golden Sunset"></div>
+        <div class="card__body">
+          <div><div class="card__title">Golden Sunset</div><div class="card__meta">3 œuvres</div></div>
+        </div>
+      </a>
+    </div>
+    <div class="feat-note reveal">
+      <a class="btn btn--ghost" href="boutique.html">Voir les 22 séries →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section buy">
+  <div class="wrap reveal">
+    <h2 class="display">Acquérir une œuvre</h2>
+    <p class="lead" style="margin-inline: auto;">Paiement sécurisé par carte bancaire ou crypto. Livraison mondiale assurée, certificat d'authenticité inclus.</p>
+    <a class="btn btn--primary" href="boutique.html">Voir la boutique</a>
+    <div class="buy__methods">
+      <span>Visa</span><span>Mastercard</span><span>Apple Pay</span><span>iDEAL</span><span>Bitcoin</span><span>Ethereum</span>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__grid">
+    <div class="footer__brand">
+      <img src="../original-site/images/logo-carlay-BLANC.png" alt="Carlay Art">
+      <p class="accent-line" style="font-size: var(--text-sm);">Art Contemporain Français</p>
+    </div>
+    <div>
+      <h4>Collections</h4>
+      <ul>
+        <li><a href="boutique.html">Romeo</a></li>
+        <li><a href="boutique.html">Vortex</a></li>
+        <li><a href="boutique.html">Insomnia</a></li>
+        <li><a href="boutique.html">Toutes les séries</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Info</h4>
+      <ul>
+        <li><a href="a-propos.html">L'Artiste</a></li>
+        <li><a href="a-propos.html#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Paiements</h4>
+      <ul>
+        <li><a href="commande.html">Carte bancaire</a></li>
+        <li><a href="commande.html">iDEAL · Bancontact</a></li>
+        <li><a href="commande.html">Crypto (BTC/ETH)</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2026 Carlay Art. Tous droits réservés.</span>
+    <a href="https://instagram.com" aria-label="Instagram">Instagram</a>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+  }, { rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.top < innerHeight && r.bottom > 0) el.classList.add('is-in');
+    else io.observe(el);
+  });
+</script>
+</body>
+</html>

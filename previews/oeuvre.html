@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vortex 5 — Preview · CARLAY ART</title>
+<link rel="stylesheet" href="preview.css">
+<style>
+  .room {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: clamp(2rem, 5vw, 4.5rem);
+    padding: 7.5rem var(--pad) 4rem;
+    max-width: 1280px;
+    margin-inline: auto;
+    align-items: start;
+  }
+  .room__stage {
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 45%, rgba(255, 255, 255, 0.045), transparent 70%),
+      var(--surface);
+    display: grid;
+    place-items: center;
+    padding: clamp(1.5rem, 4vw, 4rem);
+    cursor: zoom-in;
+  }
+  .room__stage img { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6); }
+  .room__info { position: sticky; top: 6.5rem; }
+  .room__title { font-size: var(--text-2xl); text-transform: uppercase; margin: 0.4rem 0 1.5rem; }
+  .specs { list-style: none; border-top: 1px solid var(--line); margin: 1.5rem 0; }
+  .specs li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--line);
+    font-size: var(--text-sm);
+  }
+  .specs .k { color: var(--faint); letter-spacing: 0.08em; text-transform: uppercase; font-size: var(--text-xs); }
+  .room__price { font-family: var(--font-display); font-weight: 600; font-size: var(--text-xl); margin: 1.25rem 0 1.75rem; }
+  .room__cta { display: flex; flex-direction: column; gap: 0.8rem; }
+  .assurance { margin-top: 1.75rem; color: var(--faint); font-size: var(--text-xs); line-height: 1.9; letter-spacing: 0.04em; }
+  .assurance strong { color: var(--muted); font-weight: 500; }
+  .related { padding: 3rem var(--pad) 5rem; max-width: 1280px; margin-inline: auto; }
+  @media (max-width: 900px) {
+    .room { grid-template-columns: 1fr; padding-top: 6rem; }
+    .room__info { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a class="nav__logo" href="accueil.html">CARLAY ART</a>
+  <nav class="nav__links">
+    <a href="boutique.html" aria-current="page">Œuvres</a>
+    <a href="a-propos.html">L'Artiste</a>
+    <a href="boutique.html">Boutique</a>
+    <a href="a-propos.html#contact">Contact</a>
+  </nav>
+  <button class="nav__cart" aria-label="Panier, 1 œuvre">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l1 14H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+    1
+  </button>
+</header>
+
+<main class="room">
+  <figure class="room__stage reveal" title="Cliquer pour agrandir">
+    <img src="../original-site/images/VORTEX-5.jpg" alt="Vortex 5 — croisements de lignes or, rose et bleu sur carré">
+  </figure>
+
+  <aside class="room__info reveal">
+    <p class="eyebrow eyebrow--series" style="--series: var(--teal);">Série Vortex</p>
+    <h1 class="display room__title">Vortex 5</h1>
+    <p class="lead" style="font-size: var(--text-sm);">Un tourbillon d'énergie — lignes d'or projetées sur des champs de couleur qui se croisent. Peint à New York.</p>
+    <ul class="specs">
+      <li><span class="k">Technique</span><span>Acrylique sur toile</span></li>
+      <li><span class="k">Dimensions</span><span>32 × 32 cm</span></li>
+      <li><span class="k">Année</span><span>2024</span></li>
+      <li><span class="k">Signature</span><span>Signée au dos</span></li>
+    </ul>
+    <p class="room__price">€1,000</p>
+    <div class="room__cta">
+      <button class="btn btn--primary">Ajouter au panier</button>
+      <a class="btn btn--ghost" href="commande.html">Acheter maintenant</a>
+    </div>
+    <p class="assurance">
+      <strong>Certificat d'authenticité inclus</strong><br>
+      Livraison mondiale assurée · Emballage professionnel<br>
+      Paiement sécurisé — carte, iDEAL, crypto
+    </p>
+  </aside>
+</main>
+
+<section class="related">
+  <div class="series-head reveal" style="--series: var(--teal);">
+    <h2 class="display">Plus de la série Vortex</h2>
+    <span class="count">9 œuvres</span>
+  </div>
+  <div class="grid-series">
+    <a class="card reveal" href="#" style="--ratio: 1/1;">
+      <div class="card__media"><img src="../original-site/images/vortex-2-680x680.jpeg" alt="Vortex 2"></div>
+      <div class="card__body">
+        <div><div class="card__title">Vortex 2</div></div>
+        <div class="card__price">€1,000</div>
+      </div>
+    </a>
+    <a class="card reveal" href="#" style="--ratio: 1/1;">
+      <div class="card__media">
+        <span class="badge-sold">Vendu</span>
+        <img src="../original-site/images/vortex-6-680x680.jpeg" alt="Vortex 6">
+      </div>
+      <div class="card__body">
+        <div><div class="card__title">Vortex 6</div></div>
+        <div class="card__price card__price--sold">€1,000</div>
+      </div>
+    </a>
+    <a class="card reveal" href="#" style="--ratio: 1/1;">
+      <div class="card__media"><img src="../original-site/images/vortex--680x680.jpeg" alt="Vortex 1"></div>
+      <div class="card__body">
+        <div><div class="card__title">Vortex 1</div></div>
+        <div class="card__price">€1,000</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__bottom" style="border-top: none; margin-top: 0;">
+    <span>© 2026 Carlay Art. Tous droits réservés.</span>
+    <a href="https://instagram.com" aria-label="Instagram">Instagram</a>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+  }, { rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.top < innerHeight && r.bottom > 0) el.classList.add('is-in');
+    else io.observe(el);
+  });
+</script>
+</body>
+</html>

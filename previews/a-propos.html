@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'Artiste — Preview · CARLAY ART</title>
+<link rel="stylesheet" href="preview.css">
+<style>
+  .about-hero {
+    position: relative;
+    min-height: 82vh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+  .about-hero img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+  }
+  .about-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.1) 45%, var(--noir) 100%);
+  }
+  .about-hero__text {
+    position: relative;
+    z-index: 2;
+    padding: var(--pad);
+    max-width: 1200px;
+    margin-inline: auto;
+    width: 100%;
+  }
+  .about-hero__text h1 { font-size: var(--text-hero); text-transform: uppercase; line-height: 0.95; }
+
+  .bio { max-width: 680px; margin-inline: auto; }
+  .bio p { color: var(--muted); margin-bottom: 1.4rem; }
+  .bio .pull {
+    font-family: var(--font-accent);
+    font-style: italic;
+    font-size: var(--text-lg);
+    color: var(--text);
+    border-left: 2px solid var(--rose);
+    padding-left: 1.5rem;
+    margin: 2.5rem 0;
+  }
+  .bio__sig { width: 150px; margin-top: 2rem; opacity: 0.85; }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--gap);
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .facts > div { border-top: 1px solid var(--line-strong); padding-top: 1.25rem; }
+  .facts .k { color: var(--faint); font-size: var(--text-xs); letter-spacing: 0.18em; text-transform: uppercase; }
+  .facts .v { font-family: var(--font-display); font-weight: 600; font-size: var(--text-lg); margin-top: 0.4rem; }
+
+  .contact-band { text-align: center; border-top: 1px solid var(--line); }
+  .contact-band h2 { font-size: var(--text-xl); }
+  .contact-band p { margin: 1.1rem auto 2rem; }
+  @media (max-width: 700px) { .facts { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a class="nav__logo" href="accueil.html">CARLAY ART</a>
+  <nav class="nav__links">
+    <a href="boutique.html">Œuvres</a>
+    <a href="a-propos.html" aria-current="page">L'Artiste</a>
+    <a href="boutique.html">Boutique</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <button class="nav__cart" aria-label="Panier, 1 œuvre">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l1 14H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+    1
+  </button>
+</header>
+
+<section class="about-hero">
+  <img src="../original-site/images/Carlay-art.jpg" alt="Carlay dans son atelier new-yorkais, de dos face à une toile en cours">
+  <div class="about-hero__text">
+    <p class="eyebrow">L'Artiste</p>
+    <h1 class="display">Carlay</h1>
+    <p class="accent-line" style="font-size: var(--text-lg);">Paris · New York</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="bio reveal">
+    <p>Carlay est une artiste émergente française qui évolue dans l'univers de l'art abstrait. Sa technique : l'acrylique sur toile, en couches riches et gestes francs.</p>
+    <p class="pull">« Transformer des moments ordinaires en expériences visuelles extraordinaires. »</p>
+    <p>Inspirée par les paysages urbains et les scènes du quotidien, elle construit des compositions où des formes organiques fluides traversent des fonds géométriques — violets profonds, teals électriques, roses vifs et ors métalliques.</p>
+    <p>Active principalement en France et à New York, sa présence croissante sur ces marchés artistiques majeurs témoigne d'une voix singulière dans l'abstraction contemporaine.</p>
+    <img class="bio__sig" src="../original-site/images/Carlay-art-signature.png" alt="Signature de Carlay">
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="facts">
+    <div class="reveal"><div class="k">Médium</div><div class="v">Acrylique sur toile</div></div>
+    <div class="reveal"><div class="k">Séries</div><div class="v">22 collections</div></div>
+    <div class="reveal"><div class="k">Marchés</div><div class="v">France · New York</div></div>
+  </div>
+</section>
+
+<section class="section contact-band" id="contact">
+  <div class="wrap reveal">
+    <p class="eyebrow">Contact</p>
+    <h2 class="display">Presse &amp; galeries</h2>
+    <p class="lead" style="margin-inline: auto;">Pour l'acquisition d'une œuvre, tout passe par la boutique — paiement sécurisé, livraison mondiale. Pour toute autre demande :</p>
+    <a class="btn btn--ghost" href="mailto:carlayart369@gmail.com">carlayart369@gmail.com</a>
+    <p style="margin-top: 1.5rem;"><a href="https://instagram.com" style="color: var(--muted); font-size: var(--text-sm);">Instagram ↗</a></p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__bottom" style="border-top: none; margin-top: 0;">
+    <span>© 2026 Carlay Art. Tous droits réservés.</span>
+    <a href="https://instagram.com" aria-label="Instagram">Instagram</a>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+  }, { rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.top < innerHeight && r.bottom > 0) el.classList.add('is-in');
+    else io.observe(el);
+  });
+</script>
+</body>
+</html>

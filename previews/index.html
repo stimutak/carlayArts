@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Previews — Redesign · CARLAY ART</title>
+<link rel="stylesheet" href="preview.css">
+<style>
+  .hub { max-width: 760px; margin-inline: auto; padding: 7rem var(--pad) 5rem; }
+  .hub h1 { font-size: var(--text-2xl); margin: 0.5rem 0 1rem; }
+  .hub > p { color: var(--muted); margin-bottom: 3rem; }
+  .hub ol { list-style: none; counter-reset: p; }
+  .hub li { counter-increment: p; border-top: 1px solid var(--line); }
+  .hub li a {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    padding: 1.4rem 0.5rem;
+    transition: background 0.2s;
+  }
+  .hub li a:hover { background: var(--surface); }
+  .hub li a::before {
+    content: counter(p, decimal-leading-zero);
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--rose);
+    font-size: var(--text-sm);
+  }
+  .hub .t { font-family: var(--font-display); font-weight: 600; font-size: var(--text-lg); }
+  .hub .d { color: var(--faint); font-size: var(--text-sm); margin-left: auto; text-align: right; max-width: 45%; }
+</style>
+</head>
+<body>
+<main class="hub">
+  <p class="eyebrow">Redesign — Noir Gallery v2</p>
+  <h1 class="display">Previews</h1>
+  <p>Cinq écrans du redesign, construits avec le nouveau système : Clash Display, accents par série, reveals fail-visible, navigation unifiée. Comparer avec le site actuel : <a href="../index.html" style="text-decoration: underline;">accueil actuel</a> · <a href="../boutique.html" style="text-decoration: underline;">boutique actuelle</a>.</p>
+  <ol>
+    <li><a href="accueil.html"><span class="t">Accueil</span><span class="d">Hero monogramme, bento 6 collections, artiste</span></a></li>
+    <li><a href="boutique.html"><span class="t">Boutique</span><span class="d">Sections par série avec accent couleur, filtres sticky</span></a></li>
+    <li><a href="oeuvre.html"><span class="t">Œuvre — Vortex 5</span><span class="d">Viewing room : scène + colonne info sticky</span></a></li>
+    <li><a href="a-propos.html"><span class="t">L'Artiste</span><span class="d">Photo plein écran, bio éditoriale, contact</span></a></li>
+    <li><a href="commande.html"><span class="t">Commande</span><span class="d">Checkout : livraison, 3 moyens de paiement, mode démo</span></a></li>
+  </ol>
+</main>
+</body>
+</html>

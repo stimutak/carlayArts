@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commande — Preview · CARLAY ART</title>
+<link rel="stylesheet" href="preview.css">
+<style>
+  .checkout {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    max-width: 1150px;
+    margin-inline: auto;
+    padding: 7.5rem var(--pad) 5rem;
+    align-items: start;
+  }
+  .checkout h1 { font-size: var(--text-xl); margin-bottom: 0.5rem; }
+  .steps { color: var(--faint); font-size: var(--text-xs); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 2.5rem; }
+  .steps b { color: var(--rose); font-weight: 600; }
+
+  .field { margin-bottom: 1.1rem; }
+  .field label { display: block; font-size: var(--text-xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.45rem; }
+  .field input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    padding: 0.85rem 1rem;
+    transition: border-color 0.2s;
+  }
+  .field input:focus { border-color: var(--text); outline: none; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .pay-methods { display: grid; gap: 0.7rem; margin: 1.25rem 0 2rem; }
+  .pay {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    border: 1px solid var(--line-strong);
+    padding: 1rem 1.2rem;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .pay input { accent-color: var(--rose); }
+  .pay--on { border-color: var(--rose); background: rgba(255, 51, 102, 0.06); }
+  .pay .t { font-weight: 500; font-size: var(--text-sm); }
+  .pay .d { color: var(--faint); font-size: var(--text-xs); }
+
+  .summary {
+    position: sticky;
+    top: 6.5rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 1.75rem;
+  }
+  .summary h2 { font-family: var(--font-display); font-weight: 600; font-size: var(--text-base); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 1.5rem; }
+  .line-item { display: flex; gap: 1rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--line); }
+  .line-item img { width: 72px; height: 72px; object-fit: cover; }
+  .line-item .t { font-family: var(--font-display); font-weight: 600; }
+  .line-item .m { color: var(--faint); font-size: var(--text-xs); }
+  .totals { list-style: none; margin: 1.25rem 0; }
+  .totals li { display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: var(--text-sm); color: var(--muted); }
+  .totals .grand { border-top: 1px solid var(--line-strong); margin-top: 0.6rem; padding-top: 1rem; color: var(--text); font-weight: 600; font-size: var(--text-base); }
+  .demo-note {
+    margin-top: 1.25rem;
+    padding: 0.8rem 1rem;
+    border: 1px dashed var(--line-strong);
+    color: var(--faint);
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+  }
+  .demo-note b { color: var(--gold); font-weight: 600; }
+  @media (max-width: 900px) {
+    .checkout { grid-template-columns: 1fr; }
+    .summary { position: static; order: -1; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a class="nav__logo" href="accueil.html">CARLAY ART</a>
+  <nav class="nav__links">
+    <a href="boutique.html">Œuvres</a>
+    <a href="a-propos.html">L'Artiste</a>
+    <a href="boutique.html">Boutique</a>
+    <a href="a-propos.html#contact">Contact</a>
+  </nav>
+  <button class="nav__cart" aria-label="Panier, 1 œuvre">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l1 14H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+    1
+  </button>
+</header>
+
+<main class="checkout">
+  <section>
+    <h1 class="display">Commande</h1>
+    <p class="steps">Panier → <b>Livraison &amp; Paiement</b> → Confirmation</p>
+
+    <div class="field-row">
+      <div class="field"><label for="prenom">Prénom</label><input id="prenom" autocomplete="given-name"></div>
+      <div class="field"><label for="nom">Nom</label><input id="nom" autocomplete="family-name"></div>
+    </div>
+    <div class="field"><label for="email">E-mail</label><input id="email" type="email" autocomplete="email"></div>
+    <div class="field"><label for="adresse">Adresse</label><input id="adresse" autocomplete="street-address"></div>
+    <div class="field-row">
+      <div class="field"><label for="ville">Ville</label><input id="ville" autocomplete="address-level2"></div>
+      <div class="field"><label for="cp">Code postal</label><input id="cp" autocomplete="postal-code"></div>
+    </div>
+    <div class="field"><label for="pays">Pays</label><input id="pays" value="France" autocomplete="country-name"></div>
+
+    <h2 class="display" style="font-size: var(--text-base); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2rem;">Paiement</h2>
+    <div class="pay-methods">
+      <label class="pay pay--on">
+        <input type="radio" name="pay" checked>
+        <span><span class="t">Carte bancaire</span><br><span class="d">Visa · Mastercard · Apple Pay — via Stripe/Mollie</span></span>
+      </label>
+      <label class="pay">
+        <input type="radio" name="pay">
+        <span><span class="t">iDEAL · Bancontact</span><br><span class="d">Virement bancaire européen — via Mollie</span></span>
+      </label>
+      <label class="pay">
+        <input type="radio" name="pay">
+        <span><span class="t">Crypto</span><br><span class="d">BTC · ETH · USDC — via Coinbase Commerce</span></span>
+      </label>
+    </div>
+
+    <button class="btn btn--primary" style="width: 100%;">Payer €1,000</button>
+  </section>
+
+  <aside class="summary reveal">
+    <h2>Votre œuvre</h2>
+    <div class="line-item">
+      <img src="../original-site/images/VORTEX-5.jpg" alt="Vortex 5">
+      <div>
+        <div class="t">Vortex 5</div>
+        <div class="m">Série Vortex · 32 × 32 cm<br>Pièce unique · Certificat inclus</div>
+      </div>
+    </div>
+    <ul class="totals">
+      <li><span>Sous-total</span><span>€1,000</span></li>
+      <li><span>Livraison assurée</span><span>Incluse</span></li>
+      <li class="grand"><span>Total</span><span>€1,000</span></li>
+    </ul>
+    <p class="demo-note"><b>Mode démonstration</b> — aucun paiement réel. Le bouton mène à une page de confirmation stylisée ; Stripe/Mollie s'activent dès que les clés API sont fournies.</p>
+  </aside>
+</main>
+
+<footer class="footer">
+  <div class="footer__bottom" style="border-top: none; margin-top: 0;">
+    <span>© 2026 Carlay Art. Tous droits réservés.</span>
+    <a href="https://instagram.com" aria-label="Instagram">Instagram</a>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.pay input').forEach(r => r.addEventListener('change', () => {
+    document.querySelectorAll('.pay').forEach(p => p.classList.toggle('pay--on', p.querySelector('input').checked));
+  }));
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+  }, { rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.top < innerHeight && r.bottom > 0) el.classList.add('is-in');
+    else io.observe(el);
+  });
+</script>
+</body>
+</html>
