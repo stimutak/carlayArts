@@ -1,0 +1,138 @@
+---
+import Lightbox from './Lightbox.astro';
+
+interface Props {
+  artwork: any;
+}
+
+const { artwork } = Astro.props;
+const media = [];
+
+if (artwork.images.full?.src && artwork.images.full?.alt) {
+  media.push({ src: artwork.images.full.src, alt: artwork.images.full.alt, label: 'Vue intégrale fidèle' });
+} else {
+  media.push({
+    src: artwork.images.card.src,
+    alt: artwork.images.card.alt,
+    label: 'Aperçu catalogue recadré',
+    isCrop: true,
+  });
+}
+
+for (const [index, image] of (artwork.images.details ?? []).entries()) {
+  if (image?.src && image?.alt) media.push({ src: image.src, alt: image.alt, label: `Détail ${index + 1}` });
+}
+
+for (const [key, label] of [
+  ['back', 'Dos de l’œuvre'],
+  ['signature', 'Signature'],
+  ['roomScale', 'Vue en situation'],
+]) {
+  const image = artwork.images[key];
+  if (image?.src && image?.alt) media.push({ src: image.src, alt: image.alt, label });
+}
+
+const lightboxId = `lightbox-${artwork.slug}`;
+const primary = media[0];
+const hasFaithfulFull = Boolean(artwork.images.full?.src);
+---
+
+<section class="artwork-media" aria-label={`Images de ${artwork.title}`}>
+  <button
+    class="artwork-media__stage"
+    type="button"
+    data-lightbox-open={lightboxId}
+    aria-haspopup="dialog"
+    aria-label={`Afficher ${primary.label.toLowerCase()} de ${artwork.title} dans la visionneuse`}
+  >
+    <img src={primary.src} alt={primary.alt} width="1200" height="1200" fetchpriority="high" />
+    <span class="artwork-media__open">Ouvrir la visionneuse</span>
+  </button>
+  <p class:list={['artwork-media__truth', !hasFaithfulFull && 'artwork-media__truth--warning']}>
+    <strong>{primary.label}.</strong>
+    {hasFaithfulFull
+      ? ' Le cadrage intégral fourni est affiché sans découpe.'
+      : ' L’image intégrale fidèle reste à fournir. Aucun zoom de détail n’est annoncé.'}
+  </p>
+
+  {media.length > 1 && (
+    <ul class="artwork-media__inventory" aria-label="Médias fournis">
+      {media.map((item) => <li>{item.label}</li>)}
+    </ul>
+  )}
+</section>
+
+<Lightbox id={lightboxId} title={artwork.title} media={media} />
+
+<style>
+  .artwork-media {
+    min-width: 0;
+  }
+
+  .artwork-media__stage {
+    position: relative;
+    display: grid;
+    width: 100%;
+    min-height: clamp(20rem, 58vw, 45rem);
+    place-items: center;
+    padding: clamp(1.25rem, 4vw, 4rem);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 45%, rgb(255 255 255 / 4.5%), transparent 70%),
+      var(--surface);
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .artwork-media__stage img {
+    width: 100%;
+    max-height: 38rem;
+    object-fit: contain;
+    box-shadow: 0 1.875rem 5rem rgb(0 0 0 / 60%);
+  }
+
+  .artwork-media__open {
+    position: absolute;
+    right: 0.85rem;
+    bottom: 0.85rem;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--line-strong);
+    background: color-mix(in srgb, var(--noir) 86%, transparent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+  }
+
+  .artwork-media__truth {
+    margin: 0;
+    padding: 0.8rem 0;
+    color: var(--muted);
+    font-size: var(--text-xs);
+  }
+
+  .artwork-media__truth--warning strong {
+    color: var(--rose);
+  }
+
+  .artwork-media__inventory {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    list-style: none;
+  }
+
+  .artwork-media__inventory li {
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--line);
+    color: var(--faint);
+    font-size: var(--text-xs);
+  }
+
+  @media (max-width: 42rem) {
+    .artwork-media__stage {
+      min-height: 22rem;
+    }
+  }
+</style>

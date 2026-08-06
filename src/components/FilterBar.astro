@@ -1,0 +1,222 @@
+---
+interface SeriesFilter {
+  slug: string;
+  name: string;
+}
+
+interface Props {
+  series: SeriesFilter[];
+  total: number;
+}
+
+const { series, total } = Astro.props;
+---
+
+<section class="catalog-controls" data-catalog-controls aria-label="Filtres du catalogue">
+  <div class="catalog-controls__scroll-hint" aria-hidden="true">Faire défiler les filtres →</div>
+  <div class="catalog-controls__row" role="toolbar" aria-label="Filtrer les œuvres">
+    <button class="filter-chip" type="button" data-filter-all aria-pressed="true">Tout</button>
+    <button class="filter-chip filter-chip--availability" type="button" data-filter-available aria-pressed="false">
+      Disponibles
+    </button>
+    {series.map((item) => (
+      <button
+        class="filter-chip"
+        type="button"
+        data-filter-series={item.slug}
+        aria-pressed="false"
+      >
+        {item.name}
+      </button>
+    ))}
+  </div>
+  <p class="catalog-controls__count" aria-live="polite" aria-atomic="true" data-filter-count>
+    {total} œuvres affichées
+  </p>
+</section>
+
+<script>
+  const controls = document.querySelector('[data-catalog-controls]');
+
+  if (controls instanceof HTMLElement) {
+    const allButton = controls.querySelector('[data-filter-all]');
+    const availableButton = controls.querySelector('[data-filter-available]');
+    const seriesButtons = [...controls.querySelectorAll('[data-filter-series]')];
+    const count = controls.querySelector('[data-filter-count]');
+    const cards = [...document.querySelectorAll('[data-artwork-card]')];
+    const groups = [...document.querySelectorAll('[data-artwork-group]')];
+    const validSeries = new Set(seriesButtons.map((button) => button.getAttribute('data-filter-series')));
+
+    const readState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const requestedSeries = params.get('serie');
+      return {
+        series: requestedSeries && validSeries.has(requestedSeries) ? requestedSeries : null,
+        availableOnly: params.get('disponibilite') === 'available',
+      };
+    };
+
+    const render = () => {
+      const state = readState();
+      let visible = 0;
+
+      for (const card of cards) {
+        if (!(card instanceof HTMLElement)) continue;
+        const matchesSeries = !state.series || card.dataset.series === state.series;
+        const matchesAvailability = !state.availableOnly || card.dataset.availability === 'available';
+        card.hidden = !(matchesSeries && matchesAvailability);
+        if (!card.hidden) visible += 1;
+      }
+
+      for (const group of groups) {
+        if (!(group instanceof HTMLElement)) continue;
+        group.hidden = !group.querySelector('[data-artwork-card]:not([hidden])');
+      }
+
+      if (allButton instanceof HTMLButtonElement) {
+        allButton.setAttribute('aria-pressed', String(!state.series && !state.availableOnly));
+      }
+      if (availableButton instanceof HTMLButtonElement) {
+        availableButton.setAttribute('aria-pressed', String(state.availableOnly));
+      }
+      for (const button of seriesButtons) {
+        if (!(button instanceof HTMLButtonElement)) continue;
+        button.setAttribute('aria-pressed', String(button.dataset.filterSeries === state.series));
+      }
+      if (count) count.textContent = `${visible} ${visible === 1 ? 'œuvre affichée' : 'œuvres affichées'}`;
+    };
+
+    const updateUrl = (mutate) => {
+      const url = new URL(window.location.href);
+      mutate(url.searchParams);
+      window.history.pushState({}, '', `${url.pathname}${url.search}${url.hash}`);
+      render();
+    };
+
+    allButton?.addEventListener('click', () => {
+      updateUrl((params) => {
+        params.delete('serie');
+        params.delete('disponibilite');
+      });
+    });
+
+    availableButton?.addEventListener('click', () => {
+      updateUrl((params) => {
+        if (params.get('disponibilite') === 'available') params.delete('disponibilite');
+        else params.set('disponibilite', 'available');
+      });
+    });
+
+    for (const button of seriesButtons) {
+      button.addEventListener('click', () => {
+        if (!(button instanceof HTMLButtonElement)) return;
+        updateUrl((params) => {
+          if (params.get('serie') === button.dataset.filterSeries) params.delete('serie');
+          else params.set('serie', button.dataset.filterSeries ?? '');
+        });
+      });
+    }
+
+    window.addEventListener('popstate', render);
+    render();
+  }
+</script>
+
+<style>
+  .catalog-controls {
+    position: sticky;
+    z-index: 50;
+    top: var(--nav-h);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    border-block: 1px solid var(--line);
+    background: color-mix(in srgb, var(--noir) 88%, transparent);
+    backdrop-filter: blur(14px);
+  }
+
+  .catalog-controls__row {
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding: 0.75rem var(--pad);
+    scrollbar-color: var(--line-strong) transparent;
+  }
+
+  .catalog-controls__row::after {
+    flex: 0 0 1rem;
+    content: '';
+  }
+
+  .catalog-controls__scroll-hint {
+    display: none;
+  }
+
+  .filter-chip {
+    flex: none;
+    min-height: 2.75rem;
+    padding: 0.45rem 1rem;
+    border: 1px solid transparent;
+    border-radius: 99rem;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .filter-chip:hover {
+    border-color: var(--line-strong);
+    color: var(--text);
+  }
+
+  .filter-chip[aria-pressed='true'] {
+    border-color: var(--rose);
+    background: var(--rose);
+    color: var(--noir);
+    font-weight: 600;
+  }
+
+  .filter-chip--availability:not([aria-pressed='true']) {
+    border-color: var(--line-strong);
+  }
+
+  .catalog-controls__count {
+    min-width: 11rem;
+    margin: 0;
+    padding: 0.75rem var(--pad) 0.75rem 1rem;
+    color: var(--muted);
+    font-size: var(--text-xs);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 48rem) {
+    .catalog-controls {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .catalog-controls__scroll-hint {
+      display: block;
+      padding: 0.45rem var(--pad) 0;
+      color: var(--faint);
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+    }
+
+    .catalog-controls__row {
+      padding-top: 0.45rem;
+    }
+
+    .catalog-controls__count {
+      position: absolute;
+      right: var(--pad);
+      bottom: -2.2rem;
+      min-width: 0;
+      padding: 0.25rem 0;
+      text-align: right;
+    }
+  }
+</style>

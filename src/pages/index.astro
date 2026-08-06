@@ -1,12 +1,449 @@
 ---
-import FoundationPage from '../components/FoundationPage.astro';
+import { getCollection } from 'astro:content';
+import ArtworkCard from '../components/ArtworkCard.astro';
+import Reveal from '../components/Reveal.astro';
 import Base from '../layouts/Base.astro';
+import { accentFor } from '../lib/series.js';
+
+const artworks = (await getCollection('artworks')).map((entry) => entry.data);
+const bySlug = Object.fromEntries(artworks.map((artwork) => [artwork.slug, artwork]));
+const featured = ['romeo-1', 'vortex-2', 'insomnia-1', 'juliette-1', 'vortex-5']
+  .map((slug) => bySlug[slug])
+  .filter(Boolean);
+
+const collectionSlugs = ['romeo', 'vortex', 'insomnia', 'purple-galaxy', 'juliette', 'golden-sunset'];
+const collections = collectionSlugs.map((seriesSlug) => {
+  const works = artworks
+    .filter((artwork) => artwork.seriesSlug === seriesSlug)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+  return { seriesSlug, name: works[0].series, works, cover: works[0] };
+});
 ---
 
-<Base title="CARLAY ART" currentPath="/">
-  <FoundationPage
-    eyebrow="Accueil"
-    title="Carlay Art"
-    intro="La fondation statique du nouveau site est en place. La composition approuvée de l’accueil sera portée depuis les aperçus sans transformer leurs contenus provisoires en faits."
-  />
+<Base
+  title="CARLAY ART"
+  description="Carlay Art — catalogue d’œuvres abstraites originales, présenté par séries."
+  currentPath="/"
+>
+  <header class="hero">
+    <h1 class="sr-only">Carlay Art — acrylique sur toile</h1>
+    <img
+      class="hero__logo"
+      src="/site/logo-carlay-BLANC.png"
+      alt="Monogramme CA — Carlay Art"
+      width="469"
+      height="274"
+      fetchpriority="high"
+    />
+    <p class="hero__accent accent-line">Art contemporain · Acrylique sur toile</p>
+    <a class="hero__cta" href="/boutique/">Découvrir la galerie</a>
+    <a class="hero__scroll" href="#selection">Explorer</a>
+  </header>
+
+  <section class="home-section" id="selection">
+    <div class="home-wrap">
+      <Reveal class="section-heading">
+        <p class="eyebrow">La galerie</p>
+        <h2 class="display">Œuvres sélectionnées</h2>
+        <p>
+          Une sélection issue du catalogue existant. Chaque vignette est explicitement présentée comme un
+          recadrage jusqu’à réception des fichiers intégraux.
+        </p>
+      </Reveal>
+      <div class="featured-grid">
+        {featured.map((artwork, index) => (
+          <ArtworkCard artwork={artwork} prominent={index === 0} eager={index === 0} showSeries={false} />
+        ))}
+      </div>
+      <Reveal class="section-action">
+        <a class="button-link button-link--ghost" href="/boutique/">Voir les 60 œuvres →</a>
+      </Reveal>
+    </div>
+  </section>
+
+  <section class="home-section home-section--surface">
+    <div class="home-wrap artist-intro">
+      <Reveal class="artist-intro__copy">
+        <p class="eyebrow">L’artiste · contenu en préparation</p>
+        <h2 class="display">Carlay</h2>
+        <p>
+          Le catalogue historique identifie l’acrylique sur toile comme technique. Le texte approuvé sur le
+          geste, le parcours et les influences de l’artiste sera intégré ici dès sa validation.
+        </p>
+        <p class="draft-callout">
+          <strong>À fournir par la cliente :</strong> biographie, description concrète du processus, repères de
+          parcours et citation approuvée.
+        </p>
+        <img
+          class="artist-intro__signature"
+          src="/site/Carlay-art-signature.png"
+          alt="Signature Carlay fournie au site"
+          width="300"
+          height="145"
+          loading="lazy"
+        />
+        <a class="button-link button-link--ghost" href="/a-propos/">Voir la page artiste →</a>
+      </Reveal>
+      <Reveal class="artist-intro__portrait">
+        <img
+          src="/site/Carlay-art.jpg"
+          alt="Portrait de Carlay fourni au site"
+          width="960"
+          height="1280"
+          loading="lazy"
+        />
+      </Reveal>
+    </div>
+  </section>
+
+  <section class="home-section">
+    <div class="home-wrap">
+      <Reveal class="section-heading section-heading--center">
+        <p class="eyebrow">Explorer</p>
+        <h2 class="display">Collections</h2>
+        <p>Six portes d’entrée vers les séries réelles du catalogue.</p>
+      </Reveal>
+      <div class="collection-grid">
+        {collections.map((collection, index) => (
+          <Reveal
+            as="article"
+            class:list={['collection-card', index < 2 && 'collection-card--wide']}
+            style={`--series-accent: ${accentFor(collection.seriesSlug)}`}
+          >
+            <a href={`/boutique/?serie=${collection.seriesSlug}`}>
+              <div class="collection-card__media">
+                <img
+                  src={collection.cover.images.card.src}
+                  alt={`Image catalogue représentative de la série ${collection.name}`}
+                  width="680"
+                  height="680"
+                  loading="lazy"
+                />
+                <span>Image catalogue représentative</span>
+              </div>
+              <div class="collection-card__body">
+                <h3>{collection.name}</h3>
+                <p>{collection.works.length} œuvres</p>
+              </div>
+            </a>
+          </Reveal>
+        ))}
+      </div>
+      <Reveal class="section-action">
+        <a class="button-link button-link--ghost" href="/boutique/">Explorer toutes les séries →</a>
+      </Reveal>
+    </div>
+  </section>
+
+  <section class="home-section acquisition">
+    <Reveal class="home-wrap acquisition__inner">
+      <p class="eyebrow">Acquisition · mode présentation</p>
+      <h2 class="display">Découvrir maintenant, acquérir après validation</h2>
+      <p>
+        Les images intégrales, disponibilités, certificats et politiques d’expédition doivent encore être
+        confirmés. Le site reste donc consultable sans activer d’achat.
+      </p>
+      <a class="button-link button-link--primary" href="/boutique/">Parcourir les œuvres</a>
+    </Reveal>
+  </section>
 </Base>
+
+<style>
+  .hero {
+    position: relative;
+    display: flex;
+    min-height: calc(100svh - var(--nav-h));
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(4rem, 10vw, 8rem) var(--pad);
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 60% 45% at 78% 82%, rgb(139 92 246 / 14%), transparent 65%),
+      radial-gradient(ellipse 50% 40% at 18% 20%, rgb(255 51 102 / 6%), transparent 60%),
+      var(--noir);
+    text-align: center;
+  }
+
+  .hero__logo {
+    width: clamp(11.25rem, 26vw, 18.75rem);
+    height: auto;
+  }
+
+  .hero__accent {
+    margin: 1.5rem 0 2.25rem;
+    color: var(--muted);
+    font-size: var(--text-lg);
+  }
+
+  .hero__cta,
+  .button-link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.9rem 1.6rem;
+    border: 1px solid transparent;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .hero__cta,
+  .button-link--primary {
+    background: var(--text);
+    color: var(--noir);
+  }
+
+  .hero__cta:hover,
+  .button-link--primary:hover {
+    background: var(--rose);
+  }
+
+  .hero__scroll {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    min-height: 2.75rem;
+    transform: translateX(-50%);
+    color: var(--faint);
+    font-size: var(--text-xs);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .hero__scroll::after {
+    display: block;
+    width: 1px;
+    height: 2rem;
+    margin: 0.45rem auto 0;
+    background: linear-gradient(var(--rose), transparent);
+    content: '';
+  }
+
+  .home-section {
+    padding: clamp(4rem, 10vw, 8rem) var(--pad);
+  }
+
+  .home-section--surface {
+    background: var(--surface);
+  }
+
+  .home-wrap {
+    width: min(100%, var(--content-width));
+    margin-inline: auto;
+  }
+
+  .section-heading {
+    max-width: 42rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .section-heading h2 {
+    margin-top: 0.45rem;
+    font-size: var(--text-xl);
+  }
+
+  .section-heading > p:last-child,
+  .artist-intro__copy > p,
+  .acquisition__inner > p {
+    color: var(--muted);
+  }
+
+  .section-heading--center {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--gap);
+  }
+
+  .featured-grid :global(.artwork-card:first-child) {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  .section-action {
+    display: flex;
+    justify-content: center;
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .button-link--ghost {
+    border-color: var(--line-strong);
+    color: var(--text);
+  }
+
+  .button-link--ghost:hover {
+    border-color: var(--text);
+  }
+
+  .artist-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.8fr);
+    gap: clamp(2.5rem, 7vw, 6rem);
+    align-items: center;
+  }
+
+  .artist-intro__copy h2 {
+    margin-top: 0.45rem;
+    font-size: var(--text-2xl);
+    text-transform: uppercase;
+  }
+
+  .draft-callout {
+    padding: 0.85rem 1rem;
+    border-left: 2px solid var(--rose);
+    background: var(--surface-2);
+    font-size: var(--text-sm);
+  }
+
+  .draft-callout strong {
+    color: var(--text);
+  }
+
+  .artist-intro__signature {
+    width: 8.125rem;
+    margin: 1.5rem 0;
+    opacity: 0.85;
+  }
+
+  .artist-intro__portrait img {
+    width: 100%;
+    max-height: 42rem;
+    object-fit: cover;
+  }
+
+  .collection-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--gap);
+  }
+
+  .collection-card--wide {
+    grid-column: span 2;
+  }
+
+  .collection-card__media {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .collection-card--wide .collection-card__media {
+    aspect-ratio: 16 / 10;
+  }
+
+  .collection-card__media::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: var(--series-accent);
+    content: '';
+  }
+
+  .collection-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.88);
+    transition: filter 400ms ease, transform 600ms ease;
+  }
+
+  .collection-card a:hover img,
+  .collection-card a:focus-visible img {
+    filter: saturate(1);
+    transform: scale(1.025);
+  }
+
+  .collection-card__media span {
+    position: absolute;
+    right: 0;
+    bottom: 2px;
+    padding: 0.35rem 0.6rem;
+    background: color-mix(in srgb, var(--noir) 86%, transparent);
+    color: var(--faint);
+    font-size: 0.6875rem;
+  }
+
+  .collection-card__body {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.8rem;
+  }
+
+  .collection-card__body h3,
+  .collection-card__body p {
+    margin: 0;
+  }
+
+  .collection-card__body h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+
+  .collection-card__body p {
+    color: var(--faint);
+    font-size: var(--text-xs);
+  }
+
+  .acquisition {
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+
+  .acquisition__inner {
+    max-width: 47rem;
+  }
+
+  .acquisition__inner h2 {
+    margin-top: 0.6rem;
+    font-size: var(--text-xl);
+  }
+
+  .acquisition__inner > p:not(.eyebrow) {
+    margin: 1.25rem auto 2rem;
+  }
+
+  @media (max-width: 56.25rem) {
+    .featured-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .artist-intro {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .collection-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 35rem) {
+    .featured-grid,
+    .collection-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .featured-grid :global(.artwork-card:first-child),
+    .collection-card--wide {
+      grid-column: auto;
+      grid-row: auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .collection-card a:hover img,
+    .collection-card a:focus-visible img {
+      transform: none;
+    }
+  }
+</style>

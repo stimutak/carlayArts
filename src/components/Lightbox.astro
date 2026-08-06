@@ -1,0 +1,259 @@
+---
+interface MediaItem {
+  src: string;
+  alt: string;
+  label: string;
+  isCrop?: boolean;
+}
+
+interface Props {
+  id: string;
+  title: string;
+  media: MediaItem[];
+}
+
+const { id, title, media } = Astro.props;
+---
+
+<dialog class="lightbox" id={id} data-lightbox aria-labelledby={`${id}-title`}>
+  <div class="lightbox__panel">
+    <header class="lightbox__header">
+      <div>
+        <p class="lightbox__eyebrow">Média disponible</p>
+        <h2 id={`${id}-title`}>{title}</h2>
+      </div>
+      <button class="lightbox__close" type="button" data-lightbox-close aria-label="Fermer la visionneuse">
+        <span aria-hidden="true">×</span>
+      </button>
+    </header>
+
+    <div class="lightbox__viewport">
+      {media.map((item, index) => (
+        <figure class="lightbox__slide" data-lightbox-slide hidden={index !== 0}>
+          <img src={item.src} alt={item.alt} width="1200" height="1200" />
+          <figcaption>
+            <span>{item.label}</span>
+            {item.isCrop && <strong>Cette image est un recadrage catalogue, pas une vue intégrale.</strong>}
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+
+    <footer class="lightbox__footer">
+      {media.length > 1 ? (
+        <>
+          <button type="button" data-lightbox-previous>← Précédent</button>
+          <p data-lightbox-position aria-live="polite">1 sur {media.length}</p>
+          <button type="button" data-lightbox-next>Suivant →</button>
+        </>
+      ) : (
+        <p>Seule image source actuellement fournie.</p>
+      )}
+    </footer>
+  </div>
+</dialog>
+
+<script>
+  for (const dialog of document.querySelectorAll('[data-lightbox]')) {
+    if (!(dialog instanceof HTMLDialogElement) || dialog.dataset.ready === 'true') continue;
+    dialog.dataset.ready = 'true';
+
+    const id = dialog.id;
+    const openButtons = [...document.querySelectorAll(`[data-lightbox-open="${id}"]`)];
+    const closeButton = dialog.querySelector('[data-lightbox-close]');
+    const previousButton = dialog.querySelector('[data-lightbox-previous]');
+    const nextButton = dialog.querySelector('[data-lightbox-next]');
+    const position = dialog.querySelector('[data-lightbox-position]');
+    const slides = [...dialog.querySelectorAll('[data-lightbox-slide]')];
+    let activeIndex = 0;
+    let returnTarget = null;
+
+    const focusable = () => [...dialog.querySelectorAll('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')]
+      .filter((element) => element instanceof HTMLElement && !element.hidden);
+
+    const showSlide = (nextIndex) => {
+      activeIndex = (nextIndex + slides.length) % slides.length;
+      slides.forEach((slide, index) => {
+        if (slide instanceof HTMLElement) slide.hidden = index !== activeIndex;
+      });
+      if (position) position.textContent = `${activeIndex + 1} sur ${slides.length}`;
+    };
+
+    for (const button of openButtons) {
+      button.addEventListener('click', () => {
+        returnTarget = button instanceof HTMLElement ? button : null;
+        showSlide(0);
+        dialog.showModal();
+        if (closeButton instanceof HTMLElement) closeButton.focus();
+      });
+    }
+
+    closeButton?.addEventListener('click', () => dialog.close());
+    previousButton?.addEventListener('click', () => showSlide(activeIndex - 1));
+    nextButton?.addEventListener('click', () => showSlide(activeIndex + 1));
+
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    dialog.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        dialog.close();
+        return;
+      }
+      if (event.key === 'ArrowLeft' && slides.length > 1) showSlide(activeIndex - 1);
+      if (event.key === 'ArrowRight' && slides.length > 1) showSlide(activeIndex + 1);
+      if (event.key !== 'Tab') return;
+
+      const items = focusable();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+
+    dialog.addEventListener('close', () => {
+      if (returnTarget instanceof HTMLElement) returnTarget.focus();
+    });
+  }
+</script>
+
+<style>
+  .lightbox {
+    width: min(94vw, 82rem);
+    max-width: none;
+    height: min(94vh, 62rem);
+    max-height: none;
+    padding: 0;
+    border: 1px solid var(--line-strong);
+    background: var(--noir);
+    color: var(--text);
+  }
+
+  .lightbox::backdrop {
+    background: rgb(0 0 0 / 88%);
+    backdrop-filter: blur(10px);
+  }
+
+  .lightbox__panel {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100%;
+  }
+
+  .lightbox__header,
+  .lightbox__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem clamp(1rem, 3vw, 2rem);
+  }
+
+  .lightbox__header {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .lightbox__header h2,
+  .lightbox__header p,
+  .lightbox__footer p {
+    margin: 0;
+  }
+
+  .lightbox__header h2 {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+  }
+
+  .lightbox__eyebrow {
+    color: var(--faint);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .lightbox__close,
+  .lightbox__footer button {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .lightbox__close {
+    flex: none;
+    font-size: 1.75rem;
+  }
+
+  .lightbox__viewport {
+    min-height: 0;
+    padding: clamp(1rem, 3vw, 2rem);
+    background: var(--surface);
+  }
+
+  .lightbox__slide {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    height: 100%;
+    margin: 0;
+  }
+
+  .lightbox__slide[hidden] {
+    display: none;
+  }
+
+  .lightbox__slide img {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    object-fit: contain;
+  }
+
+  .lightbox__slide figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding-top: 0.75rem;
+    color: var(--muted);
+    font-size: var(--text-xs);
+  }
+
+  .lightbox__slide figcaption strong {
+    color: var(--rose);
+    font-weight: 500;
+  }
+
+  .lightbox__footer {
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: var(--text-xs);
+    text-align: center;
+  }
+
+  .lightbox__footer button {
+    padding-inline: 1rem;
+    font-size: var(--text-xs);
+  }
+
+  @media (max-width: 35rem) {
+    .lightbox {
+      width: 100vw;
+      height: 100dvh;
+      border: 0;
+    }
+
+    .lightbox__footer button {
+      padding-inline: 0.65rem;
+    }
+  }
+</style>

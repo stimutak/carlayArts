@@ -1,0 +1,172 @@
+---
+import Reveal from './Reveal.astro';
+import { formatPrice } from '../lib/series.js';
+
+interface Props {
+  artwork: any;
+  prominent?: boolean;
+  eager?: boolean;
+  showSeries?: boolean;
+}
+
+const { artwork, prominent = false, eager = false, showSeries = true } = Astro.props;
+const isSold = artwork.availability === 'sold';
+const isAvailable = artwork.availability === 'available';
+const dimensions = artwork.dimensions.width && artwork.dimensions.height
+  ? `${artwork.dimensions.width} × ${artwork.dimensions.height} ${artwork.dimensions.unit}`
+  : 'Dimensions à confirmer';
+const stateLabel = isSold ? 'Vendu' : isAvailable ? 'Disponible' : 'Statut à confirmer';
+---
+
+<Reveal
+  as="article"
+  class:list={['artwork-card', prominent && 'artwork-card--prominent']}
+  data-artwork-card
+  data-series={artwork.seriesSlug}
+  data-availability={artwork.availability}
+>
+  <a class="artwork-card__link" href={`/oeuvre/${artwork.slug}/`} aria-label={`Voir ${artwork.title}`}>
+    <div class="artwork-card__media">
+      <img
+        src={artwork.images.card.src}
+        alt={artwork.images.card.alt}
+        width="680"
+        height="680"
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : 'auto'}
+      />
+      <span class:list={['artwork-card__state', isSold && 'artwork-card__state--sold']}>
+        {stateLabel}
+      </span>
+      <span class="artwork-card__media-note">Recadrage catalogue</span>
+    </div>
+    <div class="artwork-card__body">
+      <div>
+        <h3>{artwork.title}</h3>
+        <p>{showSeries ? `Série ${artwork.series}` : dimensions}</p>
+      </div>
+      <p class:list={['artwork-card__price', !isAvailable && 'artwork-card__price--reference']}>
+        <span class="sr-only">Prix catalogue historique : </span>{formatPrice(artwork.price.amount)}
+      </p>
+    </div>
+  </a>
+</Reveal>
+
+<style>
+  .artwork-card {
+    min-width: 0;
+  }
+
+  .artwork-card__link {
+    display: block;
+  }
+
+  .artwork-card__media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1;
+    background: var(--surface);
+  }
+
+  .artwork-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.88);
+    transition: filter 400ms ease, transform 600ms ease;
+  }
+
+  .artwork-card__link:hover .artwork-card__media img,
+  .artwork-card__link:focus-visible .artwork-card__media img {
+    filter: saturate(1);
+    transform: scale(1.025);
+  }
+
+  .artwork-card__state,
+  .artwork-card__media-note {
+    position: absolute;
+    z-index: 1;
+    padding: 0.38rem 0.65rem;
+    background: color-mix(in srgb, var(--noir) 86%, transparent);
+    backdrop-filter: blur(8px);
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .artwork-card__state {
+    top: 0.75rem;
+    left: 0.75rem;
+    border: 1px solid var(--line-strong);
+  }
+
+  .artwork-card__state--sold {
+    border-color: var(--rose);
+    color: var(--rose);
+  }
+
+  .artwork-card__media-note {
+    right: 0;
+    bottom: 0;
+    color: var(--faint);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: none;
+  }
+
+  .artwork-card__body {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.9rem;
+  }
+
+  .artwork-card__body h3,
+  .artwork-card__body p {
+    margin: 0;
+  }
+
+  .artwork-card__body h3 {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .artwork-card__body div > p {
+    color: var(--faint);
+    font-size: var(--text-xs);
+  }
+
+  .artwork-card__price {
+    flex: none;
+    font-size: var(--text-sm);
+    font-weight: 500;
+  }
+
+  .artwork-card__price--reference {
+    color: var(--faint);
+  }
+
+  [hidden] {
+    display: none;
+  }
+
+  @media (hover: none) {
+    .artwork-card__media img {
+      filter: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .artwork-card__link:hover .artwork-card__media img,
+    .artwork-card__link:focus-visible .artwork-card__media img {
+      transform: none;
+    }
+  }
+</style>

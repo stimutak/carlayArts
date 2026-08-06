@@ -2,10 +2,12 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { getCollection } from 'astro:content';
+import ArtworkCard from '../../components/ArtworkCard.astro';
+import ArtworkMedia from '../../components/ArtworkMedia.astro';
 import Reveal from '../../components/Reveal.astro';
 import Base from '../../layouts/Base.astro';
 import { validateArtworkInventory } from '../../lib/artworks.js';
-import { formatPrice } from '../../lib/series.js';
+import { accentFor, formatPrice } from '../../lib/series.js';
 
 export async function getStaticPaths() {
   const entries = await getCollection('artworks');
@@ -14,38 +16,333 @@ export async function getStaticPaths() {
     assetExists: (imagePath) => existsSync(join(process.cwd(), 'public', imagePath.replace(/^\/+/, ''))),
   });
 
-  return artworks.map((artwork) => ({ params: { slug: artwork.slug }, props: { artwork } }));
+  const bySlug = Object.fromEntries(artworks.map((artwork) => [artwork.slug, artwork]));
+
+  return artworks.map((artwork) => {
+    const explicit = artwork.relatedSlugs.map((slug) => bySlug[slug]).filter(Boolean);
+    const sameSeries = artworks
+      .filter((candidate) => candidate.slug !== artwork.slug && candidate.seriesSlug === artwork.seriesSlug)
+      .sort((a, b) => a.sortOrder - b.sortOrder);
+    const related = [...new Map([...explicit, ...sameSeries].map((candidate) => [candidate.slug, candidate])).values()]
+      .slice(0, 3);
+    return { params: { slug: artwork.slug }, props: { artwork, related } };
+  });
 }
 
-const { artwork } = Astro.props;
+const { artwork, related } = Astro.props;
 const dimensions = artwork.dimensions.width && artwork.dimensions.height
-  ? `${artwork.dimensions.width} × ${artwork.dimensions.height} ${artwork.dimensions.unit}`
+  ? `${artwork.dimensions.width} × ${artwork.dimensions.height}${artwork.dimensions.depth ? ` × ${artwork.dimensions.depth}` : ''} ${artwork.dimensions.unit}`
   : 'À confirmer';
-const state = artwork.availability === 'sold' ? 'Vendu — source historique' : 'Hors vente — validation requise';
+const availabilityLabel = artwork.availability === 'sold'
+  ? 'Vendu — source historique'
+  : artwork.availability === 'available'
+    ? 'Disponible — statut approuvé'
+    : 'Hors vente — validation requise';
+const fact = (item) => item?.value ?? 'À confirmer';
+const year = artwork.year.value ?? 'À confirmer';
+const accent = accentFor(artwork.seriesSlug);
 ---
 
-<Base title={artwork.title} currentPath={`/oeuvre/${artwork.slug}`}>
-  <section class="foundation-page artwork-foundation">
-    <Reveal>
-      <img
-        src={artwork.images.card.src}
-        alt={artwork.images.card.alt}
-        width="680"
-        height="680"
-      />
-      <p class="foundation-page__status">Aperçu catalogue recadré — image intégrale fidèle à fournir.</p>
+<Base
+  title={artwork.title}
+  description={`${artwork.title}, série ${artwork.series} — fiche d’œuvre Carlay Art.`}
+  currentPath={`/oeuvre/${artwork.slug}`}
+>
+  <article class="artwork-detail" style={`--series-accent: ${accent}`}>
+    <Reveal class="artwork-detail__media">
+      <ArtworkMedia artwork={artwork} />
     </Reveal>
-    <Reveal class="artwork-foundation__copy">
-      <p class="eyebrow">Série {artwork.series}</p>
-      <h1 class="display">{artwork.title}</h1>
-      <p class="foundation-page__intro">{artwork.workNote.value}</p>
-      <dl class="artwork-foundation__facts">
-        <div><dt>Dimensions</dt><dd>{dimensions}</dd></div>
-        <div><dt>Technique</dt><dd>{artwork.medium.value}</dd></div>
-        <div><dt>Prix source</dt><dd>{formatPrice(artwork.price.amount)}</dd></div>
-        <div><dt>État</dt><dd>{state}</dd></div>
-      </dl>
-      <p class="foundation-page__status">Aucune action d’achat n’est disponible dans cette phase.</p>
+
+    <Reveal as="div" class="artwork-detail__information">
+      <header class="artwork-detail__header">
+        <p class="eyebrow artwork-detail__series">Série {artwork.series}</p>
+        <h1 class="display">{artwork.title}</h1>
+      </header>
+
+      <section class="artwork-detail__copy" aria-labelledby="series-premise">
+        <p class="draft-label">Énoncé de série · brouillon</p>
+        <h2 id="series-premise" class="sr-only">Présentation de la série</h2>
+        <p>
+          Le texte approuvé présentant la série {artwork.series} sera placé ici dès sa réception. Référence de
+          travail : <code>{artwork.seriesStatementRef.value}</code>.
+        </p>
+      </section>
+
+      <section class="artwork-detail__copy" aria-labelledby="work-note">
+        <p class="draft-label">Note sur l’œuvre · brouillon</p>
+        <h2 id="work-note" class="sr-only">Note sur l’œuvre</h2>
+        <p>{artwork.workNote.value}</p>
+      </section>
+
+      <section aria-labelledby="specifications">
+        <h2 id="specifications" class="section-label">Caractéristiques</h2>
+        <dl class="specifications">
+          <div><dt>Technique</dt><dd>{artwork.medium.value}</dd></div>
+          <div><dt>Dimensions</dt><dd>{dimensions}</dd></div>
+          <div><dt>Année</dt><dd>{year}</dd></div>
+          <div><dt>Signature</dt><dd>{fact(artwork.signaturePlacement)}</dd></div>
+          <div><dt>État</dt><dd>{fact(artwork.condition)}</dd></div>
+          <div><dt>Encadrement</dt><dd>{fact(artwork.framingStatus)}</dd></div>
+          <div><dt>Certificat</dt><dd>{fact(artwork.certificateStatus)}</dd></div>
+        </dl>
+      </section>
+
+      <section class="artwork-detail__commercial" aria-labelledby="catalog-state">
+        <h2 id="catalog-state" class="section-label">Prix et statut</h2>
+        <p class="artwork-detail__price">
+          <span>Prix catalogue historique</span>
+          <strong>{formatPrice(artwork.price.amount)}</strong>
+        </p>
+        <p class:list={['availability', artwork.availability === 'sold' && 'availability--sold']}>
+          {availabilityLabel}
+        </p>
+        <p class="no-purchase">
+          Aucune action d’achat n’est proposée tant que la disponibilité et les médias fidèles ne sont pas
+          approuvés par le propriétaire.
+        </p>
+      </section>
+
+      <section class="artwork-detail__trust" aria-labelledby="purchase-information">
+        <h2 id="purchase-information" class="section-label">Informations d’acquisition à compléter</h2>
+        <p>
+          Certificat, condition, encadrement, livraison, droits et taxes, retours et procédure en cas de dommage
+          restent à confirmer avant toute activation commerciale.
+        </p>
+        <a href="/contact/">Poser une question sur cette œuvre →</a>
+      </section>
     </Reveal>
-  </section>
+  </article>
+
+  {related.length > 0 && (
+    <section class="related" aria-labelledby="related-title">
+      <Reveal class="related__head">
+        <div>
+          <p class="eyebrow">Continuer</p>
+          <h2 class="display" id="related-title">Plus de la série {artwork.series}</h2>
+        </div>
+        <a href={`/boutique/?serie=${artwork.seriesSlug}`}>Voir la série →</a>
+      </Reveal>
+      <div class="related__grid">
+        {related.map((item) => <ArtworkCard artwork={item} />)}
+      </div>
+    </section>
+  )}
 </Base>
+
+<style>
+  .artwork-detail {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 0.85fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
+    width: min(100%, 80rem);
+    margin-inline: auto;
+    padding: clamp(3rem, 7vw, 6rem) var(--pad);
+    align-items: start;
+  }
+
+  .artwork-detail__media {
+    min-width: 0;
+  }
+
+  .artwork-detail__information {
+    position: sticky;
+    top: calc(var(--nav-h) + 2rem);
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .artwork-detail__header {
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--series-accent);
+  }
+
+  .artwork-detail__series {
+    color: var(--series-accent);
+  }
+
+  .artwork-detail__header h1 {
+    margin-top: 0.45rem;
+    font-size: var(--text-2xl);
+    text-transform: uppercase;
+  }
+
+  .artwork-detail__copy {
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .artwork-detail__copy p {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+
+  .artwork-detail__copy .draft-label,
+  .section-label {
+    margin: 0 0 0.6rem;
+    color: var(--faint);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .artwork-detail__copy code {
+    color: var(--text);
+    font-family: inherit;
+  }
+
+  .specifications {
+    margin: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .specifications div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--line);
+    font-size: var(--text-sm);
+  }
+
+  .specifications dt {
+    color: var(--faint);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .specifications dd {
+    margin: 0;
+    text-align: right;
+  }
+
+  .artwork-detail__commercial {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .artwork-detail__price {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0;
+  }
+
+  .artwork-detail__price span {
+    color: var(--faint);
+    font-size: var(--text-xs);
+  }
+
+  .artwork-detail__price strong {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 600;
+  }
+
+  .availability {
+    width: fit-content;
+    margin: 0;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--line-strong);
+    color: var(--muted);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .availability--sold {
+    border-color: var(--rose);
+    color: var(--rose);
+  }
+
+  .no-purchase,
+  .artwork-detail__trust p {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--text-xs);
+  }
+
+  .no-purchase {
+    padding: 0.85rem 1rem;
+    border-left: 2px solid var(--rose);
+    background: var(--surface);
+  }
+
+  .artwork-detail__trust {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .artwork-detail__trust a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    margin-top: 0.75rem;
+    color: var(--text);
+    font-size: var(--text-sm);
+    text-decoration: underline;
+    text-decoration-color: var(--rose);
+    text-underline-offset: 0.3em;
+  }
+
+  .related {
+    width: min(100%, var(--content-width));
+    margin-inline: auto;
+    padding: clamp(3rem, 7vw, 5rem) var(--pad) clamp(5rem, 10vw, 8rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .related__head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--series-accent);
+  }
+
+  .related__head h2 {
+    margin-top: 0.4rem;
+    font-size: var(--text-xl);
+  }
+
+  .related__head > a {
+    flex: none;
+    min-height: 2.75rem;
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+
+  .related__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gap);
+  }
+
+  @media (max-width: 56.25rem) {
+    .artwork-detail {
+      grid-template-columns: minmax(0, 1fr);
+      padding-top: 2rem;
+    }
+
+    .artwork-detail__information {
+      position: static;
+    }
+  }
+
+  @media (max-width: 42rem) {
+    .related__head {
+      align-items: start;
+      flex-direction: column;
+    }
+
+    .related__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
