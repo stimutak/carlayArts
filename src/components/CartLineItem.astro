@@ -1,0 +1,111 @@
+---
+interface Props {
+  templateId: string;
+  removable?: boolean;
+  compact?: boolean;
+}
+
+const { templateId, removable = true, compact = false } = Astro.props;
+---
+
+<template id={templateId}>
+  <li class:list={['cart-line-item', { 'cart-line-item--compact': compact }]} data-cart-line-item>
+    <img class="cart-line-item__image" data-cart-image src="" alt="" width="88" height="88" />
+    <div class="cart-line-item__copy">
+      <a class="cart-line-item__title" data-cart-title href="/boutique"></a>
+      <span class="cart-line-item__series" data-cart-series></span>
+    </div>
+    <strong class="cart-line-item__price" data-cart-price></strong>
+    {removable && (
+      <button class="cart-line-item__remove" data-cart-remove type="button">
+        <span aria-hidden="true">×</span>
+        <span class="sr-only">Retirer l’œuvre du panier</span>
+      </button>
+    )}
+  </li>
+</template>
+
+<style is:global>
+  .cart-line-item {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr) auto auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .cart-line-item--compact {
+    grid-template-columns: 3.75rem minmax(0, 1fr) auto auto;
+    gap: 0.75rem;
+  }
+
+  .cart-line-item__image {
+    width: 5.5rem;
+    aspect-ratio: 1;
+    object-fit: cover;
+    background: var(--surface-2);
+  }
+
+  .cart-line-item--compact .cart-line-item__image {
+    width: 3.75rem;
+  }
+
+  .cart-line-item__copy {
+    display: grid;
+    min-width: 0;
+  }
+
+  .cart-line-item__title {
+    overflow: hidden;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cart-line-item__series {
+    color: var(--faint);
+    font-size: var(--text-xs);
+  }
+
+  .cart-line-item__price {
+    white-space: nowrap;
+    font-size: var(--text-sm);
+  }
+
+  .cart-line-item__remove {
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1.35rem;
+  }
+
+  .cart-line-item__remove:hover {
+    border-color: var(--rose);
+    color: var(--rose);
+  }
+
+  @media (max-width: 32rem) {
+    .cart-line-item {
+      grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+      gap: 0.75rem;
+    }
+
+    .cart-line-item__image {
+      width: 4.5rem;
+    }
+
+    .cart-line-item__price {
+      grid-column: 2;
+    }
+
+    .cart-line-item__remove {
+      grid-column: 3;
+      grid-row: 1 / span 2;
+    }
+  }
+</style>

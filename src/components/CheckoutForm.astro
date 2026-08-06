@@ -1,0 +1,465 @@
+---
+import { getCollection } from 'astro:content';
+
+const artworks = await getCollection('artworks');
+const eligibleCatalog = artworks
+  .map(({ data }) => data)
+  .filter(
+    (artwork) =>
+      artwork.availability === 'available' &&
+      artwork.availabilityReviewStatus === 'owner-approved' &&
+      artwork.price.reviewStatus === 'owner-approved',
+  );
+---
+
+<section class="checkout" data-checkout data-catalog={JSON.stringify(eligibleCatalog)}>
+  <div class="checkout__form-column">
+    <p class="checkout__progress" aria-label="Étape 2 sur 3">Panier · <strong>Coordonnées</strong> · Confirmation</p>
+    <h1 class="display">Commande démo</h1>
+    <p class="checkout__intro">
+      Ce formulaire simule le parcours de commande. Il ne demande aucune donnée de paiement et aucun paiement ne sera pris.
+    </p>
+
+    <form class="checkout-form" data-checkout-form novalidate>
+      <div class="checkout-form__error-summary" data-error-summary role="alert" tabindex="-1" hidden>
+        <h2>Vérifiez les informations suivantes</h2>
+        <ul data-error-list></ul>
+      </div>
+
+      <fieldset>
+        <legend>Vos coordonnées</legend>
+        <div class="checkout-form__grid">
+          <div class="checkout-field">
+            <label for="checkout-prenom">Prénom</label>
+            <input id="checkout-prenom" name="prenom" autocomplete="given-name" required />
+            <span id="error-prenom" class="checkout-field__error" data-field-error="prenom"></span>
+          </div>
+          <div class="checkout-field">
+            <label for="checkout-nom">Nom</label>
+            <input id="checkout-nom" name="nom" autocomplete="family-name" required />
+            <span id="error-nom" class="checkout-field__error" data-field-error="nom"></span>
+          </div>
+          <div class="checkout-field checkout-field--wide">
+            <label for="checkout-email">E-mail</label>
+            <input id="checkout-email" name="email" type="email" autocomplete="email" inputmode="email" required />
+            <span id="error-email" class="checkout-field__error" data-field-error="email"></span>
+          </div>
+          <div class="checkout-field checkout-field--wide">
+            <label for="checkout-adresse">Adresse</label>
+            <input id="checkout-adresse" name="adresse" autocomplete="street-address" required />
+            <span id="error-adresse" class="checkout-field__error" data-field-error="adresse"></span>
+          </div>
+          <div class="checkout-field">
+            <label for="checkout-ville">Ville</label>
+            <input id="checkout-ville" name="ville" autocomplete="address-level2" required />
+            <span id="error-ville" class="checkout-field__error" data-field-error="ville"></span>
+          </div>
+          <div class="checkout-field">
+            <label for="checkout-cp">Code postal</label>
+            <input id="checkout-cp" name="cp" autocomplete="postal-code" required />
+            <span id="error-cp" class="checkout-field__error" data-field-error="cp"></span>
+          </div>
+          <div class="checkout-field checkout-field--wide">
+            <label for="checkout-pays">Pays ou région</label>
+            <select id="checkout-pays" name="pays" autocomplete="country" required>
+              <option value="">Sélectionner</option>
+              <option value="FR">France</option>
+              <option value="BE">Belgique</option>
+              <option value="CH">Suisse</option>
+              <option value="LU">Luxembourg</option>
+              <option value="OTHER">Autre pays ou région</option>
+            </select>
+            <span id="error-pays" class="checkout-field__error" data-field-error="pays"></span>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="checkout-form__demo-mode">
+        <legend>Mode de finalisation</legend>
+        <label>
+          <input name="mode" type="radio" value="demo" checked />
+          <span><strong>Démonstration uniquement</strong><small>Aucune donnée bancaire demandée, aucune somme débitée.</small></span>
+        </label>
+      </fieldset>
+
+      <p class="checkout-form__status" data-checkout-status role="status" aria-live="polite"></p>
+      <button class="checkout-form__submit" data-checkout-submit type="submit" disabled>
+        <span data-submit-label>Finaliser la démonstration</span>
+      </button>
+      <p class="checkout-form__notice">Aucun paiement réel n’est disponible sur ce site de démonstration.</p>
+    </form>
+  </div>
+
+  <details class="checkout__summary" open>
+    <summary>Résumé de la sélection <span data-summary-count>0 œuvre</span></summary>
+    <ul data-order-items></ul>
+    <p class="checkout__empty" data-order-empty>
+      Votre panier ne contient aucune œuvre actuellement approuvée pour la démonstration.
+      <a href="/boutique">Retourner aux œuvres</a>.
+    </p>
+    <p class="checkout__total" data-order-total-row hidden>
+      <span>Sous-total démo</span><strong data-order-total>0 €</strong>
+    </p>
+    <p class="checkout__pending">Livraison, taxes, certificat et politiques restent à confirmer avant toute activation commerciale.</p>
+  </details>
+</section>
+
+<script>
+  import { clear, configureCartCatalog, getItems, total } from '../lib/cart.js';
+  import { createCheckout, validateCustomer } from '../lib/checkout.js';
+
+  const money = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+  const root = document.querySelector('[data-checkout]');
+
+  if (root instanceof HTMLElement) {
+    try {
+      configureCartCatalog(JSON.parse(root.dataset.catalog ?? '[]'));
+    } catch {
+      configureCartCatalog([]);
+    }
+
+    const form = root.querySelector('[data-checkout-form]');
+    const list = root.querySelector('[data-order-items]');
+    const empty = root.querySelector('[data-order-empty]');
+    const totalRow = root.querySelector('[data-order-total-row]');
+    const totalNode = root.querySelector('[data-order-total]');
+    const countNode = root.querySelector('[data-summary-count]');
+    const submit = root.querySelector('[data-checkout-submit]');
+    const submitLabel = root.querySelector('[data-submit-label]');
+    const status = root.querySelector('[data-checkout-status]');
+    const summary = root.querySelector('[data-error-summary]');
+    const errorList = root.querySelector('[data-error-list]');
+
+    const renderSummary = () => {
+      const items = getItems();
+      list?.replaceChildren();
+      for (const item of items) {
+        const row = document.createElement('li');
+        const link = document.createElement('a');
+        const price = document.createElement('strong');
+        link.href = `/oeuvre/${encodeURIComponent(item.slug)}`;
+        link.textContent = item.title;
+        price.textContent = money.format(item.price);
+        row.append(link, price);
+        list?.append(row);
+      }
+      if (empty instanceof HTMLElement) empty.hidden = items.length > 0;
+      if (totalRow instanceof HTMLElement) totalRow.hidden = items.length === 0;
+      if (totalNode) totalNode.textContent = money.format(total());
+      if (countNode) countNode.textContent = `${items.length} œuvre${items.length === 1 ? '' : 's'}`;
+      if (submit instanceof HTMLButtonElement) submit.disabled = items.length === 0;
+    };
+
+    const clearErrors = () => {
+      if (summary instanceof HTMLElement) summary.hidden = true;
+      errorList?.replaceChildren();
+      root.querySelectorAll('[data-field-error]').forEach((node) => (node.textContent = ''));
+      root.querySelectorAll('[aria-invalid="true"]').forEach((node) => {
+        node.removeAttribute('aria-invalid');
+        node.removeAttribute('aria-describedby');
+      });
+    };
+
+    const showErrors = (errors, message = 'Corrigez les champs indiqués avant de continuer.') => {
+      clearErrors();
+      if (summary instanceof HTMLElement) summary.hidden = false;
+      for (const [name, error] of Object.entries(errors)) {
+        const field = form?.elements.namedItem(name);
+        const inline = root.querySelector(`[data-field-error="${name}"]`);
+        if (field instanceof HTMLElement) {
+          field.setAttribute('aria-invalid', 'true');
+          field.setAttribute('aria-describedby', `error-${name}`);
+        }
+        if (inline) inline.textContent = error;
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = `#checkout-${name}`;
+        link.textContent = error;
+        item.append(link);
+        errorList?.append(item);
+      }
+      if (Object.keys(errors).length === 0 && errorList) {
+        const item = document.createElement('li');
+        item.textContent = message;
+        errorList.append(item);
+      }
+      summary?.focus();
+    };
+
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!(form instanceof HTMLFormElement) || !(submit instanceof HTMLButtonElement)) return;
+      clearErrors();
+      const data = new FormData(form);
+      const customer = Object.fromEntries(
+        ['prenom', 'nom', 'email', 'adresse', 'ville', 'cp', 'pays'].map((name) => [name, String(data.get(name) ?? '')]),
+      );
+      const fieldErrors = validateCustomer(customer);
+      if (Object.keys(fieldErrors).length > 0) {
+        showErrors(fieldErrors);
+        return;
+      }
+
+      submit.disabled = true;
+      submit.setAttribute('aria-busy', 'true');
+      if (submitLabel) submitLabel.textContent = 'Validation en cours…';
+      if (status) status.textContent = 'Validation de la commande de démonstration en cours.';
+
+      try {
+        const result = await createCheckout({ items: getItems(), total: total(), customer }, 'demo');
+        if (status) status.textContent = 'Démonstration validée. Aucun paiement n’a été pris.';
+        if (submitLabel) submitLabel.textContent = 'Démonstration validée';
+        clear();
+        window.location.assign(result.redirect);
+      } catch (error) {
+        const fieldErrors = error?.fieldErrors ?? {};
+        showErrors(fieldErrors, error instanceof Error ? error.message : 'La démonstration a échoué. Réessayez.');
+        if (status) status.textContent = 'La démonstration n’a pas pu être finalisée.';
+        submit.disabled = getItems().length === 0;
+        submit.removeAttribute('aria-busy');
+        if (submitLabel) submitLabel.textContent = 'Réessayer la démonstration';
+      }
+    });
+
+    renderSummary();
+    window.addEventListener('cart:change', renderSummary);
+  }
+</script>
+
+<style>
+  .checkout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(19rem, 0.7fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    width: min(100%, var(--content-width));
+    margin-inline: auto;
+    padding: clamp(3rem, 8vw, 7rem) var(--pad);
+  }
+
+  .checkout__form-column {
+    min-width: 0;
+  }
+
+  .checkout__progress {
+    margin: 0 0 1rem;
+    color: var(--faint);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .checkout__progress strong {
+    color: var(--rose);
+  }
+
+  .checkout__intro {
+    max-width: 42rem;
+    margin: 1rem 0 2rem;
+    color: var(--muted);
+  }
+
+  .checkout-form {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .checkout-form fieldset {
+    padding: 0;
+    margin: 0;
+    border: 0;
+  }
+
+  .checkout-form legend,
+  .checkout-form__error-summary h2 {
+    margin: 0 0 1rem;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 600;
+  }
+
+  .checkout-form__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .checkout-field {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .checkout-field--wide {
+    grid-column: 1 / -1;
+  }
+
+  .checkout-field label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  .checkout-field input,
+  .checkout-field select {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 0;
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .checkout-field [aria-invalid='true'] {
+    border-color: var(--rose);
+  }
+
+  .checkout-field__error {
+    min-height: 1.2em;
+    color: #ff7597;
+    font-size: var(--text-xs);
+  }
+
+  .checkout-form__error-summary {
+    padding: 1rem;
+    border: 2px solid var(--rose);
+    background: color-mix(in srgb, var(--rose) 8%, var(--surface));
+  }
+
+  .checkout-form__error-summary h2 {
+    margin-bottom: 0.5rem;
+    font-size: var(--text-base);
+  }
+
+  .checkout-form__error-summary ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  .checkout-form__error-summary a {
+    text-decoration: underline;
+  }
+
+  .checkout-form__demo-mode {
+    padding: 1rem !important;
+    border: 1px solid var(--line-strong) !important;
+  }
+
+  .checkout-form__demo-mode label {
+    display: flex;
+    gap: 0.75rem;
+    align-items: start;
+  }
+
+  .checkout-form__demo-mode input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.2rem;
+    accent-color: var(--rose);
+  }
+
+  .checkout-form__demo-mode span {
+    display: grid;
+  }
+
+  .checkout-form__demo-mode small,
+  .checkout-form__notice,
+  .checkout__pending {
+    color: var(--faint);
+    font-size: var(--text-xs);
+  }
+
+  .checkout-form__status {
+    min-height: 1.5em;
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .checkout-form__submit {
+    min-height: 3.25rem;
+    padding: 0.8rem 1.25rem;
+    border: 1px solid var(--text);
+    background: var(--text);
+    color: var(--noir);
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  .checkout-form__submit:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  .checkout-form__notice {
+    margin: -0.75rem 0 0;
+  }
+
+  .checkout__summary {
+    height: fit-content;
+    padding: 1.25rem;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+  }
+
+  .checkout__summary summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .checkout__summary ul {
+    padding: 0;
+    margin: 1rem 0 0;
+    list-style: none;
+  }
+
+  .checkout__summary :global(li) {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .checkout__empty {
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+
+  .checkout__empty a {
+    text-decoration: underline;
+  }
+
+  .checkout__total {
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .checkout__total[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 48rem) {
+    .checkout {
+      grid-template-columns: 1fr;
+      padding-top: 2rem;
+    }
+
+    .checkout__summary:not([open]) > :not(summary) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 32rem) {
+    .checkout-form__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .checkout-field--wide {
+      grid-column: auto;
+    }
+  }
+</style>

@@ -1,12 +1,218 @@
 ---
-import FoundationPage from '../components/FoundationPage.astro';
+import { getCollection } from 'astro:content';
+import CartDrawer from '../components/CartDrawer.astro';
+import CartLineItem from '../components/CartLineItem.astro';
 import Base from '../layouts/Base.astro';
+
+const artworks = await getCollection('artworks');
+const eligibleCatalog = artworks
+  .map(({ data }) => data)
+  .filter(
+    (artwork) =>
+      artwork.availability === 'available' &&
+      artwork.availabilityReviewStatus === 'owner-approved' &&
+      artwork.price.reviewStatus === 'owner-approved',
+  );
 ---
 
-<Base title="Panier" currentPath="/panier">
-  <FoundationPage
-    eyebrow="Panier"
-    title="Votre sélection"
-    intro="Le panier de pièces uniques sera ajouté dans la phase commerce démo. Cette route ne stocke ni ne transmet actuellement aucune donnée."
-  />
+<Base
+  title="Panier"
+  currentPath="/panier"
+  description="Panier de démonstration Carlay Art — aucune transaction réelle."
+>
+  <section class="cart-page" data-cart-page data-catalog={JSON.stringify(eligibleCatalog)}>
+    <header class="cart-page__header">
+      <p class="eyebrow">Sélection</p>
+      <h1 class="display">Votre panier</h1>
+      <p>
+        Chaque œuvre originale ne peut apparaître qu’une fois. Ce parcours reste une démonstration et ne prend aucun paiement.
+      </p>
+    </header>
+
+    <div class="cart-page__notice">
+      <strong>Informations encore à confirmer</strong>
+      <p>Livraison, taxes, certificat, encadrement, retours et état seront affichés ici après validation par la cliente.</p>
+    </div>
+
+    <ul class="cart-page__items" data-cart-items aria-label="Œuvres dans le panier"></ul>
+    <div class="cart-page__empty" data-cart-empty>
+      <p>Aucune œuvre n’est actuellement approuvée pour le panier de démonstration.</p>
+      <a href="/boutique">Découvrir les œuvres</a>
+    </div>
+    <footer class="cart-page__foot" data-cart-foot hidden>
+      <p><span>Sous-total démo</span><strong data-cart-total>0 €</strong></p>
+      <small>Hors livraison, taxes et autres conditions encore à confirmer.</small>
+      <a href="/commande">Continuer vers la commande démo</a>
+    </footer>
+    <p class="cart-page__status" data-cart-status role="status" aria-live="polite"></p>
+    <CartLineItem templateId="cart-page-line-template" />
+  </section>
+  <CartDrawer />
 </Base>
+
+<script>
+  import { configureCartCatalog, getItems, removeItem, total } from '../lib/cart.js';
+
+  const money = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+  const root = document.querySelector('[data-cart-page]');
+
+  if (root instanceof HTMLElement) {
+    try {
+      configureCartCatalog(JSON.parse(root.dataset.catalog ?? '[]'));
+    } catch {
+      configureCartCatalog([]);
+    }
+    const list = root.querySelector('[data-cart-items]');
+    const empty = root.querySelector('[data-cart-empty]');
+    const foot = root.querySelector('[data-cart-foot]');
+    const totalNode = root.querySelector('[data-cart-total]');
+    const status = root.querySelector('[data-cart-status]');
+    const template = document.querySelector('#cart-page-line-template');
+
+    const render = () => {
+      const items = getItems();
+      list?.replaceChildren();
+      for (const item of items) {
+        if (!(template instanceof HTMLTemplateElement) || !list) continue;
+        const row = template.content.firstElementChild?.cloneNode(true);
+        if (!(row instanceof HTMLElement)) continue;
+        const image = row.querySelector('[data-cart-image]');
+        const title = row.querySelector('[data-cart-title]');
+        const series = row.querySelector('[data-cart-series]');
+        const price = row.querySelector('[data-cart-price]');
+        const remove = row.querySelector('[data-cart-remove]');
+        if (image instanceof HTMLImageElement) {
+          image.src = item.image;
+          image.alt = item.imageAlt;
+        }
+        if (title instanceof HTMLAnchorElement) {
+          title.textContent = item.title;
+          title.href = `/oeuvre/${encodeURIComponent(item.slug)}`;
+        }
+        if (series) series.textContent = item.series;
+        if (price) price.textContent = money.format(item.price);
+        if (remove instanceof HTMLButtonElement) {
+          remove.dataset.slug = item.slug;
+          remove.querySelector('.sr-only').textContent = `Retirer ${item.title} du panier`;
+        }
+        list.append(row);
+      }
+      if (empty instanceof HTMLElement) empty.hidden = items.length > 0;
+      if (foot instanceof HTMLElement) foot.hidden = items.length === 0;
+      if (totalNode) totalNode.textContent = money.format(total());
+    };
+
+    root.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const button = target.closest('[data-cart-remove]');
+      if (!(button instanceof HTMLElement) || !button.dataset.slug) return;
+      const item = getItems().find(({ slug }) => slug === button.dataset.slug);
+      removeItem(button.dataset.slug);
+      if (status) status.textContent = item ? `${item.title} a été retirée du panier.` : 'L’œuvre a été retirée.';
+    });
+    window.addEventListener('cart:change', render);
+    render();
+  }
+</script>
+
+<style>
+  .cart-page {
+    width: min(100%, 58rem);
+    min-height: 65vh;
+    margin-inline: auto;
+    padding: clamp(3rem, 8vw, 7rem) var(--pad);
+  }
+
+  .cart-page__header {
+    display: grid;
+    gap: 1rem;
+    max-width: 44rem;
+  }
+
+  .cart-page__header p:last-child {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .cart-page__notice {
+    margin-top: 2rem;
+    padding: 1rem;
+    border: 1px solid var(--line-strong);
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+
+  .cart-page__notice strong {
+    color: var(--text);
+  }
+
+  .cart-page__notice p {
+    margin: 0.25rem 0 0;
+  }
+
+  .cart-page__items {
+    padding: 0;
+    margin: 2rem 0 0;
+    list-style: none;
+  }
+
+  .cart-page__empty {
+    margin-top: 2rem;
+    padding: 2rem;
+    border: 1px dashed var(--line-strong);
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .cart-page__empty a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    margin-top: 0.75rem;
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--text);
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .cart-page__foot {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: end;
+    margin-top: 1.5rem;
+  }
+
+  .cart-page__foot[hidden] {
+    display: none;
+  }
+
+  .cart-page__foot p {
+    display: flex;
+    width: min(100%, 24rem);
+    justify-content: space-between;
+    margin: 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .cart-page__foot small {
+    color: var(--faint);
+  }
+
+  .cart-page__foot a {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    padding: 0.7rem 1.1rem;
+    background: var(--text);
+    color: var(--noir);
+    font-weight: 700;
+  }
+
+  .cart-page__status {
+    min-height: 1.5em;
+    color: var(--muted);
+    text-align: right;
+  }
+</style>

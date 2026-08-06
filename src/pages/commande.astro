@@ -1,12 +1,14 @@
 ---
-import FoundationPage from '../components/FoundationPage.astro';
+import CartDrawer from '../components/CartDrawer.astro';
+import CheckoutForm from '../components/CheckoutForm.astro';
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Commande démo" currentPath="/commande">
-  <FoundationPage
-    eyebrow="Démonstration"
-    title="Commande"
-    intro="Aucun formulaire de paiement ni fournisseur réel n’est connecté. Le parcours démo sera implémenté séparément avec des états explicites."
-  />
+<Base
+  title="Commande démo"
+  currentPath="/commande"
+  description="Parcours de commande Carlay Art en mode démonstration — aucun paiement réel."
+>
+  <CheckoutForm />
+  <CartDrawer />
 </Base>

@@ -1,0 +1,361 @@
+---
+import { getCollection } from 'astro:content';
+import CartLineItem from './CartLineItem.astro';
+
+const artworks = await getCollection('artworks');
+const eligibleCatalog = artworks
+  .map(({ data }) => data)
+  .filter(
+    (artwork) =>
+      artwork.availability === 'available' &&
+      artwork.availabilityReviewStatus === 'owner-approved' &&
+      artwork.price.reviewStatus === 'owner-approved',
+  );
+---
+
+<div class="cart-widget" data-cart-widget data-catalog={JSON.stringify(eligibleCatalog)}>
+  <button
+    class="cart-widget__trigger js-cart-toggle"
+    type="button"
+    aria-haspopup="dialog"
+    aria-controls="cart-drawer"
+    aria-expanded="false"
+  >
+    Panier <span class="cart-widget__count" data-cart-count>0</span>
+  </button>
+
+  <div class="cart-widget__layer" data-cart-layer hidden>
+    <button class="cart-widget__backdrop" data-cart-close type="button" aria-label="Fermer le panier"></button>
+    <aside
+      class="cart-drawer"
+      id="cart-drawer"
+      data-cart-drawer
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cart-drawer-title"
+      tabindex="-1"
+    >
+      <header class="cart-drawer__head">
+        <div>
+          <p class="eyebrow">Sélection</p>
+          <h2 id="cart-drawer-title">Votre panier</h2>
+        </div>
+        <button class="cart-drawer__close" data-cart-close type="button">
+          <span aria-hidden="true">×</span><span class="sr-only">Fermer le panier</span>
+        </button>
+      </header>
+      <ul class="cart-drawer__items" data-cart-items></ul>
+      <p class="cart-drawer__empty" data-cart-empty>
+        Votre panier est vide. Les œuvres apparaîtront ici après validation de leur disponibilité.
+      </p>
+      <footer class="cart-drawer__foot" data-cart-foot hidden>
+        <p><span>Sous-total démo</span><strong data-cart-total>0 €</strong></p>
+        <a class="cart-drawer__primary" href="/commande">Continuer vers la démo</a>
+        <a class="cart-drawer__secondary" href="/panier">Voir le panier</a>
+      </footer>
+    </aside>
+  </div>
+  <p class="cart-widget__status" data-cart-status role="status" aria-live="polite"></p>
+  <CartLineItem templateId="cart-drawer-line-template" compact />
+</div>
+
+<script>
+  import { addItem, configureCartCatalog, getItems, removeItem, total } from '../lib/cart.js';
+
+  const money = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+  const widget = document.querySelector('[data-cart-widget]');
+
+  if (widget instanceof HTMLElement) {
+    try {
+      configureCartCatalog(JSON.parse(widget.dataset.catalog ?? '[]'));
+    } catch {
+      configureCartCatalog([]);
+    }
+
+    const layer = widget.querySelector('[data-cart-layer]');
+    const drawer = widget.querySelector('[data-cart-drawer]');
+    const list = widget.querySelector('[data-cart-items]');
+    const empty = widget.querySelector('[data-cart-empty]');
+    const foot = widget.querySelector('[data-cart-foot]');
+    const count = widget.querySelector('[data-cart-count]');
+    const totalNode = widget.querySelector('[data-cart-total]');
+    const status = widget.querySelector('[data-cart-status]');
+    const template = document.querySelector('#cart-drawer-line-template');
+    let returnFocus = null;
+
+    const announce = (message) => {
+      if (!(status instanceof HTMLElement)) return;
+      status.textContent = '';
+      requestAnimationFrame(() => (status.textContent = message));
+    };
+
+    const render = () => {
+      const items = getItems();
+      if (list) list.replaceChildren();
+      for (const item of items) {
+        if (!(template instanceof HTMLTemplateElement) || !list) continue;
+        const row = template.content.firstElementChild?.cloneNode(true);
+        if (!(row instanceof HTMLElement)) continue;
+        const image = row.querySelector('[data-cart-image]');
+        const title = row.querySelector('[data-cart-title]');
+        const series = row.querySelector('[data-cart-series]');
+        const price = row.querySelector('[data-cart-price]');
+        const remove = row.querySelector('[data-cart-remove]');
+        if (image instanceof HTMLImageElement) {
+          image.src = item.image;
+          image.alt = item.imageAlt;
+        }
+        if (title instanceof HTMLAnchorElement) {
+          title.textContent = item.title;
+          title.href = `/oeuvre/${encodeURIComponent(item.slug)}`;
+        }
+        if (series) series.textContent = item.series;
+        if (price) price.textContent = money.format(item.price);
+        if (remove instanceof HTMLButtonElement) {
+          remove.dataset.slug = item.slug;
+          remove.querySelector('.sr-only').textContent = `Retirer ${item.title} du panier`;
+        }
+        list.append(row);
+      }
+      if (empty instanceof HTMLElement) empty.hidden = items.length > 0;
+      if (foot instanceof HTMLElement) foot.hidden = items.length === 0;
+      if (count) count.textContent = String(items.length);
+      if (totalNode) totalNode.textContent = money.format(total());
+    };
+
+    const close = () => {
+      if (layer instanceof HTMLElement) layer.hidden = true;
+      document.body.classList.remove('cart-open');
+      document.querySelectorAll('.js-cart-toggle').forEach((node) => node.setAttribute('aria-expanded', 'false'));
+      if (returnFocus instanceof HTMLElement) returnFocus.focus();
+    };
+
+    const open = (trigger) => {
+      returnFocus = trigger;
+      if (layer instanceof HTMLElement) layer.hidden = false;
+      document.body.classList.add('cart-open');
+      trigger.setAttribute('aria-expanded', 'true');
+      render();
+      if (drawer instanceof HTMLElement) drawer.focus();
+    };
+
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const add = target.closest('.js-add-to-cart');
+      if (add instanceof HTMLElement) {
+        let payload = { slug: add.dataset.artworkSlug };
+        try {
+          if (add.dataset.artwork) payload = JSON.parse(add.dataset.artwork);
+        } catch {
+          payload = { slug: '' };
+        }
+        const result = addItem(payload);
+        if (result.ok) {
+          announce(`${result.item.title} a été ajoutée au panier.`);
+          open(add);
+        } else if (result.reason === 'duplicate') {
+          announce('Pièce unique — cette œuvre est déjà dans votre panier.');
+        } else {
+          announce('Cette œuvre ne peut pas être ajoutée tant que sa disponibilité n’est pas approuvée.');
+        }
+      }
+
+      const toggle = target.closest('.js-cart-toggle');
+      if (toggle instanceof HTMLElement) open(toggle);
+      if (target.closest('[data-cart-close]')) close();
+
+      const remove = target.closest('[data-cart-remove]');
+      if (remove instanceof HTMLElement && remove.dataset.slug) {
+        removeItem(remove.dataset.slug);
+        announce('L’œuvre a été retirée du panier.');
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (!(layer instanceof HTMLElement) || layer.hidden) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+        return;
+      }
+      if (event.key !== 'Tab' || !(drawer instanceof HTMLElement)) return;
+      const focusable = [...drawer.querySelectorAll('a[href], button:not([disabled])')].filter(
+        (node) => node instanceof HTMLElement,
+      );
+      const first = focusable[0];
+      const last = focusable.at(-1);
+      if (!first || !last) return;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+    window.addEventListener('cart:change', render);
+    render();
+  }
+</script>
+
+<style>
+  .cart-widget__trigger {
+    position: fixed;
+    z-index: 90;
+    right: var(--pad);
+    bottom: 1.25rem;
+    min-height: 2.75rem;
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 99rem;
+    background: var(--text);
+    color: var(--noir);
+    cursor: pointer;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cart-widget__count {
+    display: inline-grid;
+    min-width: 1.45rem;
+    min-height: 1.45rem;
+    place-items: center;
+    margin-left: 0.4rem;
+    border-radius: 50%;
+    background: var(--rose);
+    color: var(--noir);
+  }
+
+  .cart-widget__layer {
+    position: fixed;
+    z-index: 300;
+    inset: 0;
+  }
+
+  .cart-widget__layer[hidden] {
+    display: none;
+  }
+
+  .cart-widget__backdrop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    border: 0;
+    background: rgb(0 0 0 / 72%);
+    cursor: default;
+  }
+
+  .cart-drawer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    width: min(100%, 29rem);
+    height: 100%;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: clamp(1.25rem, 4vw, 2rem);
+    overflow-y: auto;
+    border-left: 1px solid var(--line-strong);
+    background: var(--surface);
+    box-shadow: -1rem 0 4rem rgb(0 0 0 / 45%);
+  }
+
+  .cart-drawer__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .cart-drawer__head h2 {
+    margin: 0.25rem 0 0;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+  }
+
+  .cart-drawer__close {
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 1.5rem;
+  }
+
+  .cart-drawer__items {
+    flex: 1;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .cart-drawer__empty {
+    flex: 1;
+    color: var(--muted);
+  }
+
+  .cart-drawer__foot {
+    display: grid;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .cart-drawer__foot[hidden] {
+    display: none;
+  }
+
+  .cart-drawer__foot p {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 0.5rem;
+  }
+
+  .cart-drawer__primary,
+  .cart-drawer__secondary {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--text);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  .cart-drawer__primary {
+    background: var(--text);
+    color: var(--noir);
+  }
+
+  .cart-drawer__secondary {
+    color: var(--text);
+  }
+
+  .cart-widget__status {
+    position: fixed;
+    z-index: 400;
+    right: var(--pad);
+    bottom: 5rem;
+    max-width: min(24rem, calc(100vw - 2 * var(--pad)));
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--line-strong);
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: var(--text-sm);
+  }
+
+  .cart-widget__status:empty {
+    display: none;
+  }
+
+  :global(body.cart-open) {
+    overflow: hidden;
+  }
+</style>

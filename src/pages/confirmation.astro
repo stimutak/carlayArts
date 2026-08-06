@@ -1,12 +1,160 @@
 ---
-import FoundationPage from '../components/FoundationPage.astro';
+import CartDrawer from '../components/CartDrawer.astro';
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Confirmation démo" currentPath="/confirmation">
-  <FoundationPage
-    eyebrow="Démonstration"
-    title="Confirmation"
-    intro="Cette route est réservée au futur résultat de démonstration. Elle ne confirme actuellement ni commande ni paiement."
-  />
+<Base
+  title="Confirmation démo"
+  currentPath="/confirmation"
+  description="Résultat du parcours de commande Carlay Art en mode démonstration."
+>
+  <section class="confirmation" data-confirmation>
+    <div class="confirmation__mark" aria-hidden="true">✓</div>
+    <p class="eyebrow">Mode démonstration</p>
+    <h1 class="display" data-confirmation-title>Aucun résultat démo enregistré</h1>
+    <p class="confirmation__lead" data-confirmation-lead>
+      Cette page ne confirme ni commande réelle ni paiement. Lancez le parcours depuis une œuvre approuvée lorsqu’elle sera disponible.
+    </p>
+    <div class="confirmation__details" data-confirmation-details hidden>
+      <p><span>Référence locale</span><strong data-confirmation-reference></strong></p>
+      <ul data-confirmation-items></ul>
+      <p><span>Total de démonstration</span><strong data-confirmation-total></strong></p>
+    </div>
+    <div class="confirmation__demo-notice" role="status">
+      <strong>Aucun paiement n’a été pris.</strong>
+      <span>Il s’agit uniquement d’une simulation locale; aucune commande n’a été envoyée.</span>
+    </div>
+    <nav class="confirmation__actions" aria-label="Après la démonstration">
+      <a href="/boutique">Retour aux œuvres</a>
+      <a href="/contact">Contacter l’artiste</a>
+    </nav>
+  </section>
+  <CartDrawer />
 </Base>
+
+<script>
+  import { getDemoConfirmation } from '../lib/checkout.js';
+
+  const money = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+  const root = document.querySelector('[data-confirmation]');
+  const confirmation = getDemoConfirmation();
+  if (root instanceof HTMLElement && confirmation) {
+    const title = root.querySelector('[data-confirmation-title]');
+    const lead = root.querySelector('[data-confirmation-lead]');
+    const details = root.querySelector('[data-confirmation-details]');
+    const reference = root.querySelector('[data-confirmation-reference]');
+    const list = root.querySelector('[data-confirmation-items]');
+    const total = root.querySelector('[data-confirmation-total]');
+    if (title) title.textContent = 'Démonstration terminée';
+    if (lead) lead.textContent = 'Votre sélection a traversé le parcours de démonstration avec succès.';
+    if (details instanceof HTMLElement) details.hidden = false;
+    if (reference) reference.textContent = confirmation.reference;
+    for (const item of confirmation.items) {
+      const row = document.createElement('li');
+      const name = document.createElement('span');
+      const price = document.createElement('strong');
+      name.textContent = item.title;
+      price.textContent = money.format(item.price);
+      row.append(name, price);
+      list?.append(row);
+    }
+    if (total) total.textContent = money.format(confirmation.total);
+  }
+</script>
+
+<style>
+  .confirmation {
+    display: grid;
+    width: min(100%, 46rem);
+    min-height: 66vh;
+    place-items: center;
+    align-content: center;
+    gap: 1rem;
+    margin-inline: auto;
+    padding: clamp(3rem, 9vw, 8rem) var(--pad);
+    text-align: center;
+  }
+
+  .confirmation__mark {
+    display: grid;
+    width: 4rem;
+    height: 4rem;
+    place-items: center;
+    border: 1px solid var(--rose);
+    border-radius: 50%;
+    color: var(--rose);
+    font-size: 1.75rem;
+  }
+
+  .confirmation__lead {
+    max-width: 38rem;
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .confirmation__details {
+    width: min(100%, 34rem);
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    text-align: left;
+  }
+
+  .confirmation__details p,
+  .confirmation__details li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .confirmation__details ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .confirmation__details p:last-child {
+    border-bottom: 0;
+  }
+
+  .confirmation__demo-notice {
+    display: grid;
+    width: min(100%, 34rem);
+    gap: 0.2rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 2px solid var(--rose);
+    background: color-mix(in srgb, var(--rose) 8%, var(--surface));
+  }
+
+  .confirmation__demo-notice span {
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+
+  .confirmation__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .confirmation__actions a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--line-strong);
+    font-weight: 600;
+  }
+
+  .confirmation__actions a:first-child {
+    background: var(--text);
+    color: var(--noir);
+  }
+</style>
