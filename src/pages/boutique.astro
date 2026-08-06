@@ -4,8 +4,9 @@ import ArtworkCard from '../components/ArtworkCard.astro';
 import Reveal from '../components/Reveal.astro';
 import Base from '../layouts/Base.astro';
 import { accentFor } from '../lib/series.js';
+import { withAccessibilityFixture } from '../lib/accessibility-fixture.js';
 
-const artworks = (await getCollection('artworks')).map((entry) => entry.data).sort((a, b) => a.sortOrder - b.sortOrder);
+const artworks = withAccessibilityFixture((await getCollection('artworks')).map((entry) => entry.data)).sort((a, b) => a.sortOrder - b.sortOrder);
 const seriesSlugs = [...new Set(artworks.map((artwork) => artwork.seriesSlug))];
 const series = seriesSlugs.map((slug) => {
   const works = artworks.filter((artwork) => artwork.seriesSlug === slug);

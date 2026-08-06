@@ -2,7 +2,7 @@ import { spawn } from 'node:child_process';
 import { chromium } from 'playwright';
 
 const origin = 'http://127.0.0.1:4322';
-const preview = spawn('npm', ['run', 'preview', '--', '--host', '127.0.0.1', '--port', '4322'], {
+const preview = spawn('./node_modules/.bin/astro', ['preview', '--host', '127.0.0.1', '--port', '4322'], {
   cwd: process.cwd(),
   stdio: ['ignore', 'pipe', 'pipe'],
 });
@@ -42,15 +42,34 @@ try {
   const toggle = mobile.locator('#site-menu-toggle');
   await toggle.click();
   if ((await toggle.getAttribute('aria-expanded')) !== 'true') throw new Error('Mobile menu did not expose expanded state.');
-  if (await mobile.locator('#site-mobile-menu').getAttribute('hidden')) throw new Error('Mobile menu remained hidden.');
-  if (!await mobile.locator('main').evaluate((element) => element.inert)) throw new Error('Mobile menu did not make background content inert.');
+  if (await mobile.locator('#site-mobile-menu').evaluate((element) => element.hidden)) throw new Error('Mobile menu remained hidden.');
+  for (const selector of ['.nav', 'main', '.footer', '[data-cart-shell]']) {
+    if (!(await mobile.locator(selector).evaluate((element) => element.inert))) throw new Error(`Mobile menu did not inert ${selector}.`);
+  }
   await mobile.keyboard.press('Shift+Tab');
   const wrappedHref = await mobile.evaluate(() => document.activeElement?.getAttribute('href'));
   if (wrappedHref !== '/panier/') throw new Error('Mobile menu focus did not wrap to its last link.');
   await mobile.keyboard.press('Escape');
   if ((await toggle.getAttribute('aria-expanded')) !== 'false') throw new Error('Escape did not collapse the mobile menu.');
   if (!(await toggle.evaluate((element) => element === document.activeElement))) throw new Error('Focus did not return to the menu button.');
-  if (await mobile.locator('main').evaluate((element) => element.inert)) throw new Error('Mobile menu did not restore background interactivity.');
+  if (await mobile.locator('main').evaluate((element) => element.inert)) throw new Error('Escape did not restore background interactivity.');
+
+  await toggle.click();
+  await mobile.locator('#site-mobile-menu').click({ position: { x: 4, y: 4 } });
+  if (!(await toggle.evaluate((element) => element === document.activeElement))) throw new Error('Overlay close did not restore menu trigger focus.');
+  if (await mobile.locator('main').evaluate((element) => element.inert)) throw new Error('Overlay close did not restore background interactivity.');
+
+  await toggle.click();
+  await mobile.locator('#site-mobile-menu a[href="/contact/"]').click();
+  await mobile.waitForURL('**/contact/');
+  if (await mobile.locator('main').evaluate((element) => element.inert)) throw new Error('Menu navigation did not restore background interactivity.');
+
+  await mobile.goto(origin);
+  await mobile.locator('#site-menu-toggle').click();
+  await mobile.setViewportSize({ width: 1440, height: 900 });
+  await mobile.waitForFunction(() => document.querySelector('#site-mobile-menu')?.hidden === true);
+  if (!(await mobile.locator('#site-mobile-menu').evaluate((element) => element.hidden))) throw new Error('Desktop breakpoint did not close the mobile menu.');
+  if (await mobile.locator('main').evaluate((element) => element.inert)) throw new Error('Desktop breakpoint did not restore background interactivity.');
 
   await mobile.setViewportSize({ width: 390, height: 844 });
   await mobile.goto(`${origin}/boutique/`);

@@ -247,6 +247,15 @@ import Base from '../layouts/Base.astro';
       if (target instanceof HTMLInputElement || target instanceof HTMLSelectElement) setFieldError(target.name);
     });
 
+    form?.querySelector('[data-error-summary]')?.addEventListener('click', (event) => {
+      const link = event.target instanceof Element ? event.target.closest('a[href^="#"]') : null;
+      if (!(link instanceof HTMLAnchorElement)) return;
+      const target = document.querySelector(link.hash);
+      if (!(target instanceof HTMLElement)) return;
+      event.preventDefault();
+      target.focus();
+    });
+
     form?.addEventListener('submit', async (event) => {
       event.preventDefault();
       if (!(form instanceof HTMLFormElement) || submitting || !window.CarlayCart) return;

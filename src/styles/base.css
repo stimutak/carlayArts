@@ -43,6 +43,15 @@ body::after {
 
 main {
   min-height: calc(100vh - var(--nav-h));
+  scroll-margin-top: calc(var(--nav-h) + 1rem);
+}
+
+main:focus {
+  outline: none;
+}
+
+:where([id]) {
+  scroll-margin-top: calc(var(--nav-h) + 1rem);
 }
 
 main:focus {

@@ -139,7 +139,6 @@
     shell.hidden = true;
     document.body.classList.remove('cart-open');
     setBackgroundInert(false);
-    document.querySelectorAll('[data-cart-open]').forEach((node) => node.setAttribute('aria-expanded', 'false'));
     if (restore && returnFocus instanceof HTMLElement) returnFocus.focus();
     returnFocus = null;
   };
@@ -151,7 +150,6 @@
     shell.hidden = false;
     document.body.classList.add('cart-open');
     setBackgroundInert(true);
-    document.querySelectorAll('[data-cart-open]').forEach((node) => node.setAttribute('aria-expanded', 'true'));
     drawer.querySelector('[data-cart-close]')?.focus();
   };
 

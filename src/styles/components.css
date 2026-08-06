@@ -1029,6 +1029,15 @@
     align-items: flex-start;
   }
 
+  .artwork-card__body {
+    flex-direction: column;
+  }
+
+  .artwork-card__price {
+    max-width: 100%;
+    justify-items: start;
+  }
+
   .series-head {
     flex-direction: column;
     gap: 0.2rem;

@@ -2,7 +2,7 @@ import { spawn } from 'node:child_process';
 import { chromium } from 'playwright';
 
 const origin = 'http://127.0.0.1:4323';
-const preview = spawn('npm', ['run', 'preview', '--', '--host', '127.0.0.1', '--port', '4323'], {
+const preview = spawn('./node_modules/.bin/astro', ['preview', '--host', '127.0.0.1', '--port', '4323'], {
   cwd: process.cwd(),
   stdio: ['ignore', 'pipe', 'pipe'],
 });
@@ -32,35 +32,7 @@ const assertNoOverflow = async (page, route, width) => {
   assert(!overflow, `${route} overflows horizontally at ${width}px.`);
 };
 
-const patchInventory = async (route) => {
-  if (!route.request().url().endsWith('/data/cart-inventory.json')) return route.continue();
-  const response = await route.fetch();
-  const records = await response.json();
-  const work = records.find((record) => record.id === 'legacy-vortex-5');
-  if (work) {
-    const approved = (value) => ({ value, reviewStatus: 'owner-approved' });
-    work.availability = 'available';
-    work.availabilityReviewStatus = 'owner-approved';
-    work.price.reviewStatus = 'owner-approved';
-    work.medium = approved('Acrylique sur toile');
-    work.year = approved(2026);
-    work.dimensions.reviewStatus = 'owner-approved';
-    work.signaturePlacement = approved('Dos de la toile');
-    work.condition = approved('Neuve');
-    work.framingStatus = approved('Non encadrée');
-    work.certificateStatus = approved('Inclus');
-    work.images.full = { src: work.image.src, alt: `${work.title}, vue intégrale test`, reviewStatus: 'owner-approved' };
-    work.images.details = [{ src: work.image.src, alt: `${work.title}, détail test`, reviewStatus: 'owner-approved' }];
-  }
-  return route.fulfill({
-    response,
-    body: JSON.stringify(records),
-    headers: { ...response.headers(), 'content-type': 'application/json; charset=utf-8' },
-  });
-};
-
 const waitForCart = (page) => page.waitForFunction(() => document.documentElement.dataset.cartReady === 'true');
-
 let browser;
 try {
   await waitForServer();
@@ -121,22 +93,26 @@ try {
   await guarded.close();
 
   const journey = await browser.newContext({ viewport: { width: 390, height: 844 } });
-  await journey.route('**/*', patchInventory);
   const demo = await journey.newPage();
   const journeyErrors = [];
   demo.on('console', (message) => message.type() === 'error' && journeyErrors.push(message.text()));
   demo.on('pageerror', (error) => journeyErrors.push(error.message));
-  await demo.goto(`${origin}/oeuvre/vortex-5/`);
+  await demo.goto(`${origin}/boutique/`);
+  await demo.waitForFunction(() => document.querySelector('[data-filter-shell]')?.classList.contains('is-enhanced'));
+  await demo.locator('[data-filter-availability]').click();
+  assert((await demo.locator('[data-artwork-card]:visible').count()) === 1, 'Synthetic eligible filter did not expose exactly one card.');
+  await demo.locator('a[href="/oeuvre/accessibility-test-fixture/"]').click();
+  assert((await demo.locator('[data-lightbox-open]').count()) === 1, 'Eligible fixture did not expose its verified lightbox.');
+  assert(!(await demo.locator('main').innerText()).includes('Média non homologué'), 'Eligible detail still says its media is unverified.');
+  assert(!(await demo.locator('main').innerText()).includes('L’intégration panier relève de la phase commerce'), 'Eligible detail retained pre-Phase-4 integration copy.');
+  await demo.locator('[data-lightbox-open]').click();
+  assert(await demo.locator('[data-lightbox]').evaluate((node) => node.open), 'Verified lightbox did not open.');
+  assert(await demo.locator('body > .nav').evaluate((node) => node.inert), 'Verified lightbox did not inert background navigation.');
+  await demo.locator('[data-lightbox-close]').click();
+  await demo.waitForFunction(() => document.activeElement?.hasAttribute('data-lightbox-open'));
+  assert(await demo.locator('[data-lightbox-open]').evaluate((node) => node === document.activeElement), 'Verified lightbox did not restore trigger focus.');
   await waitForCart(demo);
-  await demo.evaluate(() => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.textContent = 'Ajouter le fixture disponible';
-    button.dataset.cartAdd = 'legacy-vortex-5';
-    button.setAttribute('data-cart-open-after-add', '');
-    document.querySelector('[data-cart-actions]')?.append(button);
-  });
-  const fixtureAdd = demo.locator('[data-cart-add="legacy-vortex-5"]');
+  const fixtureAdd = demo.locator('[data-cart-add="synthetic-accessibility-fixture"]');
   await fixtureAdd.click();
   assert(await demo.locator('#cart-drawer').isVisible(), 'Successful add did not open the drawer.');
   assert((await demo.locator('[data-cart-count]').first().textContent()) === '1', 'Successful add did not update the count.');
@@ -183,7 +159,7 @@ try {
   await demo.waitForURL('**/confirmation/');
   await waitForCart(demo);
   assert(await demo.getByRole('heading', { name: 'Aucun paiement n’a été pris' }).isVisible(), 'Confirmation lacks the no-payment outcome.');
-  assert((await demo.locator('[data-confirmation-items]').innerText()).includes('Vortex 5'), 'Confirmation does not repeat the selected work.');
+  assert((await demo.locator('[data-confirmation-items]').innerText()).includes('Fixture d’accessibilité'), 'Confirmation does not repeat the synthetic eligible work.');
   assert((await demo.locator('[data-cart-count]').first().textContent()) === '0', 'Successful demo did not clear the cart.');
   await assertNoOverflow(demo, '/confirmation', 390);
 

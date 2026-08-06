@@ -21,8 +21,6 @@ const links = [
       class="nav__cart-link"
       href="/panier/"
       aria-current={currentPath === '/panier' ? 'page' : undefined}
-      aria-controls="cart-drawer"
-      aria-expanded="false"
       aria-haspopup="dialog"
       data-cart-open
     >
@@ -58,9 +56,16 @@ const links = [
       document.querySelector('.footer'),
       document.querySelector('[data-cart-shell]'),
     ].filter((node) => node instanceof HTMLElement);
+    let inerted = [];
 
-    const setBackgroundInert = (inert) => {
-      backgroundElements.forEach((node) => { node.inert = inert; });
+    const setBackgroundInert = () => {
+      inerted = backgroundElements.map((element) => ({ element, wasInert: element.inert }));
+      inerted.forEach(({ element }) => { element.inert = true; });
+    };
+
+    const restoreBackground = () => {
+      inerted.forEach(({ element, wasInert }) => { element.inert = wasInert; });
+      inerted = [];
     };
 
     const closeMenu = ({ returnFocus = true } = {}) => {
@@ -68,7 +73,7 @@ const links = [
       toggle.setAttribute('aria-expanded', 'false');
       if (toggleLabel) toggleLabel.textContent = 'Ouvrir le menu';
       document.body.classList.remove('menu-open');
-      setBackgroundInert(false);
+      restoreBackground();
       if (returnFocus) toggle.focus();
     };
 
@@ -77,7 +82,7 @@ const links = [
       toggle.setAttribute('aria-expanded', 'true');
       if (toggleLabel) toggleLabel.textContent = 'Fermer le menu';
       document.body.classList.add('menu-open');
-      setBackgroundInert(true);
+      setBackgroundInert();
       menu.querySelector(focusableSelector)?.focus();
     };
 

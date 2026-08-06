@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
-import { accentFor, formatPrice } from '../src/lib/series.js';
+import { accentFor, formatPrice, textAccentFor } from '../src/lib/series.js';
 import { canonicalPath, pageTitle } from '../src/lib/metadata.js';
 
 describe('series and metadata helpers', () => {
@@ -9,6 +9,7 @@ describe('series and metadata helpers', () => {
     expect(accentFor('romeo')).toBe('#87CEEB');
     expect(accentFor('insomnia')).toBe('#4ADE80');
     expect(accentFor('unknown')).toBe('rgba(255,255,255,0.16)');
+    expect(textAccentFor('unknown')).toBe('#B8B8B8');
   });
 
   it('formats catalog prices and canonical paths consistently', () => {

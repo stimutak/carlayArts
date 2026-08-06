@@ -9,7 +9,9 @@
     "test": "vitest run --exclude tests/dist.test.js",
     "test:watch": "vitest --exclude tests/dist.test.js",
     "test:dist": "vitest run tests/dist.test.js",
-    "test:browser": "node scripts/check-foundation-browser.mjs && node scripts/check-commerce-browser.mjs",
+    "build:test-fixture": "CARLAY_ACCESSIBILITY_FIXTURE=1 astro build",
+    "test:browser": "npm run build && node scripts/check-foundation-browser.mjs && npm run build:test-fixture && node scripts/check-commerce-browser.mjs && node scripts/check-accessibility-browser.mjs",
+    "test:a11y": "npm run build:test-fixture && node scripts/check-accessibility-browser.mjs",
     "audit:static": "node scripts/audit-production.mjs",
     "audit:screenshots": "node scripts/capture-audit-screenshots.mjs",
     "check": "npm run test && npm run build && npm run test:dist && npm run audit:static",
@@ -32,6 +34,7 @@
     "playwright": "^1.57.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "astro": "^5.18.2",
     "jsdom": "^26.1.0",
     "vitest": "^3.2.7"

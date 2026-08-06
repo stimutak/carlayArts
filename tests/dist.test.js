@@ -59,4 +59,14 @@ describe('static route foundation', () => {
     expect(artwork).toContain('data-unverified-media');
     expect(artwork).not.toContain('<dialog');
   });
+
+  it('keeps the synthetic eligible fixture and commerce controls out of production output', () => {
+    expect(existsSync(outputForPath('/oeuvre/accessibility-test-fixture'))).toBe(false);
+    for (const file of htmlFiles(dist)) {
+      const html = readFileSync(file, 'utf8');
+      expect(html, relative(dist, file)).not.toContain('synthetic-accessibility-fixture');
+      expect(html, relative(dist, file)).not.toContain('accessibility-test-fixture');
+      expect(html, relative(dist, file)).not.toMatch(/data-cart-(?:add|buy)=/);
+    }
+  });
 });

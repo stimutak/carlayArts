@@ -1,10 +1,11 @@
 import { getCollection } from 'astro:content';
+import { withAccessibilityFixture } from '../../lib/accessibility-fixture.js';
 
 export const prerender = true;
 
 export async function GET() {
   const entries = await getCollection('artworks');
-  const inventory = entries.map(({ data }) => ({
+  const inventory = withAccessibilityFixture(entries.map(({ data }) => data)).map((data) => ({
     id: data.id,
     slug: data.slug,
     title: data.title,

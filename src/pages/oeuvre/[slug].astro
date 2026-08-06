@@ -14,11 +14,12 @@ import {
   reviewedFactLabel,
   validateArtworkInventory,
 } from '../../lib/artworks.js';
-import { accentFor, formatPrice } from '../../lib/series.js';
+import { accentFor, formatPrice, textAccentFor } from '../../lib/series.js';
+import { isAccessibilityFixture, withAccessibilityFixture } from '../../lib/accessibility-fixture.js';
 
 export async function getStaticPaths() {
   const entries = await getCollection('artworks');
-  const artworks = entries.map((entry) => entry.data);
+  const artworks = withAccessibilityFixture(entries.map((entry) => entry.data));
   validateArtworkInventory(artworks, {
     assetExists: (imagePath) => existsSync(join(process.cwd(), 'public', imagePath.replace(/^\/+/, ''))),
   });
@@ -26,12 +27,14 @@ export async function getStaticPaths() {
 }
 
 const { artwork } = Astro.props;
-const all = (await getCollection('artworks')).map((entry) => entry.data).sort((a, b) => a.sortOrder - b.sortOrder);
+const all = withAccessibilityFixture((await getCollection('artworks')).map((entry) => entry.data)).sort((a, b) => a.sortOrder - b.sortOrder);
 const related = all.filter((candidate) => candidate.seriesSlug === artwork.seriesSlug && candidate.slug !== artwork.slug).slice(0, 3);
 const accent = accentFor(artwork.seriesSlug);
+const textAccent = textAccentFor(artwork.seriesSlug);
 const purchasable = isCommerceEligible(artwork);
 const state = availabilityLabel(artwork);
 const verifiedFull = Boolean(artwork.images.full.src && artwork.images.full.reviewStatus === 'owner-approved');
+const testFixture = isAccessibilityFixture(artwork);
 const media = verifiedFull
   ? [artwork.images.full, ...artwork.images.details.filter((image) => image.src && image.reviewStatus === 'owner-approved')].map((image) => ({
       src: image.src,
@@ -53,13 +56,20 @@ const media = verifiedFull
   <section class="artwork-room">
     <div>
       <Lightbox id={`lightbox-${artwork.slug}`} title={artwork.title} media={media} verifiedFull={verifiedFull} />
-      <p class="review-note" style="margin-top: 0.8rem;">
-        <strong>Catalogue en validation.</strong> L’image et les informations ci-dessous proviennent du catalogue historique et restent à confirmer avec l’artiste. L’agrandissement est réservé aux médias approuvés.
-      </p>
+      {verifiedFull ? (
+        <p class="review-note" style="margin-top: 0.8rem;">
+          <strong>Médias vérifiés.</strong> La vue intégrale et les détails affichés sont approuvés pour ce dossier.
+          {testFixture && ' Cette route synthétique est réservée aux tests et ne publie ni n’approuve une œuvre réelle.'}
+        </p>
+      ) : (
+        <p class="review-note" style="margin-top: 0.8rem;">
+          <strong>Catalogue en validation.</strong> L’image et les informations ci-dessous proviennent du catalogue historique et restent à confirmer avec l’artiste. L’agrandissement est réservé aux médias approuvés.
+        </p>
+      )}
     </div>
 
     <Reveal as="article" class="artwork-room__info">
-      <p class="eyebrow" style={`color: ${accent};`}>Série {artwork.series} · à confirmer</p>
+      <p class="eyebrow" style={`color: ${textAccent};`}>Série {artwork.series} · à confirmer</p>
       <h1 class="display artwork-room__title">{artwork.title}</h1>
 
       <div class="artwork-story">
