@@ -1,0 +1,163 @@
+---
+const { id, title, media, verifiedFull = false } = Astro.props;
+const first = media[0];
+---
+
+{verifiedFull ? (
+  <>
+    <button
+      class="artwork-stage reveal"
+      type="button"
+      data-lightbox-open={id}
+      aria-haspopup="dialog"
+      aria-label={`Ouvrir la vue intégrale de ${title}`}
+    >
+      <span class="artwork-stage__canvas">
+        <img src={first.src} alt={first.alt} width="680" height="680" loading="eager" fetchpriority="high" />
+      </span>
+      <span class="artwork-stage__hint">Ouvrir la vue intégrale</span>
+    </button>
+
+    <dialog class="lightbox" data-lightbox={id} aria-labelledby={`${id}-title`}>
+      <div class="lightbox__panel">
+        <div class="lightbox__head">
+          <div>
+            <h2 id={`${id}-title`}>{title}</h2>
+            <p>Vue intégrale vérifiée</p>
+          </div>
+          <button class="lightbox__close" type="button" data-lightbox-close aria-label="Fermer la vue intégrale">×</button>
+        </div>
+        <div class="lightbox__viewport" data-lightbox-viewport>
+          {media.map((item, index) => (
+            <figure data-lightbox-slide={index} hidden={index !== 0}>
+              <img src={item.src} alt={item.alt} width="680" height="680" />
+              {item.caption && <figcaption>{item.caption}</figcaption>}
+            </figure>
+          ))}
+        </div>
+        <div class="lightbox__controls">
+          {media.length > 1 ? (
+            <>
+              <button type="button" data-lightbox-prev aria-label="Vue précédente">← Précédente</button>
+              <p class="lightbox__status" data-lightbox-status aria-live="polite">1 / {media.length}</p>
+              <button type="button" data-lightbox-next aria-label="Vue suivante">Suivante →</button>
+            </>
+          ) : (
+            <p class="lightbox__notice">Une seule vue intégrale vérifiée est disponible.</p>
+          )}
+        </div>
+      </div>
+    </dialog>
+  </>
+) : (
+  <figure class="artwork-stage artwork-stage--static reveal" data-unverified-media>
+    <span class="artwork-stage__canvas">
+      <img src={first.src} alt={first.alt} width="680" height="680" loading="eager" fetchpriority="high" />
+    </span>
+    <figcaption class="artwork-stage__hint">Aperçu catalogue · agrandissement indisponible</figcaption>
+  </figure>
+)}
+
+<script>
+  document.querySelectorAll('[data-lightbox]').forEach((dialog) => {
+    if (!(dialog instanceof HTMLDialogElement)) return;
+    const id = dialog.dataset.lightbox;
+    const trigger = document.querySelector(`[data-lightbox-open="${id}"]`);
+    const closeButton = dialog.querySelector('[data-lightbox-close]');
+    const previousButton = dialog.querySelector('[data-lightbox-prev]');
+    const nextButton = dialog.querySelector('[data-lightbox-next]');
+    const status = dialog.querySelector('[data-lightbox-status]');
+    const viewport = dialog.querySelector('[data-lightbox-viewport]');
+    const slides = [...dialog.querySelectorAll('[data-lightbox-slide]')];
+    let index = 0;
+    let returnFocus = null;
+    let touchStartX = null;
+    let inerted = [];
+
+    const setBackgroundInert = () => {
+      inerted = [];
+      let branch = dialog;
+      while (branch.parentElement) {
+        [...branch.parentElement.children].forEach((sibling) => {
+          if (sibling === branch || !(sibling instanceof HTMLElement)) return;
+          inerted.push({ element: sibling, wasInert: sibling.inert });
+          sibling.inert = true;
+        });
+        branch = branch.parentElement;
+        if (branch === document.body) break;
+      }
+    };
+
+    const restoreBackground = () => {
+      inerted.forEach(({ element, wasInert }) => {
+        element.inert = wasInert;
+      });
+      inerted = [];
+    };
+
+    const show = (nextIndex) => {
+      if (!slides.length) return;
+      index = (nextIndex + slides.length) % slides.length;
+      slides.forEach((slide, slideIndex) => {
+        slide.hidden = slideIndex !== index;
+      });
+      if (status) status.textContent = `${index + 1} / ${slides.length}`;
+    };
+
+    const close = () => {
+      if (dialog.open) dialog.close();
+    };
+
+    trigger?.addEventListener('click', () => {
+      returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : trigger;
+      show(0);
+      setBackgroundInert();
+      dialog.showModal();
+      if (closeButton instanceof HTMLElement) closeButton.focus();
+    });
+    closeButton?.addEventListener('click', close);
+    previousButton?.addEventListener('click', () => show(index - 1));
+    nextButton?.addEventListener('click', () => show(index + 1));
+
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) close();
+    });
+    dialog.addEventListener('close', () => {
+      restoreBackground();
+      if (returnFocus instanceof HTMLElement) returnFocus.focus();
+    });
+    dialog.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft' && slides.length > 1) {
+        event.preventDefault();
+        show(index - 1);
+      }
+      if (event.key === 'ArrowRight' && slides.length > 1) {
+        event.preventDefault();
+        show(index + 1);
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = [...dialog.querySelectorAll('button:not([disabled]), a[href]')].filter(
+        (element) => element instanceof HTMLElement && !element.hidden,
+      );
+      const firstFocusable = focusable[0];
+      const lastFocusable = focusable.at(-1);
+      if (!firstFocusable || !lastFocusable) return;
+      if (event.shiftKey && document.activeElement === firstFocusable) {
+        event.preventDefault();
+        lastFocusable.focus();
+      } else if (!event.shiftKey && document.activeElement === lastFocusable) {
+        event.preventDefault();
+        firstFocusable.focus();
+      }
+    });
+    viewport?.addEventListener('touchstart', (event) => {
+      touchStartX = event.changedTouches[0]?.clientX ?? null;
+    }, { passive: true });
+    viewport?.addEventListener('touchend', (event) => {
+      if (touchStartX === null || slides.length < 2) return;
+      const delta = (event.changedTouches[0]?.clientX ?? touchStartX) - touchStartX;
+      if (Math.abs(delta) > 45) show(index + (delta < 0 ? 1 : -1));
+      touchStartX = null;
+    }, { passive: true });
+  });
+</script>

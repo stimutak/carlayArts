@@ -101,16 +101,15 @@ a {
   border: 0;
 }
 
-/* The dimmed state exists only after the tiny head script adds .js. If JS is
-   absent, content is fully opaque; if enhancement later fails, it remains
-   readable at 0.35 opacity instead of disappearing. */
-html.js .reveal {
-  opacity: 0.35;
+/* Reveal enhancement never changes opacity. Text and controls therefore retain
+   full contrast even if enhancement is interrupted after the head gate. */
+html.js.js-ready .reveal {
+  opacity: 1;
   transform: translateY(1rem);
-  transition: opacity 500ms ease-out, transform 500ms ease-out;
+  transition: transform 500ms ease-out;
 }
 
-html.js .reveal.is-in {
+html.js.js-ready .reveal.is-in {
   opacity: 1;
   transform: none;
 }
@@ -120,7 +119,7 @@ html.js .reveal.is-in {
     scroll-behavior: auto;
   }
 
-  html.js .reveal {
+  html.js.js-ready .reveal {
     opacity: 1;
     transform: none;
   }

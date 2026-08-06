@@ -1,12 +1,110 @@
 ---
-import FoundationPage from '../components/FoundationPage.astro';
+import { getCollection } from 'astro:content';
+import ArtworkCard from '../components/ArtworkCard.astro';
+import Reveal from '../components/Reveal.astro';
 import Base from '../layouts/Base.astro';
+
+const artworks = (await getCollection('artworks')).map((entry) => entry.data).sort((a, b) => a.sortOrder - b.sortOrder);
+const bySlug = Object.fromEntries(artworks.map((artwork) => [artwork.slug, artwork]));
+const featured = ['romeo-1', 'vortex-2', 'insomnia-1', 'juliette-1', 'vortex-5']
+  .map((slug) => bySlug[slug])
+  .filter(Boolean);
+const collectionSeeds = [
+  { slug: 'romeo', cover: 'romeo-2', wide: true },
+  { slug: 'vortex', cover: 'vortex-5', wide: true },
+  { slug: 'insomnia', cover: 'insomnia-3' },
+  { slug: 'purple-galaxy', cover: 'purple-galaxy-7' },
+  { slug: 'juliette', cover: 'juliette-2' },
+  { slug: 'golden-sunset', cover: 'golden-sunset-2' },
+];
+const collections = collectionSeeds.map((collection) => {
+  const works = artworks.filter((artwork) => artwork.seriesSlug === collection.slug);
+  return { ...collection, name: works[0]?.series, count: works.length, artwork: bySlug[collection.cover] };
+});
+const seriesCount = new Set(artworks.map((artwork) => artwork.seriesSlug)).size;
 ---
 
-<Base title="CARLAY ART" currentPath="/">
-  <FoundationPage
-    eyebrow="Accueil"
-    title="Carlay Art"
-    intro="La fondation statique du nouveau site est en place. La composition approuvée de l’accueil sera portée depuis les aperçus sans transformer leurs contenus provisoires en faits."
-  />
+<Base
+  title="CARLAY ART"
+  currentPath="/"
+  description="Carlay Art — catalogue de peintures contemporaines. Inventaire en cours de validation propriétaire."
+>
+  <section class="home-hero">
+    <div class="home-hero__inner reveal">
+      <h1 class="sr-only">Carlay Art — peintures contemporaines</h1>
+      <img class="home-hero__logo" src="/site/logo-carlay-BLANC.png" alt="Monogramme CA — Carlay Art" width="469" height="274" fetchpriority="high" />
+      <p class="accent-line">Peintures contemporaines · catalogue en validation</p>
+      <a class="btn" href="/boutique/">Découvrir la galerie</a>
+    </div>
+    <a class="home-hero__scroll" href="#catalogue">Explorer</a>
+  </section>
+
+  <section id="catalogue" class="section">
+    <div class="wrap">
+      <Reveal class="section-head">
+        <p class="eyebrow">Le catalogue</p>
+        <h2 class="display">Œuvres en aperçu</h2>
+        <p class="lead">Une sélection visuelle tirée des 60 dossiers du catalogue historique. Chaque fiche conserve son état de validation et sa route propre.</p>
+      </Reveal>
+      <div class="grid-featured">
+        {featured.map((artwork, index) => <ArtworkCard artwork={artwork} ratio={index === 0 ? '3 / 4' : '1 / 1'} eager={index === 0} />)}
+      </div>
+      <Reveal class="section-head" style="margin-top: 2.75rem; margin-bottom: 0; align-items: start;">
+        <a class="btn btn--ghost" href="/boutique/">Voir les 60 œuvres →</a>
+      </Reveal>
+    </div>
+  </section>
+
+  <section class="section home-artist">
+    <div class="wrap home-artist__grid">
+      <Reveal class="home-artist__copy">
+        <p class="eyebrow">L’Artiste</p>
+        <h2 class="display" style="font-size: var(--text-2xl); text-transform: uppercase;">Carlay</h2>
+        <p class="lead">Les sources historiques décrivent un travail principalement réalisé à l’acrylique sur toile. La biographie, le processus et les inspirations attendent encore la validation directe de l’artiste.</p>
+        <p class="review-note"><strong>Contenu éditorial en révision.</strong> Aucun récit curatorial ni contexte géographique non vérifié n’est présenté comme un fait.</p>
+        <img class="home-artist__signature" src="/site/Carlay-art-signature.png" alt="Signature visuelle de Carlay" width="300" height="145" loading="lazy" />
+        <div><a class="btn btn--ghost" href="/a-propos/">Découvrir le dossier artiste →</a></div>
+      </Reveal>
+      <Reveal class="home-artist__photo">
+        <img src="/site/Carlay-art.jpg" alt="Portrait de Carlay avec une peinture" width="960" height="1280" loading="lazy" />
+      </Reveal>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <Reveal class="section-head" style="text-align: center; justify-items: center;">
+        <p class="eyebrow">Explorer</p>
+        <h2 class="display">Séries</h2>
+        <p class="lead">Six portes d’entrée visuelles vers un inventaire de {seriesCount} regroupements candidats.</p>
+      </Reveal>
+      <div class="grid-bento">
+        {collections.map((collection) => (
+          <Reveal
+            as="a"
+            class={`collection-card${collection.wide ? ' collection-card--wide' : ''}`}
+            href={`/boutique/?serie=${collection.slug}`}
+          >
+            <img src={collection.artwork.images.card.src} alt={`Aperçu de la série ${collection.name}`} width="680" height="680" loading="lazy" />
+            <div class="collection-card__copy">
+              <h3>{collection.name}</h3>
+              <p>{collection.count} {collection.count > 1 ? 'œuvres' : 'œuvre'} →</p>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+      <Reveal class="section-head" style="margin-top: 2.75rem; margin-bottom: 0; align-items: center;">
+        <a class="btn btn--ghost" href="/boutique/">Voir les {seriesCount} regroupements →</a>
+      </Reveal>
+    </div>
+  </section>
+
+  <section class="section home-acquisition">
+    <Reveal class="wrap">
+      <p class="eyebrow">Acquisition</p>
+      <h2 class="display">Une disponibilité qui reste vérifiable</h2>
+      <p class="lead">Aucune œuvre n’est achetable tant que son identité, son état, son prix et son image intégrale ne sont pas approuvés. Le catalogue reste consultable pendant cette revue.</p>
+      <a class="btn" href="/boutique/?disponibilite=disponibles">Voir les œuvres disponibles</a>
+    </Reveal>
+  </section>
 </Base>

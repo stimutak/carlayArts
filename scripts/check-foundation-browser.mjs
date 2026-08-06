@@ -29,6 +29,8 @@ try {
   browser = await chromium.launch({ headless: true });
 
   const mobile = await browser.newPage({ viewport: { width: 320, height: 800 } });
+  const pageErrors = [];
+  mobile.on('pageerror', (error) => pageErrors.push(error.message));
   for (const route of ['/', '/boutique', '/a-propos', '/contact', '/panier', '/commande', '/confirmation', '/oeuvre/vortex-5']) {
     const response = await mobile.goto(`${origin}${route}`);
     if (!response?.ok()) throw new Error(`${route} returned ${response?.status() ?? 'no response'}`);
@@ -54,6 +56,23 @@ try {
     throw new Error('/boutique overflows horizontally at 390px.');
   }
   if (!(await mobile.locator('#site-menu-toggle').isVisible())) throw new Error('Mobile menu button is not visible at 390px.');
+  if ((await mobile.locator('[data-artwork-card]').count()) !== 60) throw new Error('Boutique did not render all 60 candidate works.');
+  if ((await mobile.locator('[data-result-count]').textContent())?.trim() !== '60 œuvres affichées') throw new Error('Initial boutique result count is not 60.');
+
+  await mobile.locator('[data-filter-series="vortex"]').click();
+  if (new URL(mobile.url()).searchParams.get('serie') !== 'vortex') throw new Error('Series filter was not preserved in the URL.');
+  if ((await mobile.locator('[data-result-count]').textContent())?.trim() !== '9 œuvres affichées') throw new Error('Vortex result count is not 9.');
+  await mobile.locator('[data-filter-availability]').click();
+  if (new URL(mobile.url()).searchParams.get('disponibilite') !== 'disponibles') throw new Error('Availability filter was not preserved in the URL.');
+  if ((await mobile.locator('[data-result-count]').textContent())?.trim() !== '0 œuvres affichées') throw new Error('Fail-closed availability result count is not 0.');
+  if (!(await mobile.locator('[data-catalog-empty]').isVisible())) throw new Error('Empty available-state explanation is hidden.');
+  await mobile.goBack();
+  if ((await mobile.locator('[data-result-count]').textContent())?.trim() !== '9 œuvres affichées') throw new Error('Back navigation did not restore the series filter.');
+
+  await mobile.goto(`${origin}/oeuvre/vortex-5`);
+  const stage = mobile.locator('[data-unverified-media]');
+  if ((await stage.locator('img').evaluate((image) => getComputedStyle(image).objectFit)) !== 'contain') throw new Error('Artwork stage does not use object-fit: contain.');
+  if (await mobile.locator('[data-lightbox-open], [data-lightbox]').count()) throw new Error('Unverified media incorrectly exposes enlargement controls.');
 
   await mobile.setViewportSize({ width: 1440, height: 900 });
   await mobile.goto(`${origin}/oeuvre/vortex-5`);
@@ -62,15 +81,23 @@ try {
   }
   if (!(await mobile.locator('.nav__links').isVisible())) throw new Error('Desktop navigation is not visible at 1440px.');
   if (await mobile.locator('#site-menu-toggle').isVisible()) throw new Error('Mobile menu button remains visible at 1440px.');
+  if ((await mobile.locator('.artwork-room').evaluate((element) => getComputedStyle(element).gridTemplateColumns)).split(' ').length < 2) {
+    throw new Error('Artwork detail did not retain its desktop two-column composition.');
+  }
 
   const noJavaScript = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 320, height: 800 } });
   const noJavaScriptPage = await noJavaScript.newPage();
   await noJavaScriptPage.goto(origin);
   const revealOpacity = await noJavaScriptPage.locator('.reveal').first().evaluate((element) => getComputedStyle(element).opacity);
   if (revealOpacity !== '1') throw new Error(`Reveal content opacity without JavaScript was ${revealOpacity}.`);
+  if (!(await noJavaScriptPage.locator('.nav__links').isVisible())) throw new Error('Primary navigation is hidden without JavaScript at 320px.');
+  await noJavaScriptPage.goto(`${origin}/boutique`);
+  if ((await noJavaScriptPage.locator('[data-artwork-card]').count()) !== 60) throw new Error('Essential catalog content is hidden without JavaScript.');
   await noJavaScript.close();
 
-  console.log('Browser foundation checks passed at 320px, 390px, and 1440px, including keyboard menu and no-JavaScript reveal.');
+  if (pageErrors.length) throw new Error(`Browser page errors:\n${pageErrors.join('\n')}`);
+
+  console.log('Phase 3 browser checks passed at 320px, 390px, and 1440px: layout, URL filters, counts, fail-closed commerce/media, menu focus return, contain media, and no-JavaScript content/navigation.');
 } finally {
   await browser?.close();
   preview.kill('SIGTERM');

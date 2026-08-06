@@ -1,12 +1,141 @@
 ---
-import FoundationPage from '../components/FoundationPage.astro';
+import { getCollection } from 'astro:content';
+import ArtworkCard from '../components/ArtworkCard.astro';
+import Reveal from '../components/Reveal.astro';
 import Base from '../layouts/Base.astro';
+import { accentFor } from '../lib/series.js';
+
+const artworks = (await getCollection('artworks')).map((entry) => entry.data).sort((a, b) => a.sortOrder - b.sortOrder);
+const seriesSlugs = [...new Set(artworks.map((artwork) => artwork.seriesSlug))];
+const series = seriesSlugs.map((slug) => {
+  const works = artworks.filter((artwork) => artwork.seriesSlug === slug);
+  return {
+    slug,
+    name: slug === 'other' ? 'Autres œuvres' : works[0].series,
+    accent: accentFor(slug),
+    works,
+  };
+});
 ---
 
-<Base title="Œuvres" currentPath="/boutique">
-  <FoundationPage
-    eyebrow="Boutique"
-    title="Les œuvres"
-    intro="Le catalogue, ses filtres et ses états seront construits à partir de l’inventaire validé. Aucun achat n’est activé dans cette fondation."
-  />
+<Base
+  title="Œuvres"
+  currentPath="/boutique"
+  description="Catalogue complet Carlay Art — 60 dossiers, états de disponibilité et sources en cours de validation."
+>
+  <header class="shop-hero">
+    <p class="eyebrow">Catalogue</p>
+    <h1 class="display">Les œuvres</h1>
+    <p class="accent-line">60 dossiers · 14 regroupements · validation propriétaire en cours</p>
+  </header>
+
+  <div class="filter-shell" data-filter-shell>
+    <p class="sr-only" id="filter-help">Les filtres défilent horizontalement sur petit écran. Ils peuvent être combinés.</p>
+    <nav class="filters" aria-label="Filtrer les œuvres" aria-describedby="filter-help">
+      <button class="chip" type="button" aria-pressed="true" data-filter-all>Tout</button>
+      <button class="chip" type="button" aria-pressed="false" data-filter-availability="disponibles">Disponibles</button>
+      {series.map((group) => (
+        <button class="chip" type="button" aria-pressed="false" data-filter-series={group.slug}>{group.name}</button>
+      ))}
+    </nav>
+    <p class="filter-result" aria-live="polite" data-result-count>{artworks.length} œuvres affichées</p>
+  </div>
+
+  <section class="section section--tight">
+    <div class="wrap">
+      <Reveal class="review-note">
+        <strong>Catalogue de travail, non commercial.</strong> « Disponible » exige une validation propriétaire du prix, de l’état et de l’image intégrale. Le filtre retourne donc zéro œuvre tant que ces éléments restent en revue.
+      </Reveal>
+
+      <div data-catalog>
+        {series.map((group) => (
+          <section id={group.slug} data-series-section={group.slug}>
+            <Reveal class="series-head" style={`--series: ${group.accent};`}>
+              <h2 class="display">{group.name}</h2>
+              <span class="count">{group.works.length} {group.works.length > 1 ? 'œuvres' : 'œuvre'}</span>
+            </Reveal>
+            <div class="grid-series">
+              {group.works.map((artwork) => <ArtworkCard artwork={artwork} />)}
+            </div>
+          </section>
+        ))}
+      </div>
+
+      <p class="catalog-empty" data-catalog-empty hidden>
+        Aucune œuvre ne correspond à ces filtres. Les anciennes disponibilités restent fermées jusqu’à validation propriétaire.
+      </p>
+    </div>
+  </section>
+
+  <script>
+    const shell = document.querySelector('[data-filter-shell]');
+    const catalog = document.querySelector('[data-catalog]');
+    const count = document.querySelector('[data-result-count]');
+    const empty = document.querySelector('[data-catalog-empty]');
+    const seriesButtons = [...document.querySelectorAll('[data-filter-series]')];
+    const availabilityButton = document.querySelector('[data-filter-availability]');
+    const allButton = document.querySelector('[data-filter-all]');
+    const validSeries = new Set(seriesButtons.map((button) => button.getAttribute('data-filter-series')));
+
+    const readState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const requestedSeries = params.get('serie');
+      return {
+        series: requestedSeries && validSeries.has(requestedSeries) ? requestedSeries : null,
+        available: params.get('disponibilite') === 'disponibles',
+      };
+    };
+
+    const writeState = (state) => {
+      const url = new URL(window.location.href);
+      if (state.series) url.searchParams.set('serie', state.series);
+      else url.searchParams.delete('serie');
+      if (state.available) url.searchParams.set('disponibilite', 'disponibles');
+      else url.searchParams.delete('disponibilite');
+      url.hash = '';
+      history.pushState({}, '', url);
+      applyState(state);
+    };
+
+    const applyState = (state = readState()) => {
+      let visibleCount = 0;
+      document.querySelectorAll('[data-series-section]').forEach((section) => {
+        if (!(section instanceof HTMLElement)) return;
+        const inSeries = !state.series || section.dataset.seriesSection === state.series;
+        let visibleInSection = 0;
+        section.querySelectorAll('[data-artwork-card]').forEach((card) => {
+          if (!(card instanceof HTMLElement)) return;
+          const isAvailable = card.dataset.availability === 'available';
+          const visible = inSeries && (!state.available || isAvailable);
+          card.hidden = !visible;
+          if (visible) visibleInSection += 1;
+        });
+        section.hidden = visibleInSection === 0;
+        visibleCount += visibleInSection;
+      });
+
+      seriesButtons.forEach((button) => {
+        button.setAttribute('aria-pressed', String(button.getAttribute('data-filter-series') === state.series));
+      });
+      availabilityButton?.setAttribute('aria-pressed', String(state.available));
+      allButton?.setAttribute('aria-pressed', String(!state.series && !state.available));
+      if (count) count.textContent = `${visibleCount} ${visibleCount === 1 ? 'œuvre affichée' : 'œuvres affichées'}`;
+      if (empty instanceof HTMLElement) empty.hidden = visibleCount !== 0;
+    };
+
+    allButton?.addEventListener('click', () => writeState({ series: null, available: false }));
+    availabilityButton?.addEventListener('click', () => {
+      const state = readState();
+      writeState({ ...state, available: !state.available });
+    });
+    seriesButtons.forEach((button) => button.addEventListener('click', () => {
+      const state = readState();
+      const selected = button.getAttribute('data-filter-series');
+      writeState({ ...state, series: state.series === selected ? null : selected });
+    }));
+    window.addEventListener('popstate', () => applyState());
+    applyState();
+    shell?.classList.add('is-enhanced');
+    catalog?.classList.add('is-filterable');
+  </script>
 </Base>

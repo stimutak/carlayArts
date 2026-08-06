@@ -2,10 +2,20 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { getCollection } from 'astro:content';
+import candidateInventory from '../../../data/artwork-inventory.authoritative-candidate.json';
+import ArtworkCard from '../../components/ArtworkCard.astro';
+import Lightbox from '../../components/Lightbox.astro';
 import Reveal from '../../components/Reveal.astro';
 import Base from '../../layouts/Base.astro';
-import { validateArtworkInventory } from '../../lib/artworks.js';
-import { formatPrice } from '../../lib/series.js';
+import {
+  availabilityLabel,
+  dimensionsLabel,
+  isCommerceEligible,
+  reviewLabel,
+  reviewedFactLabel,
+  validateArtworkInventory,
+} from '../../lib/artworks.js';
+import { accentFor, formatPrice } from '../../lib/series.js';
 
 export async function getStaticPaths() {
   const entries = await getCollection('artworks');
@@ -13,39 +23,122 @@ export async function getStaticPaths() {
   validateArtworkInventory(artworks, {
     assetExists: (imagePath) => existsSync(join(process.cwd(), 'public', imagePath.replace(/^\/+/, ''))),
   });
-
   return artworks.map((artwork) => ({ params: { slug: artwork.slug }, props: { artwork } }));
 }
 
 const { artwork } = Astro.props;
-const dimensions = artwork.dimensions.width && artwork.dimensions.height
-  ? `${artwork.dimensions.width} × ${artwork.dimensions.height} ${artwork.dimensions.unit}`
-  : 'À confirmer';
-const state = artwork.availability === 'sold' ? 'Vendu — source historique' : 'Hors vente — validation requise';
+const all = (await getCollection('artworks')).map((entry) => entry.data).sort((a, b) => a.sortOrder - b.sortOrder);
+const related = all.filter((candidate) => candidate.seriesSlug === artwork.seriesSlug && candidate.slug !== artwork.slug).slice(0, 3);
+const review = candidateInventory.artworks.find((candidate) => candidate.slug === artwork.slug);
+const accent = accentFor(artwork.seriesSlug);
+const purchasable = isCommerceEligible(artwork);
+const state = availabilityLabel(artwork);
+const missingMedia = review?.media?.missing_roles ?? [];
+const conflictFields = review?.conflicts?.map((conflict) => conflict.field) ?? [];
+const mediaLabels = {
+  'detail-or-texture': 'détail ou texture',
+  'back-or-edge': 'dos ou tranche',
+  'work-signature': 'signature de l’œuvre',
+  'room-scale': 'vue à l’échelle',
+};
+const verifiedFull = Boolean(artwork.images.full.src && artwork.images.full.reviewStatus === 'owner-approved');
+const media = verifiedFull
+  ? [artwork.images.full, ...artwork.images.details.filter((image) => image.src && image.reviewStatus === 'owner-approved')].map((image) => ({
+      src: image.src,
+      alt: image.alt,
+      caption: 'Média approuvé pour ce dossier.',
+    }))
+  : [{
+      src: artwork.images.card.src,
+      alt: `${artwork.title} — aperçu du catalogue historique, fidélité intégrale non validée`,
+      caption: 'Aperçu catalogue. Cette image n’est pas présentée comme un fichier intégral vérifié.',
+    }];
 ---
 
-<Base title={artwork.title} currentPath={`/oeuvre/${artwork.slug}`}>
-  <section class="foundation-page artwork-foundation">
-    <Reveal>
-      <img
-        src={artwork.images.card.src}
-        alt={artwork.images.card.alt}
-        width="680"
-        height="680"
-      />
-      <p class="foundation-page__status">Aperçu catalogue recadré — image intégrale fidèle à fournir.</p>
-    </Reveal>
-    <Reveal class="artwork-foundation__copy">
-      <p class="eyebrow">Série {artwork.series}</p>
-      <h1 class="display">{artwork.title}</h1>
-      <p class="foundation-page__intro">{artwork.workNote.value}</p>
-      <dl class="artwork-foundation__facts">
-        <div><dt>Dimensions</dt><dd>{dimensions}</dd></div>
-        <div><dt>Technique</dt><dd>{artwork.medium.value}</dd></div>
-        <div><dt>Prix source</dt><dd>{formatPrice(artwork.price.amount)}</dd></div>
-        <div><dt>État</dt><dd>{state}</dd></div>
-      </dl>
-      <p class="foundation-page__status">Aucune action d’achat n’est disponible dans cette phase.</p>
+<Base
+  title={artwork.title}
+  currentPath="/boutique"
+  description={`${artwork.title}, série ${artwork.series} — dossier d’œuvre en cours de validation propriétaire.`}
+>
+  <section class="artwork-room">
+    <div>
+      <Lightbox id={`lightbox-${artwork.slug}`} title={artwork.title} media={media} verifiedFull={verifiedFull} />
+      <p class="review-note" style="margin-top: 0.8rem;">
+        <strong>Média non homologué.</strong> L’image est un aperçu de catalogue affiché sans recadrage supplémentaire, avec <code>object-fit: contain</code>. Le fichier intégral fidèle et les vues de détail restent à fournir.
+      </p>
+    </div>
+
+    <Reveal as="article" class="artwork-room__info">
+      <p class="eyebrow" style={`color: ${accent};`}>Série {artwork.series} · à confirmer</p>
+      <h1 class="display artwork-room__title">{artwork.title}</h1>
+
+      <div class="artwork-story">
+        <div>
+          <h2>À propos de la série</h2>
+          <p>Texte de série en attente de validation par l’artiste.</p>
+          <small>{reviewLabel(artwork.seriesStatementRef.reviewStatus)}</small>
+        </div>
+        <div>
+          <h2>Note sur l’œuvre</h2>
+          <p>Note spécifique en attente de validation par l’artiste.</p>
+          <small>{reviewLabel(artwork.workNote.reviewStatus)}</small>
+        </div>
+      </div>
+
+      <ul class="specs" aria-label="Caractéristiques de l’œuvre">
+        <li><span class="k">Technique</span><span class="v">{reviewedFactLabel(artwork.medium.value, artwork.medium.reviewStatus)}<br /><small>{reviewLabel(artwork.medium.reviewStatus)}</small></span></li>
+        <li><span class="k">Dimensions</span><span class="v">{reviewedFactLabel(dimensionsLabel(artwork), artwork.dimensions.reviewStatus)}<br /><small>{reviewLabel(artwork.dimensions.reviewStatus)}</small></span></li>
+        <li><span class="k">Année</span><span class="v">{reviewedFactLabel(artwork.year.value, artwork.year.reviewStatus)}<br /><small>{reviewLabel(artwork.year.reviewStatus)}</small></span></li>
+        <li><span class="k">État</span><span class="v">{reviewedFactLabel(artwork.condition.value, artwork.condition.reviewStatus)}<br /><small>{reviewLabel(artwork.condition.reviewStatus)}</small></span></li>
+        <li><span class="k">Encadrement</span><span class="v">{reviewedFactLabel(artwork.framingStatus.value, artwork.framingStatus.reviewStatus)}<br /><small>{reviewLabel(artwork.framingStatus.reviewStatus)}</small></span></li>
+        <li><span class="k">Certificat</span><span class="v">{reviewedFactLabel(artwork.certificateStatus.value, artwork.certificateStatus.reviewStatus)}<br /><small>{reviewLabel(artwork.certificateStatus.reviewStatus)}</small></span></li>
+        <li><span class="k">Signature</span><span class="v">{reviewedFactLabel(artwork.signaturePlacement.value, artwork.signaturePlacement.reviewStatus)}<br /><small>{reviewLabel(artwork.signaturePlacement.reviewStatus)}</small></span></li>
+      </ul>
+
+      <p class="artwork-price">
+        <span>{formatPrice(artwork.price.amount)}</span>
+        <small>Prix du catalogue historique · à confirmer<br />{reviewLabel(artwork.price.reviewStatus)}</small>
+      </p>
+
+      <div class="artwork-state" role="status">
+        <strong>{state}</strong>
+        {artwork.availability === 'sold' ? (
+          <p>État « vendu » conservé depuis la source historique. Aucune action d’achat n’est proposée.</p>
+        ) : purchasable ? (
+          <p>Les contrôles propriétaire et média sont validés. L’intégration panier relève de la phase commerce.</p>
+        ) : (
+          <p>Cette œuvre reste hors vente jusqu’à validation de son identité, de son prix, de son état et de son image intégrale.</p>
+        )}
+      </div>
+
+      <a class="btn btn--ghost" href={`/boutique/?serie=${artwork.seriesSlug}`}>Voir la série →</a>
+
+      <section class="artwork-review" aria-labelledby={`review-${artwork.slug}`}>
+        <h2 id={`review-${artwork.slug}`}>Traçabilité du dossier</h2>
+        <p>Source candidate : <code>{artwork.source.file}</code>. Statut : {review?.status ?? 'à confirmer'}.</p>
+        {conflictFields.length > 0 ? (
+          <p><strong>Conflits de source :</strong> {conflictFields.join(', ')}.</p>
+        ) : (
+          <p>Aucun conflit mécanique relevé entre les sources comparées ; l’approbation propriétaire reste requise.</p>
+        )}
+        <p><strong>Médias manquants :</strong></p>
+        <ul>
+          {missingMedia.map((role) => <li>{mediaLabels[role] ?? role}</li>)}
+          <li>image intégrale fidèle approuvée</li>
+        </ul>
+      </section>
     </Reveal>
   </section>
+
+  {related.length > 0 && (
+    <section class="related">
+      <Reveal class="series-head" style={`--series: ${accent};`}>
+        <h2 class="display">Plus de la série {artwork.series}</h2>
+        <span class="count">{related.length} suggestions</span>
+      </Reveal>
+      <div class="grid-series">
+        {related.map((candidate) => <ArtworkCard artwork={candidate} />)}
+      </div>
+    </section>
+  )}
 </Base>

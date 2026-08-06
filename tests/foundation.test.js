@@ -25,14 +25,16 @@ describe('fail-visible reveal contract', () => {
   const css = readFileSync('src/styles/base.css', 'utf8');
   const layout = readFileSync('src/layouts/Base.astro', 'utf8');
 
-  it('gates dimming behind html.js and never starts fully invisible', () => {
-    expect(css).toContain('html.js .reveal');
-    expect(css).toMatch(/html\.js \.reveal \{[\s\S]*?opacity: 0\.35/);
+  it('gates dimming behind completed enhancement and never starts fully invisible', () => {
+    expect(css).toContain('html.js.js-ready .reveal');
+    expect(css).toMatch(/html\.js\.js-ready \.reveal \{[\s\S]*?opacity: 1/);
+    expect(css).not.toMatch(/transition:\s*opacity/);
     expect(css).not.toMatch(/opacity:\s*0\s*;/);
     expect(layout).toContain("document.documentElement.classList.add('js')");
+    expect(layout).toContain("document.documentElement.classList.add('js-ready')");
   });
 
   it('makes reveals immediate under reduced motion', () => {
-    expect(css).toMatch(/prefers-reduced-motion: reduce[\s\S]*?html\.js \.reveal \{[\s\S]*?opacity: 1/);
+    expect(css).toMatch(/prefers-reduced-motion: reduce[\s\S]*?html\.js\.js-ready \.reveal \{[\s\S]*?opacity: 1/);
   });
 });

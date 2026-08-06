@@ -97,5 +97,7 @@ const links = [
     desktopQuery.addEventListener('change', (event) => {
       if (event.matches && !menu.hidden) closeMenu({ returnFocus: false });
     });
+
+    document.documentElement.classList.add('js-nav-ready');
   }
 </script>

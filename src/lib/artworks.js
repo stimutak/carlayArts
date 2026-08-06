@@ -27,3 +27,48 @@ export function validateArtworkInventory(artworks, { assetExists = () => true } 
 
   return artworks;
 }
+
+export function isCommerceEligible(artwork) {
+  return (
+    artwork.availability === 'available' &&
+    artwork.availabilityReviewStatus === 'owner-approved' &&
+    artwork.price?.reviewStatus === 'owner-approved' &&
+    Boolean(artwork.images?.full?.src) &&
+    artwork.images.full.reviewStatus === 'owner-approved' &&
+    artwork.condition?.reviewStatus === 'owner-approved' &&
+    artwork.framingStatus?.reviewStatus === 'owner-approved' &&
+    artwork.certificateStatus?.reviewStatus === 'owner-approved'
+  );
+}
+
+// Compatibility name for Phase 4 consumers. Commerce must continue to flow
+// through the centralized predicate above rather than checking availability.
+export const isPurchasable = isCommerceEligible;
+
+export function availabilityLabel(artwork) {
+  if (artwork.availability === 'sold') return 'Vendu';
+  if (isCommerceEligible(artwork)) return 'Disponible';
+  return 'En validation';
+}
+
+export function dimensionsLabel(artwork) {
+  const { width, height, depth, unit } = artwork.dimensions;
+  if (!width || !height) return 'À confirmer';
+  return `${width} × ${height}${depth ? ` × ${depth}` : ''} ${unit}`;
+}
+
+export function reviewLabel(reviewStatus) {
+  const labels = {
+    'owner-approved': 'Validé par la propriétaire',
+    'legacy-source': 'Source catalogue historique',
+    'needs-owner-review': 'Validation propriétaire requise',
+    draft: 'Brouillon à valider',
+  };
+  return labels[reviewStatus] ?? 'Statut de validation inconnu';
+}
+
+export function reviewedFactLabel(value, reviewStatus) {
+  if (value === null || value === undefined || value === '') return 'À confirmer';
+  if (String(value) === 'À confirmer') return 'À confirmer';
+  return reviewStatus === 'owner-approved' ? String(value) : `${value} · À confirmer`;
+}

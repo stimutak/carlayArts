@@ -54,7 +54,9 @@ describe('static route foundation', () => {
     }
 
     const artwork = readFileSync(outputForPath('/oeuvre/vortex-5'), 'utf8');
-    expect(artwork).toContain('Hors vente — validation requise');
+    expect(artwork).toContain('En validation');
     expect(artwork).not.toMatch(/Ajouter au panier|Acheter maintenant/);
+    expect(artwork).toContain('data-unverified-media');
+    expect(artwork).not.toContain('<dialog');
   });
 });

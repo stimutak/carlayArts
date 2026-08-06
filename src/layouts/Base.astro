@@ -51,6 +51,7 @@ const canonical = new URL(canonicalPath(Astro.url.pathname), Astro.site);
     <Footer />
     <script>
       const revealElements = [...document.querySelectorAll('.reveal')];
+      document.documentElement.classList.add('js-ready');
       if (!('IntersectionObserver' in window)) {
         revealElements.forEach((element) => element.classList.add('is-in'));
       } else {

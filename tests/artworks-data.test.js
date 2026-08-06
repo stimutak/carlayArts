@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { validateArtworkInventory } from '../src/lib/artworks.js';
+import { availabilityLabel, dimensionsLabel, isCommerceEligible, validateArtworkInventory } from '../src/lib/artworks.js';
 
 const contentDir = join(process.cwd(), 'src/content/artworks');
 const records = readdirSync(contentDir)
@@ -30,6 +30,29 @@ describe('artwork content foundation', () => {
     expect(bySlug['vortex-5'].availability).toBe('not-for-sale');
     expect(bySlug['insomnia-5'].availability).toBe('not-for-sale');
     expect(records.some((artwork) => artwork.availability === 'available')).toBe(false);
+    expect(records.some((artwork) => isCommerceEligible(artwork))).toBe(false);
+    expect(availabilityLabel(bySlug['romeo-1'])).toBe('Vendu');
+    expect(availabilityLabel(bySlug['vortex-5'])).toBe('En validation');
+  });
+
+  it('formats known and unresolved dimensions without filling missing facts', () => {
+    const bySlug = Object.fromEntries(records.map((artwork) => [artwork.slug, artwork]));
+    expect(dimensionsLabel(bySlug['vortex-5'])).toBe('32 × 32 cm');
+    expect(dimensionsLabel(bySlug['insomnia-5'])).toBe('À confirmer');
+  });
+
+  it('centralizes commerce eligibility across approval, media, and trust facts', () => {
+    const eligible = structuredClone(records.find((artwork) => artwork.availability === 'not-for-sale'));
+    eligible.availability = 'available';
+    eligible.availabilityReviewStatus = 'owner-approved';
+    eligible.price.reviewStatus = 'owner-approved';
+    eligible.images.full = { src: '/artworks/VORTEX-5.jpg', alt: 'Vue intégrale vérifiée', reviewStatus: 'owner-approved' };
+    eligible.condition = { value: 'Validé', reviewStatus: 'owner-approved' };
+    eligible.framingStatus = { value: 'Non encadrée', reviewStatus: 'owner-approved' };
+    eligible.certificateStatus = { value: 'Inclus', reviewStatus: 'owner-approved' };
+    expect(isCommerceEligible(eligible)).toBe(true);
+    eligible.certificateStatus.reviewStatus = 'needs-owner-review';
+    expect(isCommerceEligible(eligible)).toBe(false);
   });
 
   it('tracks unresolved facts instead of omitting or fabricating them', () => {

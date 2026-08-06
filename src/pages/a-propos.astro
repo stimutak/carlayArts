@@ -1,12 +1,64 @@
 ---
-import FoundationPage from '../components/FoundationPage.astro';
+import { getCollection } from 'astro:content';
+import Reveal from '../components/Reveal.astro';
 import Base from '../layouts/Base.astro';
+
+const artworks = await getCollection('artworks');
+const seriesCount = new Set(artworks.map((entry) => entry.data.seriesSlug)).size;
 ---
 
-<Base title="L’Artiste" currentPath="/a-propos">
-  <FoundationPage
-    eyebrow="L’Artiste"
-    title="À propos"
-    intro="La biographie, le processus et les citations seront ajoutés uniquement après validation par l’artiste."
-  />
+<Base
+  title="L’Artiste"
+  currentPath="/a-propos"
+  description="Carlay — dossier artiste et processus éditorial en cours de validation directe."
+>
+  <header class="about-hero">
+    <img src="/site/Carlay-art.jpg" alt="Portrait de Carlay avec une peinture" width="960" height="1280" fetchpriority="high" />
+    <div class="about-hero__text">
+      <p class="eyebrow">L’Artiste</p>
+      <h1 class="display">Carlay</h1>
+      <p class="accent-line">Dossier artiste · version en révision</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <Reveal class="bio">
+      <p>Les sources historiques présentent Carlay comme une artiste française travaillant principalement à l’acrylique sur toile. Cette formulation est conservée comme provenance documentaire, pas comme biographie définitivement approuvée.</p>
+      <aside class="bio__pull" aria-label="Citation en attente">
+        Citation de l’artiste en attente de validation — aucun propos ne lui est attribué dans cette version.
+      </aside>
+      <p>Le processus, les inspirations, la chronologie des séries et les contextes géographiques sont encore à documenter avec l’artiste. Les aperçus visuels du catalogue ne permettent pas, à eux seuls, de formuler des intentions curatoriales.</p>
+      <p class="review-note"><strong>TODO éditorial.</strong> Obtenir une biographie, une déclaration de processus, une citation et les repères France/New York directement approuvés avant publication indexable.</p>
+      <img class="bio__signature" src="/site/Carlay-art-signature.png" alt="Signature visuelle de Carlay" width="300" height="145" loading="lazy" />
+    </Reveal>
+  </section>
+
+  <section class="section section--tight" aria-label="Faits documentés">
+    <div class="facts">
+      <Reveal>
+        <div class="k">Médium candidat</div>
+        <div class="v">Acrylique sur toile</div>
+        <div class="source">Source catalogue historique</div>
+      </Reveal>
+      <Reveal>
+        <div class="k">Inventaire</div>
+        <div class="v">{artworks.length} dossiers</div>
+        <div class="source">Audit Phase 0</div>
+      </Reveal>
+      <Reveal>
+        <div class="k">Regroupements</div>
+        <div class="v">{seriesCount} séries candidates</div>
+        <div class="source">Noms à valider</div>
+      </Reveal>
+    </div>
+  </section>
+
+  <section class="section contact-band" id="contact">
+    <Reveal class="wrap">
+      <p class="eyebrow">Contact</p>
+      <h2 class="display">Presse, galeries &amp; informations</h2>
+      <p class="lead">La boutique reste consultable sans achat. Pour une demande éditoriale, professionnelle ou liée à une œuvre, utilisez la page de contact.</p>
+      <a class="btn btn--ghost" href="/contact/">Choisir le bon contact →</a>
+    </Reveal>
+  </section>
 </Base>

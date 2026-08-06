@@ -1,12 +1,34 @@
 ---
-import FoundationPage from '../components/FoundationPage.astro';
+import Reveal from '../components/Reveal.astro';
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Contact" currentPath="/contact">
-  <FoundationPage
-    eyebrow="Contact"
-    title="Écrire à Carlay Art"
-    intro="Les coordonnées presse, galerie, acquisition et le profil social seront affichés ici après confirmation de leurs destinations officielles."
-  />
+<Base
+  title="Contact"
+  currentPath="/contact"
+  description="Contact Carlay Art — demandes presse, galerie et informations sur les œuvres."
+>
+  <section class="section contact-page">
+    <Reveal class="wrap contact-page__inner">
+      <p class="eyebrow">Contact</p>
+      <h1 class="display">Parlons de l’œuvre, pas d’un paiement</h1>
+      <p class="lead">Aucune vente en ligne n’est active pendant la validation de l’inventaire. Les demandes peuvent néanmoins être orientées vers le catalogue ou l’adresse héritée du site.</p>
+
+      <div class="contact-page__routes">
+        <a class="contact-route" href="/boutique/">
+          <h2>Une œuvre</h2>
+          <p>Consulter les 60 dossiers, leurs états et les informations encore à confirmer.</p>
+          <span aria-hidden="true">Voir le catalogue →</span>
+        </a>
+        <a class="contact-route" href="mailto:carlayart369@gmail.com?subject=Demande%20presse%20ou%20galerie">
+          <h2>Presse &amp; galeries</h2>
+          <p>Écrire à l’adresse de contact issue de la documentation historique.</p>
+          <span aria-hidden="true">Préparer un courriel →</span>
+        </a>
+      </div>
+
+      <p class="review-note"><strong>Coordonnée à confirmer :</strong> carlayart369@gmail.com. Le profil Instagram officiel n’a pas encore été vérifié et n’est donc pas lié.</p>
+      <span data-todo="replace with artist profile URL">Instagram · destination officielle en attente</span>
+    </Reveal>
+  </section>
 </Base>

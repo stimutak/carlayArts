@@ -1,0 +1,38 @@
+---
+import Reveal from './Reveal.astro';
+import { availabilityLabel, dimensionsLabel, isCommerceEligible } from '../lib/artworks.js';
+import { formatPrice } from '../lib/series.js';
+
+const { artwork, ratio = '1 / 1', eager = false } = Astro.props;
+const state = availabilityLabel(artwork);
+const purchasable = isCommerceEligible(artwork);
+const sold = artwork.availability === 'sold';
+---
+
+<Reveal as="article" class="artwork-card" data-artwork-card data-availability={purchasable ? 'available' : artwork.availability}>
+  <a class="artwork-card__link" href={`/oeuvre/${artwork.slug}/`} aria-label={`${artwork.title}, ${state}`}>
+    <div class="artwork-card__media" style={`--card-ratio: ${ratio};`}>
+      <img
+        src={artwork.images.card.src}
+        alt={`${artwork.title} — aperçu du catalogue historique`}
+        width="680"
+        height="680"
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : 'auto'}
+      />
+      <span class:list={['artwork-card__badge', sold && 'artwork-card__badge--sold']}>
+        {state}
+      </span>
+    </div>
+    <div class="artwork-card__body">
+      <div>
+        <h3 class="artwork-card__title">{artwork.title}</h3>
+        <p class="artwork-card__meta">{dimensionsLabel(artwork)} · Série {artwork.series} · à confirmer</p>
+      </div>
+      <div class="artwork-card__price">
+        <span class:list={[sold && 'artwork-card__price--sold']}>{formatPrice(artwork.price.amount)}</span>
+        <small>Prix source · à confirmer</small>
+      </div>
+    </div>
+  </a>
+</Reveal>
