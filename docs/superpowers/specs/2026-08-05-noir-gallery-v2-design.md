@@ -233,7 +233,8 @@ unresolved image paths, or an available work without a faithful full-work image.
 ### Motion
 
 - Reveal effects are gated by `html.js`; no JavaScript means full opacity.
-- Initial enhanced state is never fully invisible: opacity starts at 0.25 or higher.
+- Text, controls, and other contrast-dependent content remain at full opacity in every
+  reveal state. Reveal motion may animate transform only.
 - Observed elements reveal once and are then unobserved.
 - `prefers-reduced-motion` removes reveal, hover scale, smooth scrolling, and other
   nonessential motion while preserving content and state changes.
@@ -436,9 +437,12 @@ blockers or high-severity findings remain.
 
 ### Accessibility
 
-- WCAG 2.2 AA is the target for content, interaction, states, and responsive behavior.
-- Automated accessibility scan reports zero critical or serious violations on every
-  representative route.
+- WCAG 2.2 AA is required for content, interaction, states, responsive behavior, and
+  every complete user process in scope.
+- There are zero confirmed applicable WCAG 2.2 A or AA failures, regardless of how an
+  automated tool categorizes severity.
+- Automated accessibility scans cover every representative route and each material UI
+  state; scanner results supplement rather than replace criterion-level review.
 - Manual keyboard review passes navigation, filters, lightbox, cart, checkout, errors,
   and confirmation.
 - Screen-reader review confirms names, roles, state changes, error association, modal
@@ -523,8 +527,10 @@ Reviewer: accessibility specialist experienced with WCAG 2.2 and transactional f
 They approve keyboard, screen-reader, contrast, zoom/reflow, reduced-motion, touch,
 modal, form-error, and dynamic cart/filter announcements.
 
-Evidence: manual audit report, automated results, and zero unresolved critical or
-serious issues.
+Evidence: manual audit report, automated results, zero confirmed applicable WCAG 2.2
+A or AA failures at any severity, and a criterion-level conformance matrix covering
+keyboard, screen reader, 200% zoom and 320px reflow, text spacing, focus obscuration,
+reduced motion, modal inertness, form errors, and dynamic announcements.
 
 ### Gate E — Frontend, performance, and SEO
 

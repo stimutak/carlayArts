@@ -1,4 +1,18 @@
-# Noir Gallery v2 — Astro Implementation Plan
+# SUPERSEDED — DO NOT EXECUTE
+
+This draft predates the evidence-backed inventory audit and fail-closed commerce
+rules. It remains only as historical context. The current implementation authority is:
+
+1. `docs/superpowers/specs/2026-08-05-noir-gallery-v2-design.md`
+2. `docs/foundation-status.md`
+3. `docs/audits/2026-08-06-artwork-inventory-review.md`
+4. `data/artwork-inventory.authoritative-candidate.json` as candidate evidence only,
+   never owner approval
+
+Do not follow this draft's source-of-truth, verbatim-copy, payment, inventory, or
+media instructions.
+
+# Noir Gallery v2 — Astro Implementation Plan (historical draft)
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

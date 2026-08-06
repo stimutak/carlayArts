@@ -76,7 +76,10 @@ try {
   page.on('pageerror', (error) => errors.push(error.message));
 
   await page.goto(`${origin}/oeuvre/vortex-5`);
-  assert((await page.locator('[data-availability="not-for-sale"]').count()) === 1, 'Not-for-sale state is not visible on the work page.');
+  assert(
+    (await page.locator('[data-cart-actions] [data-availability="not-for-sale"]').count()) === 1,
+    'Not-for-sale commerce state is not visible on the work page.',
+  );
   assert((await page.locator('[data-cart-add]').count()) === 0, 'Not-for-sale work exposed an add control.');
   await page.evaluate(() => localStorage.setItem('carlay-cart-v2', JSON.stringify({ version: 2, itemIds: ['legacy-vortex-5', 'invented'] })));
   await page.reload();
