@@ -1,4 +1,6 @@
 import { spawn } from 'node:child_process';
+import { once } from 'node:events';
+import { join } from 'node:path';
 import AxeBuilder from '@axe-core/playwright';
 import { chromium } from 'playwright';
 
@@ -16,7 +18,8 @@ const routes = [
   '/404.html',
 ];
 
-const preview = spawn('npm', ['run', 'preview', '--', '--host', '127.0.0.1', '--port', '4323'], {
+const astroBin = join(process.cwd(), 'node_modules', '.bin', process.platform === 'win32' ? 'astro.cmd' : 'astro');
+const preview = spawn(astroBin, ['preview', '--host', '127.0.0.1', '--port', '4323'], {
   cwd: process.cwd(),
   stdio: ['ignore', 'pipe', 'pipe'],
 });
@@ -34,6 +37,13 @@ const waitForServer = async () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
   throw new Error(`Astro preview did not become ready.\n${output}`);
+};
+
+const stopPreview = async () => {
+  if (preview.exitCode !== null) return;
+  preview.kill('SIGTERM');
+  await Promise.race([once(preview, 'exit'), new Promise((resolve) => setTimeout(resolve, 2000))]);
+  if (preview.exitCode === null) preview.kill('SIGKILL');
 };
 
 let browser;
@@ -79,5 +89,5 @@ try {
 } finally {
   await context?.close();
   await browser?.close();
-  preview.kill('SIGTERM');
+  await stopPreview();
 }

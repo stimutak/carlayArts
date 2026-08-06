@@ -1,8 +1,11 @@
 import { spawn } from 'node:child_process';
+import { once } from 'node:events';
+import { join } from 'node:path';
 import { chromium } from 'playwright';
 
 const origin = 'http://127.0.0.1:4322';
-const preview = spawn('npm', ['run', 'preview', '--', '--host', '127.0.0.1', '--port', '4322'], {
+const astroBin = join(process.cwd(), 'node_modules', '.bin', process.platform === 'win32' ? 'astro.cmd' : 'astro');
+const preview = spawn(astroBin, ['preview', '--host', '127.0.0.1', '--port', '4322'], {
   cwd: process.cwd(),
   stdio: ['ignore', 'pipe', 'pipe'],
 });
@@ -21,6 +24,13 @@ const waitForServer = async () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
   throw new Error(`Astro preview did not become ready.\n${output}`);
+};
+
+const stopPreview = async () => {
+  if (preview.exitCode !== null) return;
+  preview.kill('SIGTERM');
+  await Promise.race([once(preview, 'exit'), new Promise((resolve) => setTimeout(resolve, 2000))]);
+  if (preview.exitCode === null) preview.kill('SIGKILL');
 };
 
 let browser;
@@ -126,5 +136,5 @@ try {
   console.log('Browser site checks passed at 320px, 390px, and 1440px, including filters, dialogs, cart safety, and no-JavaScript content.');
 } finally {
   await browser?.close();
-  preview.kill('SIGTERM');
+  await stopPreview();
 }
