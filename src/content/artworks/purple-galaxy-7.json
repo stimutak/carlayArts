@@ -1,0 +1,82 @@
+{
+  "id": "legacy-purple-galaxy-7",
+  "slug": "purple-galaxy-7",
+  "title": "Purple Galaxy 7",
+  "series": "Purple Galaxy",
+  "seriesSlug": "purple-galaxy",
+  "sortOrder": 25,
+  "price": {
+    "amount": 1000,
+    "currency": "EUR",
+    "reviewStatus": "legacy-source"
+  },
+  "availability": "sold",
+  "availabilityReviewStatus": "legacy-source",
+  "medium": {
+    "value": "Acrylique sur toile",
+    "reviewStatus": "legacy-source"
+  },
+  "year": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "dimensions": {
+    "width": 22,
+    "height": 30,
+    "depth": null,
+    "unit": "cm",
+    "reviewStatus": "legacy-source"
+  },
+  "orientation": "portrait",
+  "aspectRatio": 0.7333333333333333,
+  "signaturePlacement": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "condition": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "framingStatus": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "certificateStatus": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "cardDescription": {
+    "value": "Texte éditorial en attente de validation par l’artiste.",
+    "reviewStatus": "draft"
+  },
+  "workNote": {
+    "value": "Note spécifique en attente de validation par l’artiste.",
+    "reviewStatus": "draft"
+  },
+  "seriesStatementRef": {
+    "value": "draft-purple-galaxy",
+    "reviewStatus": "draft"
+  },
+  "images": {
+    "full": {
+      "src": null,
+      "alt": null,
+      "reviewStatus": "needs-owner-review"
+    },
+    "card": {
+      "src": "/artworks/PURPLE-GALAXY-7-680x680.jpg",
+      "alt": "Purple Galaxy 7",
+      "reviewStatus": "legacy-source"
+    },
+    "details": [],
+    "back": null,
+    "signature": null,
+    "roomScale": null
+  },
+  "featured": false,
+  "relatedSlugs": [],
+  "source": {
+    "kind": "legacy-catalog",
+    "file": "boutique.html"
+  }
+}

@@ -1,0 +1,14 @@
+---
+import Reveal from './Reveal.astro';
+
+const { eyebrow = 'Fondation', title, intro } = Astro.props;
+---
+
+<section class="foundation-page">
+  <Reveal as="header" class="foundation-page__header">
+    <p class="eyebrow">{eyebrow}</p>
+    <h1 class="display">{title}</h1>
+    <p class="foundation-page__intro">{intro}</p>
+    <p class="foundation-page__status">Structure statique — contenu et interactions à valider dans les phases suivantes.</p>
+  </Reveal>
+</section>
