@@ -1,0 +1,277 @@
+---
+import { getCollection } from 'astro:content';
+
+const entries = await getCollection('artworks');
+const inventory = entries.map(({ data }) => ({
+  id: data.id,
+  slug: data.slug,
+  title: data.title,
+  series: data.series,
+  availability: data.availability,
+  availabilityReviewStatus: data.availabilityReviewStatus,
+  price: data.price,
+  medium: data.medium,
+  year: data.year,
+  dimensions: data.dimensions,
+  signaturePlacement: data.signaturePlacement,
+  condition: data.condition,
+  framingStatus: data.framingStatus,
+  certificateStatus: data.certificateStatus,
+  images: { full: data.images.full, details: data.images.details },
+  image: data.images.card,
+}));
+---
+
+<script id="carlay-cart-inventory" type="application/json" set:html={JSON.stringify(inventory)}></script>
+
+<div class="cart-drawer-shell" data-cart-shell hidden>
+  <button class="cart-drawer__backdrop" type="button" data-cart-backdrop tabindex="-1" aria-label="Fermer le panier"></button>
+  <aside
+    id="cart-drawer"
+    class="cart-drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="cart-drawer-title"
+    tabindex="-1"
+  >
+    <header class="cart-drawer__header">
+      <div>
+        <p class="eyebrow">Sélection</p>
+        <h2 id="cart-drawer-title">Votre panier</h2>
+      </div>
+      <button class="icon-button" type="button" data-cart-close aria-label="Fermer le panier">×</button>
+    </header>
+
+    <div class="notice notice--error" data-cart-error hidden>
+      <p data-cart-error-message></p>
+      <button class="text-button" type="button" data-cart-retry>Réessayer</button>
+    </div>
+
+    <div class="cart-drawer__body">
+      <ul class="cart-lines" data-cart-drawer-items aria-label="Œuvres dans le panier"></ul>
+      <div class="empty-state" data-cart-drawer-empty>
+        <p>Votre panier est vide.</p>
+        <a class="text-link" href="/boutique">Découvrir les œuvres</a>
+      </div>
+    </div>
+
+    <footer class="cart-drawer__footer" data-cart-drawer-footer hidden>
+      <p class="cart-total"><span>Sous-total</span><strong data-cart-drawer-total></strong></p>
+      <p class="policy-review">Livraison, taxes, droits et retours restent à confirmer avec l’artiste avant toute activation commerciale.</p>
+      <a class="button button--primary" href="/commande">Continuer en mode démo</a>
+      <a class="button button--secondary" href="/panier">Voir le panier complet</a>
+    </footer>
+  </aside>
+</div>
+
+<p class="sr-only" role="status" aria-live="polite" aria-atomic="true" data-cart-announcer></p>
+
+<script>
+  import {
+    addItem,
+    clearCart,
+    configureInventory,
+    getCartSnapshot,
+    removeItem,
+    retryCartStorage,
+  } from '../lib/cart.js';
+
+  const shell = document.querySelector('[data-cart-shell]');
+  const drawer = shell?.querySelector('.cart-drawer');
+  const inventoryNode = document.querySelector('#carlay-cart-inventory');
+  const announcer = document.querySelector('[data-cart-announcer]');
+  const focusableSelector = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  let returnFocus = null;
+  const backgroundElements = [
+    document.querySelector('.skip-link'),
+    document.querySelector('.nav'),
+    document.querySelector('main'),
+    document.querySelector('.footer'),
+    document.querySelector('#site-mobile-menu'),
+  ].filter((node) => node instanceof HTMLElement);
+
+  const setBackgroundInert = (inert) => {
+    backgroundElements.forEach((node) => { node.inert = inert; });
+  };
+
+  const money = (amount, currency = 'EUR') => new Intl.NumberFormat('fr-FR', {
+    style: 'currency', currency, maximumFractionDigits: 0,
+  }).format(amount);
+
+  const announce = (message) => {
+    if (!(announcer instanceof HTMLElement)) return;
+    announcer.textContent = '';
+    window.setTimeout(() => (announcer.textContent = message), 20);
+  };
+
+  const createLine = (item, { removable = true } = {}) => {
+    const line = document.createElement('li');
+    line.className = 'cart-line';
+    const image = document.createElement('img');
+    image.src = item.image?.src || '/site/logo-carlay-BLANC.png';
+    image.alt = item.image?.alt || '';
+    image.width = 80;
+    image.height = 80;
+    const copy = document.createElement('div');
+    copy.className = 'cart-line__copy';
+    const link = document.createElement('a');
+    link.href = `/oeuvre/${item.slug}`;
+    link.textContent = item.title;
+    const series = document.createElement('span');
+    series.textContent = item.series;
+    const price = document.createElement('strong');
+    price.textContent = money(item.price.amount, item.price.currency);
+    copy.append(link, series, price);
+    line.append(image, copy);
+    if (removable) {
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'icon-button cart-line__remove';
+      remove.dataset.cartRemove = item.id;
+      remove.setAttribute('aria-label', `Retirer ${item.title} du panier`);
+      remove.textContent = '×';
+      line.append(remove);
+    }
+    return line;
+  };
+
+  const render = () => {
+    const snapshot = getCartSnapshot();
+    document.querySelectorAll('[data-cart-count]').forEach((node) => {
+      node.textContent = String(snapshot.count);
+      node.setAttribute('aria-label', `${snapshot.count} œuvre${snapshot.count === 1 ? '' : 's'} dans le panier`);
+    });
+    document.documentElement.dataset.cartReady = 'true';
+
+    if (!(shell instanceof HTMLElement)) return snapshot;
+    const list = shell.querySelector('[data-cart-drawer-items]');
+    const empty = shell.querySelector('[data-cart-drawer-empty]');
+    const footer = shell.querySelector('[data-cart-drawer-footer]');
+    const totalNode = shell.querySelector('[data-cart-drawer-total]');
+    const error = shell.querySelector('[data-cart-error]');
+    const errorMessage = shell.querySelector('[data-cart-error-message]');
+    if (list) list.replaceChildren(...snapshot.items.map((item) => createLine(item)));
+    if (empty instanceof HTMLElement) empty.hidden = snapshot.items.length > 0;
+    if (footer instanceof HTMLElement) footer.hidden = snapshot.items.length === 0;
+    if (totalNode) totalNode.textContent = snapshot.total === null ? 'Indisponible' : money(snapshot.total, snapshot.currency);
+    if (error instanceof HTMLElement) error.hidden = snapshot.status.kind !== 'error';
+    if (errorMessage) errorMessage.textContent = snapshot.status.message;
+    return snapshot;
+  };
+
+  const closeDrawer = ({ restore = true } = {}) => {
+    if (!(shell instanceof HTMLElement) || shell.hidden) return;
+    shell.hidden = true;
+    document.body.classList.remove('cart-open');
+    setBackgroundInert(false);
+    document.querySelectorAll('[data-cart-open]').forEach((node) => node.setAttribute('aria-expanded', 'false'));
+    if (restore && returnFocus instanceof HTMLElement) returnFocus.focus();
+    returnFocus = null;
+  };
+
+  const openDrawer = (trigger = document.activeElement) => {
+    if (!(shell instanceof HTMLElement) || !(drawer instanceof HTMLElement)) return;
+    render();
+    returnFocus = trigger instanceof HTMLElement ? trigger : null;
+    shell.hidden = false;
+    document.body.classList.add('cart-open');
+    setBackgroundInert(true);
+    document.querySelectorAll('[data-cart-open]').forEach((node) => node.setAttribute('aria-expanded', 'true'));
+    drawer.querySelector('[data-cart-close]')?.focus();
+  };
+
+  try {
+    const records = JSON.parse(inventoryNode?.textContent || '[]');
+    configureInventory(records);
+  } catch {
+    announce('Le catalogue est indisponible. Le panier reste verrouillé.');
+  }
+
+  window.CarlayCart = Object.freeze({ addItem, clearCart, getCartSnapshot, openDrawer, removeItem, retryCartStorage });
+  const initialSnapshot = render();
+  if (initialSnapshot.status.message) announce(initialSnapshot.status.message);
+  window.dispatchEvent(new CustomEvent('cart:ready', { detail: initialSnapshot }));
+
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    if (!target) return;
+    const open = target.closest('[data-cart-open]');
+    if (open) {
+      event.preventDefault();
+      openDrawer(open);
+      return;
+    }
+    if (target.closest('[data-cart-close], [data-cart-backdrop]')) {
+      closeDrawer();
+      return;
+    }
+    const retry = target.closest('[data-cart-retry]');
+    if (retry) {
+      const snapshot = retryCartStorage();
+      render();
+      announce(snapshot.status.kind === 'error' ? snapshot.status.message : 'Panier rechargé.');
+      return;
+    }
+    const remove = target.closest('[data-cart-remove]');
+    if (remove instanceof HTMLElement) {
+      const item = getCartSnapshot().items.find((entry) => entry.id === remove.dataset.cartRemove);
+      const result = removeItem(remove.dataset.cartRemove);
+      render();
+      if (result.ok) announce(`${item?.title || 'Œuvre'} retirée du panier.`);
+      return;
+    }
+    const buy = target.closest('[data-cart-buy]');
+    const add = buy || target.closest('[data-cart-add]');
+    if (!(add instanceof HTMLElement)) return;
+    event.preventDefault();
+    const id = buy instanceof HTMLElement ? buy.dataset.cartBuy : add.dataset.cartAdd;
+    const result = addItem(id);
+    render();
+    if (result.ok) {
+      announce(`${result.item.title} ajoutée au panier. Une pièce unique.`);
+      if (buy instanceof HTMLElement) window.location.assign('/commande');
+      else if (add.hasAttribute('data-cart-open-after-add')) openDrawer(add);
+      return;
+    }
+    const messages = {
+      duplicate: 'Pièce unique — cette œuvre est déjà dans votre panier.',
+      sold: 'Cette œuvre est vendue et ne peut pas être ajoutée.',
+      'not-for-sale': 'Cette œuvre n’est pas proposée à la vente.',
+      unknown: 'Cette œuvre ne figure pas dans l’inventaire vérifié.',
+      storage: 'Impossible d’enregistrer le panier. Réessayez.',
+      'inventory-unavailable': 'Le catalogue est indisponible. Le panier reste verrouillé.',
+    };
+    announce(messages[result.reason] || 'Impossible d’ajouter cette œuvre.');
+    if (result.reason === 'duplicate') openDrawer(add);
+  });
+
+  window.addEventListener('cart:change', render);
+  window.addEventListener('storage', (event) => {
+    if (event.key?.startsWith('carlay-cart')) {
+      render();
+      announce('Le panier a été mis à jour dans un autre onglet.');
+    }
+  });
+  document.addEventListener('keydown', (event) => {
+    if (!(shell instanceof HTMLElement) || shell.hidden) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeDrawer();
+      return;
+    }
+    if (event.key !== 'Tab' || !(drawer instanceof HTMLElement)) return;
+    const focusable = [...drawer.querySelectorAll(focusableSelector)].filter(
+      (node) => node instanceof HTMLElement && node.getClientRects().length > 0,
+    );
+    const first = focusable[0];
+    const last = focusable.at(-1);
+    if (!first || !last) return;
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+</script>

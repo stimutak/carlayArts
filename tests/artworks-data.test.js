@@ -95,5 +95,10 @@ describe('inventory validator', () => {
     const unsafeAvailable = structuredClone(records.find((artwork) => artwork.availability === 'not-for-sale'));
     unsafeAvailable.availability = 'available';
     expect(() => validateArtworkInventory([unsafeAvailable])).toThrow(/missing a faithful full-work image/);
+
+    const unapprovedAvailable = structuredClone(unsafeAvailable);
+    unapprovedAvailable.images.full = { ...unapprovedAvailable.images.card };
+    unapprovedAvailable.images.details = [{ ...unapprovedAvailable.images.card }];
+    expect(() => validateArtworkInventory([unapprovedAvailable])).toThrow(/not commerce eligible/);
   });
 });

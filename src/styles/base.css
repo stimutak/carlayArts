@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html {
   background: var(--noir);
   scroll-behavior: smooth;
@@ -22,7 +26,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-body.menu-open {
+body.menu-open,
+body.cart-open {
   overflow: hidden;
 }
 
@@ -56,6 +61,12 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+input,
+select,
+textarea {
+  color-scheme: dark;
 }
 
 button,

@@ -1,12 +1,75 @@
 ---
-import FoundationPage from '../components/FoundationPage.astro';
 import Base from '../layouts/Base.astro';
 ---
 
 <Base title="Confirmation démo" currentPath="/confirmation">
-  <FoundationPage
-    eyebrow="Démonstration"
-    title="Confirmation"
-    intro="Cette route est réservée au futur résultat de démonstration. Elle ne confirme actuellement ni commande ni paiement."
-  />
+  <section class="commerce-page confirmation-page">
+    <header class="commerce-header">
+      <p class="eyebrow">Résultat local</p>
+      <h1 class="display">Confirmation démo</h1>
+    </header>
+
+    <p class="loading-state" data-confirmation-loading role="status">Recherche du résultat de démonstration…</p>
+    <noscript><p class="notice notice--error">JavaScript est nécessaire pour lire le résultat local. Cette page ne confirme aucun paiement réel.</p></noscript>
+
+    <div class="confirmation-result" data-confirmation-result hidden>
+      <div class="confirmation-mark" aria-hidden="true">✓</div>
+      <div>
+        <h2 tabindex="-1">Aucun paiement n’a été pris</h2>
+        <p>Le parcours de démonstration est terminé. Il n’a créé ni commande, ni réservation d’œuvre, ni transaction, ni e-mail.</p>
+        <p class="confirmation-reference">Référence locale : <strong data-confirmation-reference></strong></p>
+      </div>
+      <ul class="summary-lines confirmation-lines" data-confirmation-items aria-label="Œuvres de la démonstration"></ul>
+      <p class="cart-total"><span>Sous-total simulé</span><strong data-confirmation-total></strong></p>
+      <div class="notice policy-review">
+        <strong>Activation commerciale bloquée.</strong>
+        <p>La disponibilité et les politiques de livraison, taxes, droits, retours et dommages doivent être approuvées par l’artiste avant toute commande réelle.</p>
+      </div>
+      <div class="button-row">
+        <a class="button button--primary" href="/boutique">Retour aux œuvres</a>
+        <a class="button button--secondary" href="/contact">Contacter l’atelier</a>
+      </div>
+    </div>
+
+    <div class="empty-state empty-state--large" data-confirmation-empty>
+      <h2>Aucun résultat démo dans cet onglet</h2>
+      <p>Cette page seule ne confirme ni commande ni paiement. Commencez depuis un panier contenant une œuvre disponible.</p>
+      <a class="button button--primary" href="/panier">Voir le panier</a>
+    </div>
+  </section>
+
+  <script>
+    import { readDemoConfirmation } from '../lib/checkout.js';
+
+    const loading = document.querySelector('[data-confirmation-loading]');
+    const result = document.querySelector('[data-confirmation-result]');
+    const empty = document.querySelector('[data-confirmation-empty]');
+    const confirmation = readDemoConfirmation();
+    if (loading instanceof HTMLElement) loading.hidden = true;
+    if (!confirmation) {
+      if (empty instanceof HTMLElement) empty.hidden = false;
+    } else if (result instanceof HTMLElement) {
+      const money = (amount, currency = 'EUR') => new Intl.NumberFormat('fr-FR', {
+        style: 'currency', currency, maximumFractionDigits: 0,
+      }).format(amount);
+      result.hidden = false;
+      if (empty instanceof HTMLElement) empty.hidden = true;
+      const reference = result.querySelector('[data-confirmation-reference]');
+      if (reference) reference.textContent = confirmation.reference;
+      const items = confirmation.items.map((item) => {
+        const li = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = `/oeuvre/${item.slug}`;
+        link.textContent = item.title;
+        const price = document.createElement('strong');
+        price.textContent = money(item.price.amount, item.price.currency);
+        li.append(link, price);
+        return li;
+      });
+      result.querySelector('[data-confirmation-items]')?.replaceChildren(...items);
+      const total = result.querySelector('[data-confirmation-total]');
+      if (total) total.textContent = money(confirmation.total, confirmation.currency);
+      result.querySelector('h2')?.focus?.();
+    }
+  </script>
 </Base>

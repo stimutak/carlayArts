@@ -9,7 +9,7 @@
     "test": "vitest run --exclude tests/dist.test.js",
     "test:watch": "vitest --exclude tests/dist.test.js",
     "test:dist": "vitest run tests/dist.test.js",
-    "test:browser": "node scripts/check-foundation-browser.mjs",
+    "test:browser": "node scripts/check-foundation-browser.mjs && node scripts/check-commerce-browser.mjs",
     "check": "npm run test && npm run build && npm run test:dist",
     "extract": "node scripts/extract-artworks.mjs",
     "dev:legacy": "npx serve .",

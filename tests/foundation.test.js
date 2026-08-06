@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { accentFor, formatPrice } from '../src/lib/series.js';
 import { canonicalPath, pageTitle } from '../src/lib/metadata.js';
 
@@ -36,5 +36,33 @@ describe('fail-visible reveal contract', () => {
 
   it('makes reveals immediate under reduced motion', () => {
     expect(css).toMatch(/prefers-reduced-motion: reduce[\s\S]*?html\.js\.js-ready \.reveal \{[\s\S]*?opacity: 1/);
+  });
+});
+
+describe('implementation authority', () => {
+  it('quarantines plans that contain obsolete authority or verbatim-copy directives', () => {
+    const planDirectory = 'docs/superpowers/plans';
+    const obsoleteDirectives = [
+      'boutique.html`, which is the inventory source of truth',
+      'pixel reference',
+      'contents copied verbatim',
+    ];
+
+    for (const file of readdirSync(planDirectory).filter((name) => name.endsWith('.md'))) {
+      const source = readFileSync(`${planDirectory}/${file}`, 'utf8');
+      if (!obsoleteDirectives.some((directive) => source.includes(directive))) continue;
+      expect(source, `${file} contains obsolete directives without a superseded warning`).toMatch(
+        /^# SUPERSEDED — DO NOT EXECUTE/m,
+      );
+    }
+  });
+
+  it('defines Gate D by WCAG conformance rather than scanner severity', () => {
+    const specification = readFileSync(
+      'docs/superpowers/specs/2026-08-05-noir-gallery-v2-design.md',
+      'utf8',
+    );
+    expect(specification).toContain('zero confirmed applicable WCAG 2.2 A or AA failures');
+    expect(specification).toContain('scanner results supplement rather than replace criterion-level review');
   });
 });

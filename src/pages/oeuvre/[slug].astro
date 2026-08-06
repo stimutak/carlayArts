@@ -6,6 +6,7 @@ import candidateInventory from '../../../data/artwork-inventory.authoritative-ca
 import ArtworkCard from '../../components/ArtworkCard.astro';
 import Lightbox from '../../components/Lightbox.astro';
 import Reveal from '../../components/Reveal.astro';
+import CartActions from '../../components/CartActions.astro';
 import Base from '../../layouts/Base.astro';
 import {
   availabilityLabel,
@@ -110,6 +111,8 @@ const media = verifiedFull
           <p>Cette œuvre reste hors vente jusqu’à validation de son identité, de son prix, de son état et de son image intégrale.</p>
         )}
       </div>
+
+      <CartActions artwork={artwork} />
 
       <a class="btn btn--ghost" href={`/boutique/?serie=${artwork.seriesSlug}`}>Voir la série →</a>
 

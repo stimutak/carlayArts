@@ -17,8 +17,16 @@ const links = [
     ))}
   </nav>
   <div class="nav__actions">
-    <a class="nav__cart-link" href="/panier" aria-current={currentPath === '/panier' ? 'page' : undefined}>
-      Panier
+    <a
+      class="nav__cart-link"
+      href="/panier"
+      aria-current={currentPath === '/panier' ? 'page' : undefined}
+      aria-controls="cart-drawer"
+      aria-expanded="false"
+      aria-haspopup="dialog"
+      data-cart-open
+    >
+      Panier <span class="nav__cart-count" data-cart-count aria-label="Statut du panier en cours de chargement">—</span>
     </a>
     <button
       id="site-menu-toggle"

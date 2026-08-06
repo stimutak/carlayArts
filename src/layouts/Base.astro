@@ -3,6 +3,7 @@ import '@fontsource-variable/space-grotesk/wght.css';
 import '@fontsource/playfair-display/400-italic.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import CartDrawer from '../components/CartDrawer.astro';
 import '../styles/tokens.css';
 import '../styles/base.css';
 import '../styles/components.css';
@@ -49,6 +50,7 @@ const canonical = new URL(canonicalPath(Astro.url.pathname), Astro.site);
       <slot />
     </main>
     <Footer />
+    <CartDrawer />
     <script>
       const revealElements = [...document.querySelectorAll('.reveal')];
       document.documentElement.classList.add('js-ready');

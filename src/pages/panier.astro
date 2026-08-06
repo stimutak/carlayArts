@@ -1,12 +1,113 @@
 ---
-import FoundationPage from '../components/FoundationPage.astro';
 import Base from '../layouts/Base.astro';
 ---
 
 <Base title="Panier" currentPath="/panier">
-  <FoundationPage
-    eyebrow="Panier"
-    title="Votre sélection"
-    intro="Le panier de pièces uniques sera ajouté dans la phase commerce démo. Cette route ne stocke ni ne transmet actuellement aucune donnée."
-  />
+  <section class="commerce-page commerce-page--cart">
+    <header class="commerce-header">
+      <p class="eyebrow">Pièces uniques</p>
+      <h1 class="display">Votre sélection</h1>
+      <p>Chaque œuvre ne peut apparaître qu’une fois. Toute œuvre vendue, non validée ou inconnue est refusée automatiquement.</p>
+    </header>
+
+    <div class="notice notice--error" data-cart-page-error hidden>
+      <p data-cart-page-error-message></p>
+      <button class="text-button" type="button" data-cart-page-retry>Réessayer</button>
+    </div>
+
+    <p class="loading-state" data-cart-page-loading role="status">Chargement du panier…</p>
+    <noscript><p class="notice notice--error">JavaScript est nécessaire pour lire le panier enregistré sur cet appareil.</p></noscript>
+
+    <div data-cart-page-content>
+      <ul class="cart-lines cart-lines--page" data-cart-page-items aria-label="Œuvres sélectionnées"></ul>
+      <div class="empty-state empty-state--large" data-cart-page-empty>
+        <h2>Votre panier est vide</h2>
+        <p>Explorez le catalogue. Seules les œuvres dont la disponibilité est validée peuvent être ajoutées.</p>
+        <a class="button button--primary" href="/boutique">Découvrir les œuvres</a>
+      </div>
+
+      <div class="cart-review" data-cart-page-review hidden>
+        <div class="cart-review__policy">
+          <h2>Avant la commande</h2>
+          <ul class="check-list">
+            <li>Une seule unité par œuvre originale.</li>
+            <li>Le parcours suivant est une démonstration : aucun paiement ne peut être pris.</li>
+            <li>Les conditions de livraison, taxes, droits, retours et dommages attendent la validation de l’artiste.</li>
+          </ul>
+        </div>
+        <div class="cart-review__total">
+          <p class="cart-total"><span>Sous-total des œuvres</span><strong data-cart-page-total></strong></p>
+          <p class="policy-review">Ce sous-total n’inclut aucun montant de livraison, taxe ou droit non vérifié.</p>
+          <a class="button button--primary" href="/commande">Continuer en mode démo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const root = document.querySelector('[data-cart-page-content]');
+    const loading = document.querySelector('[data-cart-page-loading]');
+    const money = (amount, currency = 'EUR') => new Intl.NumberFormat('fr-FR', {
+      style: 'currency', currency, maximumFractionDigits: 0,
+    }).format(amount);
+
+    const createLine = (item) => {
+      const line = document.createElement('li');
+      line.className = 'cart-line';
+      const image = document.createElement('img');
+      image.src = item.image?.src || '/site/logo-carlay-BLANC.png';
+      image.alt = item.image?.alt || '';
+      image.width = 112;
+      image.height = 112;
+      const copy = document.createElement('div');
+      copy.className = 'cart-line__copy';
+      const link = document.createElement('a');
+      link.href = `/oeuvre/${item.slug}`;
+      link.textContent = item.title;
+      const series = document.createElement('span');
+      series.textContent = `Série ${item.series}`;
+      const price = document.createElement('strong');
+      price.textContent = money(item.price.amount, item.price.currency);
+      copy.append(link, series, price);
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'text-button cart-line__page-remove';
+      remove.dataset.cartPageRemove = item.id;
+      remove.textContent = 'Retirer';
+      remove.setAttribute('aria-label', `Retirer ${item.title} du panier`);
+      line.append(image, copy, remove);
+      return line;
+    };
+
+    const render = () => {
+      if (!window.CarlayCart || !(root instanceof HTMLElement)) return;
+      const snapshot = window.CarlayCart.getCartSnapshot();
+      root.hidden = false;
+      if (loading instanceof HTMLElement) loading.hidden = true;
+      root.querySelector('[data-cart-page-items]')?.replaceChildren(...snapshot.items.map(createLine));
+      const empty = root.querySelector('[data-cart-page-empty]');
+      const review = root.querySelector('[data-cart-page-review]');
+      if (empty instanceof HTMLElement) empty.hidden = snapshot.items.length > 0;
+      if (review instanceof HTMLElement) review.hidden = snapshot.items.length === 0;
+      const total = root.querySelector('[data-cart-page-total]');
+      if (total) total.textContent = snapshot.total === null ? 'Indisponible' : money(snapshot.total, snapshot.currency);
+      const error = document.querySelector('[data-cart-page-error]');
+      const errorMessage = document.querySelector('[data-cart-page-error-message]');
+      if (error instanceof HTMLElement) error.hidden = snapshot.status.kind !== 'error';
+      if (errorMessage) errorMessage.textContent = snapshot.status.message;
+    };
+
+    window.addEventListener('cart:ready', render);
+    window.addEventListener('cart:change', render);
+    if (window.CarlayCart) render();
+    document.addEventListener('click', (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      const remove = target?.closest('[data-cart-page-remove]');
+      if (remove instanceof HTMLElement) window.CarlayCart?.removeItem(remove.dataset.cartPageRemove);
+      if (target?.closest('[data-cart-page-retry]')) {
+        window.CarlayCart?.retryCartStorage();
+        render();
+      }
+    });
+  </script>
 </Base>

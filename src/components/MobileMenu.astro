@@ -4,13 +4,15 @@ const links = [
   { href: '/boutique', label: 'Œuvres' },
   { href: '/a-propos', label: "L’Artiste" },
   { href: '/contact', label: 'Contact' },
-  { href: '/panier', label: 'Panier' },
+  { href: '/panier', label: 'Panier', cart: true },
 ];
 ---
 
 <div id="site-mobile-menu" class="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation mobile" hidden>
   <button class="mobile-menu__close" type="button" data-menu-close aria-label="Fermer le menu">×</button>
   {links.map((link) => (
-    <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>{link.label}</a>
+    <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
+      {link.label} {link.cart && <span data-cart-count aria-label="Statut du panier en cours de chargement">—</span>}
+    </a>
   ))}
 </div>

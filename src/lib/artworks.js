@@ -1,3 +1,7 @@
+import { commerceEligibilityIssues, isCommerceEligible } from './inventory.js';
+
+export { isCommerceEligible } from './inventory.js';
+
 export function validateArtworkInventory(artworks, { assetExists = () => true } = {}) {
   const ids = new Set();
   const slugs = new Set();
@@ -23,22 +27,12 @@ export function validateArtworkInventory(artworks, { assetExists = () => true } 
     if (artwork.availability === 'available' && !artwork.images?.full?.src) {
       throw new Error(`Available artwork ${artwork.slug} is missing a faithful full-work image.`);
     }
+    if (artwork.availability === 'available' && !isCommerceEligible(artwork)) {
+      throw new Error(`Available artwork ${artwork.slug} is not commerce eligible: ${commerceEligibilityIssues(artwork).join(', ')}`);
+    }
   }
 
   return artworks;
-}
-
-export function isCommerceEligible(artwork) {
-  return (
-    artwork.availability === 'available' &&
-    artwork.availabilityReviewStatus === 'owner-approved' &&
-    artwork.price?.reviewStatus === 'owner-approved' &&
-    Boolean(artwork.images?.full?.src) &&
-    artwork.images.full.reviewStatus === 'owner-approved' &&
-    artwork.condition?.reviewStatus === 'owner-approved' &&
-    artwork.framingStatus?.reviewStatus === 'owner-approved' &&
-    artwork.certificateStatus?.reviewStatus === 'owner-approved'
-  );
 }
 
 // Compatibility name for Phase 4 consumers. Commerce must continue to flow

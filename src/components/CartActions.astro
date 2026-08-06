@@ -1,0 +1,22 @@
+---
+const { artwork } = Astro.props;
+import { isCommerceEligible } from '../lib/inventory.js';
+const isAvailable = isCommerceEligible(artwork);
+const isSold = artwork.availability === 'sold';
+---
+
+<div class="cart-actions" data-cart-actions={artwork.id}>
+  {isAvailable ? (
+    <>
+      <button class="button button--primary" type="button" data-cart-add={artwork.id} data-cart-open-after-add>
+        Ajouter au panier
+      </button>
+      <a class="button button--secondary" href="/commande" data-cart-buy={artwork.id}>Acheter maintenant</a>
+      <p class="cart-actions__note">Pièce unique : un seul exemplaire peut être ajouté.</p>
+    </>
+  ) : (
+    <p class="commerce-state" data-availability={artwork.availability}>
+      {isSold ? 'Vendu — cette œuvre ne peut pas être ajoutée.' : 'Acquisition indisponible — statut en attente de validation par l’artiste.'}
+    </p>
+  )}
+</div>
