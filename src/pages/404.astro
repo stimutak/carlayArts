@@ -1,0 +1,89 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Page introuvable"
+  description="Cette page n’existe pas ou n’est plus disponible."
+  currentPath="/404"
+>
+  <section class="not-found" aria-labelledby="not-found-title">
+    <p class="not-found__code" aria-hidden="true">404</p>
+    <div class="not-found__copy">
+      <p class="eyebrow">Page introuvable</p>
+      <h1 id="not-found-title" class="display">Cette destination n’existe pas.</h1>
+      <p>Le lien est peut-être incomplet. Retrouvez une route active ci-dessous.</p>
+      <nav aria-label="Quitter la page introuvable">
+        <a class="primary" href="/">Retour à l’accueil</a>
+        <a href="/boutique">Voir les œuvres</a>
+        <a href="/contact">Nous contacter</a>
+      </nav>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .not-found {
+    position: relative;
+    display: grid;
+    min-height: 72vh;
+    place-items: center;
+    overflow: hidden;
+    padding: clamp(5rem, 10vw, 9rem) var(--pad);
+    text-align: center;
+  }
+
+  .not-found__code {
+    position: absolute;
+    margin: 0;
+    color: transparent;
+    font-family: var(--font-display);
+    font-size: clamp(12rem, 42vw, 36rem);
+    font-weight: 700;
+    line-height: 0.7;
+    -webkit-text-stroke: 1px var(--line-strong);
+    user-select: none;
+  }
+
+  .not-found__copy {
+    position: relative;
+    width: min(100%, 46rem);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    background: rgb(10 10 10 / 82%);
+    backdrop-filter: blur(12px);
+  }
+
+  .not-found h1 {
+    margin-top: 0.8rem;
+  }
+
+  .not-found__copy > p:not(.eyebrow) {
+    color: var(--muted);
+  }
+
+  .not-found nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  .not-found nav a {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--line-strong);
+  }
+
+  .not-found nav a:hover {
+    border-color: var(--rose);
+  }
+
+  .not-found nav .primary {
+    border-color: var(--text);
+    background: var(--text);
+    color: var(--noir);
+  }
+</style>

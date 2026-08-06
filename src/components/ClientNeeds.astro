@@ -1,0 +1,515 @@
+---
+import inventoryReview from '../../docs/artwork-inventory-review.json';
+
+const works = inventoryReview.works;
+const soldCount = works.filter((work) => work.availability === 'sold').length;
+const pendingAvailabilityCount = works.filter((work) => work.availability === 'not-for-sale').length;
+const readyCount = works.filter((work) => work.missingFacts.length === 0).length;
+
+const labels = {
+  faithfulFullWorkImage: {
+    title: 'Vue fidèle de l’œuvre complète',
+    request: 'Un fichier non recadré, net et fidèle aux couleurs pour chaque œuvre.',
+    placement: 'Page œuvre : image principale. Boutique : source des futures variantes optimisées.',
+  },
+  detailImages: {
+    title: 'Vues de détail',
+    request: 'Les vues disponibles : texture, bord, dos ou signature, clairement associées à leur œuvre.',
+    placement: 'Page œuvre : galerie secondaire, uniquement quand les fichiers existent.',
+  },
+  year: {
+    title: 'Année',
+    request: 'L’année confirmée de création pour chaque œuvre.',
+    placement: 'Page œuvre : fiche technique et données structurées ultérieures.',
+  },
+  dimensions: {
+    title: 'Dimensions',
+    request: 'Hauteur × largeur × profondeur, avec l’unité et sans inclure un cadre sauf mention explicite.',
+    placement: 'Page œuvre : fiche technique. Aucune valeur ne sera estimée.',
+  },
+  signaturePlacement: {
+    title: 'Emplacement de la signature',
+    request: 'Emplacement exact, ou confirmation que l’œuvre n’est pas signée.',
+    placement: 'Page œuvre : fiche technique.',
+  },
+  condition: {
+    title: 'État de l’œuvre',
+    request: 'État vérifié et toute précision que le client souhaite publier.',
+    placement: 'Page œuvre : fiche technique et informations avant demande.',
+  },
+  framingStatus: {
+    title: 'Encadrement',
+    request: 'Encadrée, non encadrée ou autre formulation approuvée, œuvre par œuvre.',
+    placement: 'Page œuvre : fiche technique. Aucun encadrement ne sera supposé.',
+  },
+  certificateStatus: {
+    title: 'Statut du certificat',
+    request: 'Indiquer oui, non ou à confirmer pour chaque œuvre.',
+    placement: 'Page œuvre : seulement après validation ; aucune promesse automatique.',
+  },
+  seriesStatement: {
+    title: 'Texte de série',
+    request: 'Un court texte approuvé décrivant la prémisse de chaque série concernée.',
+    placement: 'Boutique et pages œuvre de la série.',
+  },
+  workNote: {
+    title: 'Note propre à l’œuvre',
+    request: 'Quelques phrases spécifiques à chaque œuvre, dans les mots approuvés par l’artiste.',
+    placement: 'Page œuvre : section éditoriale.',
+  },
+} as const;
+
+type Field = keyof typeof labels;
+type Group = {
+  id: string;
+  eyebrow: string;
+  title: string;
+  intro: string;
+  fields: Field[];
+};
+
+const groups: Group[] = [
+  {
+    id: 'media',
+    eyebrow: '01 · Fichiers',
+    title: 'Images des œuvres',
+    intro: 'Des sources identifiées et fidèles, sans déduire une vue manquante depuis une miniature.',
+    fields: ['faithfulFullWorkImage', 'detailImages'],
+  },
+  {
+    id: 'facts',
+    eyebrow: '02 · Catalogue',
+    title: 'Faits physiques',
+    intro: 'Les informations vérifiables qui décrivent précisément chaque pièce.',
+    fields: ['year', 'dimensions', 'signaturePlacement', 'condition', 'framingStatus', 'certificateStatus'],
+  },
+  {
+    id: 'editorial',
+    eyebrow: '03 · Éditorial',
+    title: 'Textes approuvés',
+    intro: 'Le contexte propre aux séries et aux œuvres, fourni ou validé par l’artiste.',
+    fields: ['seriesStatement', 'workNote'],
+  },
+];
+
+const needsFor = (field: Field) => works.filter((work) => work.missingFacts.includes(field));
+const uniqueDuplicateWorks = new Set(inventoryReview.duplicateCardImages.flatMap((item) => item.slugs));
+---
+
+<div class="needs">
+  <section class="needs-summary" aria-labelledby="needs-summary-title">
+    <div>
+      <p class="eyebrow">État du dossier · {inventoryReview.generatedAt}</p>
+      <h1 id="needs-summary-title" class="display">Le site avance. Les inconnues restent visibles.</h1>
+      <p>
+        Cette page lit directement le relevé de préparation du catalogue. Elle ne contient ni donnée
+        privée, ni information de paiement, ni fait inventé sur l’artiste.
+      </p>
+    </div>
+    <dl>
+      <div>
+        <dt>Œuvres suivies</dt>
+        <dd>{works.length}</dd>
+      </div>
+      <div>
+        <dt>Fiches complètes</dt>
+        <dd>{readyCount}</dd>
+      </div>
+      <div>
+        <dt>Statut historique « vendu »</dt>
+        <dd>{soldCount}</dd>
+      </div>
+      <div>
+        <dt>Disponibilité non validée</dt>
+        <dd>{pendingAvailabilityCount}</dd>
+      </div>
+    </dl>
+  </section>
+
+  <nav class="needs-jump" aria-label="Catégories de la liste client">
+    {groups.map((group) => <a href={`#${group.id}`}>{group.title}</a>)}
+    <a href="#artiste-contact">Artiste &amp; contact</a>
+    <a href="#blocages">Activation finale</a>
+  </nav>
+
+  {groups.map((group) => (
+    <section class="needs-group" id={group.id} aria-labelledby={`${group.id}-title`}>
+      <header>
+        <p class="eyebrow">{group.eyebrow}</p>
+        <h2 id={`${group.id}-title`} class="display">{group.title}</h2>
+        <p>{group.intro}</p>
+      </header>
+      <div class="needs-list">
+        {group.fields.map((field) => {
+          const affected = needsFor(field);
+          const item = labels[field];
+          return (
+            <article class="need-card">
+              <div class="need-card__heading">
+                <div>
+                  <p class="need-card__status">En attente</p>
+                  <h3>{item.title}</h3>
+                </div>
+                <strong aria-label={`${affected.length} œuvres concernées`}>{affected.length}<small> / {works.length}</small></strong>
+              </div>
+              <p>{item.request}</p>
+              <p class="need-card__placement"><b>Où cela ira :</b> {item.placement}</p>
+              <details>
+                <summary>Voir les {affected.length} œuvres concernées</summary>
+                <ul class="slug-list">
+                  {affected.map((work) => <li><a href={`/oeuvre/${work.slug}`}>{work.slug}</a></li>)}
+                </ul>
+              </details>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  ))}
+
+  <section class="needs-group" id="media-conflicts" aria-labelledby="media-conflicts-title">
+    <header>
+      <p class="eyebrow">Contrôle des fichiers</p>
+      <h2 id="media-conflicts-title" class="display">Miniatures à départager</h2>
+      <p>
+        {inventoryReview.duplicateCardImages.length} fichiers sont actuellement associés à plusieurs
+        identités de catalogue, soit {uniqueDuplicateWorks.size} œuvres concernées. Le client doit
+        indiquer quel fichier appartient à quelle œuvre et fournir les remplacements manquants.
+      </p>
+    </header>
+    <div class="conflict-list">
+      {inventoryReview.duplicateCardImages.map((item) => (
+        <article>
+          <p class="need-card__status">Association à confirmer</p>
+          <h3>{item.image}</h3>
+          <p>{item.slugs.join(' · ')}</p>
+          <p class="need-card__placement"><b>Où cela ira :</b> cartes boutique et pages œuvre correspondantes.</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="needs-group" id="artiste-contact" aria-labelledby="artist-input-title">
+    <header>
+      <p class="eyebrow">04 · Identité éditoriale</p>
+      <h2 id="artist-input-title" class="display">Artiste &amp; contact</h2>
+      <p>Ces éléments ne figurent pas dans le relevé des œuvres et sont suivis séparément.</p>
+    </header>
+    <div class="editorial-checklist">
+      <article>
+        <span>En attente</span>
+        <h3>Récit de l’artiste</h3>
+        <ul>
+          <li>Biographie courte et biographie complète approuvées</li>
+          <li>Démarche, processus, médiums et inspirations formulés par l’artiste</li>
+          <li>Citation exacte approuvée pour la mise en avant</li>
+          <li>Repères biographiques ou géographiques autorisés à la publication</li>
+        </ul>
+        <p><b>Destination :</b> accueil et page L’Artiste.</p>
+      </article>
+      <article>
+        <span>En attente</span>
+        <h3>Visuels d’identité</h3>
+        <ul>
+          <li>Portrait ou image d’atelier définitive, avec contexte et crédit si nécessaire</li>
+          <li>Texte alternatif factuel approuvé</li>
+          <li>Validation de la version de signature et de son usage</li>
+        </ul>
+        <p><b>Destination :</b> héros artiste, introduction et métadonnées sociales ultérieures.</p>
+      </article>
+      <article>
+        <span>Partiel</span>
+        <h3>Contact public</h3>
+        <ul>
+          <li>URL exacte du profil social officiel</li>
+          <li>Formulation souhaitée pour les demandes presse, galerie et œuvre</li>
+          <li>Autres coordonnées publiques uniquement si le client souhaite les afficher</li>
+        </ul>
+        <p><b>Destination :</b> page Contact et pied de page. Le courriel du dépôt est déjà utilisé.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="activation" id="blocages" aria-labelledby="activation-title">
+    <div>
+      <p class="eyebrow">À garder fermé jusqu’à validation</p>
+      <h2 id="activation-title" class="display">Blocages d’activation finale</h2>
+      <p>
+        Ces décisions n’empêchent pas la construction visuelle ou la démonstration, mais empêchent une
+        mise en vente réelle et des promesses publiques.
+      </p>
+    </div>
+    <ul>
+      <li><b>Disponibilité et prix :</b> approbation œuvre par œuvre avant toute action d’achat.</li>
+      <li><b>Politiques :</b> textes approuvés sur livraison, droits, retours, dommages et encadrement.</li>
+      <li><b>Commerce :</b> décision démo ou production, responsable légal et fournisseur retenu.</li>
+      <li><b>Publication :</b> retrait du blocage d’indexation uniquement après revue finale.</li>
+    </ul>
+  </section>
+</div>
+
+<style>
+  .needs {
+    width: min(100%, var(--content-width));
+    margin-inline: auto;
+    padding: 0 var(--pad) clamp(5rem, 10vw, 9rem);
+  }
+
+  .needs-summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(20rem, 0.75fr);
+    gap: clamp(2rem, 7vw, 6rem);
+    align-items: end;
+    padding: clamp(5rem, 10vw, 9rem) 0 clamp(3rem, 7vw, 6rem);
+  }
+
+  .needs-summary h2,
+  .needs-group h2,
+  .activation h2 {
+    margin-top: 0.8rem;
+  }
+
+  .needs-summary p:not(.eyebrow),
+  .needs-group > header > p:not(.eyebrow),
+  .activation p:not(.eyebrow) {
+    max-width: 45rem;
+    color: var(--muted);
+  }
+
+  .needs-summary dl {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0;
+    border-top: 1px solid var(--line-strong);
+    border-left: 1px solid var(--line-strong);
+  }
+
+  .needs-summary dl > div {
+    padding: 1.25rem;
+    border-right: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .needs-summary dt {
+    min-height: 2.8em;
+    color: var(--faint);
+    font-size: var(--text-xs);
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .needs-summary dd {
+    margin: 0.25rem 0 0;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 600;
+  }
+
+  .needs-jump {
+    position: sticky;
+    z-index: 5;
+    top: var(--nav-h);
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem 0;
+    overflow-x: auto;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--noir) 94%, transparent);
+    backdrop-filter: blur(12px);
+    scrollbar-width: thin;
+  }
+
+  .needs-jump a {
+    flex: 0 0 auto;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--line-strong);
+    color: var(--muted);
+    font-size: var(--text-xs);
+  }
+
+  .needs-jump a:hover {
+    border-color: var(--rose);
+    color: var(--text);
+  }
+
+  .needs-group {
+    padding-top: clamp(5rem, 10vw, 8rem);
+    scroll-margin-top: calc(var(--nav-h) + 4rem);
+  }
+
+  .needs-group > header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(17rem, 0.7fr);
+    column-gap: var(--gap);
+    align-items: end;
+  }
+
+  .needs-group > header .eyebrow,
+  .needs-group > header h2 {
+    grid-column: 1;
+  }
+
+  .needs-group > header > p:not(.eyebrow) {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin: 0;
+  }
+
+  .needs-list,
+  .conflict-list,
+  .editorial-checklist {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gap);
+    margin-top: 2.5rem;
+  }
+
+  .need-card,
+  .conflict-list article,
+  .editorial-checklist article {
+    min-width: 0;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+  }
+
+  .need-card__heading {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .need-card__heading strong {
+    flex: 0 0 auto;
+    color: var(--rose);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+  }
+
+  .need-card__heading small {
+    color: var(--faint);
+    font-size: var(--text-xs);
+  }
+
+  .need-card__status,
+  .editorial-checklist article > span {
+    margin: 0;
+    color: var(--rose);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .need-card h3,
+  .conflict-list h3,
+  .editorial-checklist h3 {
+    margin: 0.5rem 0 1rem;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    overflow-wrap: anywhere;
+  }
+
+  .need-card > p,
+  .conflict-list p,
+  .editorial-checklist li,
+  .editorial-checklist p {
+    color: var(--muted);
+  }
+
+  .need-card__placement {
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+    font-size: var(--text-sm);
+  }
+
+  details {
+    margin-top: 1.25rem;
+    border-top: 1px solid var(--line);
+  }
+
+  summary {
+    padding-top: 1rem;
+    color: var(--text);
+    cursor: pointer;
+    font-size: var(--text-sm);
+  }
+
+  .slug-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .slug-list a {
+    display: block;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.75rem;
+  }
+
+  .slug-list a:hover {
+    border-color: var(--rose);
+    color: var(--text);
+  }
+
+  .conflict-list article {
+    background: transparent;
+  }
+
+  .editorial-checklist article > ul {
+    padding-left: 1.25rem;
+  }
+
+  .editorial-checklist li + li {
+    margin-top: 0.5rem;
+  }
+
+  .activation {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.8fr);
+    gap: clamp(2rem, 8vw, 7rem);
+    margin-top: clamp(5rem, 10vw, 9rem);
+    padding: clamp(2rem, 5vw, 4rem);
+    border: 1px solid var(--rose);
+    scroll-margin-top: calc(var(--nav-h) + 4rem);
+  }
+
+  .activation ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: var(--muted);
+  }
+
+  .activation li + li {
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 52rem) {
+    .needs-summary,
+    .needs-group > header,
+    .activation {
+      grid-template-columns: 1fr;
+    }
+
+    .needs-group > header > p:not(.eyebrow) {
+      grid-column: 1;
+      grid-row: auto;
+      margin-top: 1rem;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .needs-list,
+    .conflict-list,
+    .editorial-checklist {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

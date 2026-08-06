@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /
+
+# Draft environment: indexing remains disabled until the final publication review.

@@ -1,12 +1,259 @@
 ---
-import FoundationPage from '../components/FoundationPage.astro';
 import Base from '../layouts/Base.astro';
+import Reveal from '../components/Reveal.astro';
 ---
 
-<Base title="Contact" currentPath="/contact">
-  <FoundationPage
-    eyebrow="Contact"
-    title="Écrire à Carlay Art"
-    intro="Les coordonnées presse, galerie, acquisition et le profil social seront affichés ici après confirmation de leurs destinations officielles."
-  />
+<Base
+  title="Contact"
+  description="Contactez Carlay Art pour une demande presse, galerie, collaboration ou au sujet d’une œuvre."
+  currentPath="/contact"
+>
+  <section class="contact-hero" aria-labelledby="contact-title">
+    <Reveal class="contact-hero__inner">
+      <p class="eyebrow">Contact</p>
+      <h1 id="contact-title" class="display">Parlons de votre demande.</h1>
+      <p class="contact-hero__lead">
+        Presse, galerie, collaboration ou question au sujet d’une œuvre : le courriel est le canal
+        direct actuellement confirmé.
+      </p>
+      <a class="email-link" href="mailto:carlayart369@gmail.com">carlayart369@gmail.com</a>
+    </Reveal>
+  </section>
+
+  <section class="contact-paths" aria-labelledby="contact-paths-title">
+    <div class="contact-paths__heading">
+      <p class="eyebrow">Votre demande</p>
+      <h2 id="contact-paths-title" class="display">Un point d’entrée, plusieurs conversations.</h2>
+    </div>
+    <div class="contact-paths__grid">
+      <article>
+        <span>01</span>
+        <h3>Presse &amp; galeries</h3>
+        <p>Indiquez le média ou la structure, l’objet de la demande et l’échéance utile.</p>
+      </article>
+      <article>
+        <span>02</span>
+        <h3>À propos d’une œuvre</h3>
+        <p>Ajoutez le titre ou le lien de l’œuvre concernée afin de faciliter la réponse.</p>
+      </article>
+      <article>
+        <span>03</span>
+        <h3>Collaborations</h3>
+        <p>Présentez brièvement le projet, son calendrier et les informations déjà publiques.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="contact-status" aria-labelledby="contact-status-title">
+    <Reveal class="contact-status__inner">
+      <div>
+        <p class="eyebrow">Canaux officiels</p>
+        <h2 id="contact-status-title" class="display">Le lien social reste à confirmer.</h2>
+        <p>
+          Aucun lien générique n’est publié à sa place. Le profil officiel apparaîtra ici dès que sa
+          destination aura été fournie et vérifiée.
+        </p>
+      </div>
+      <dl>
+        <div>
+          <dt>Courriel</dt>
+          <dd><a href="mailto:carlayart369@gmail.com">Disponible</a></dd>
+        </div>
+        <div>
+          <dt>Profil social officiel</dt>
+          <dd>À fournir</dd>
+        </div>
+      </dl>
+    </Reveal>
+  </section>
+
+  <aside class="client-route" aria-labelledby="client-route-title">
+    <div>
+      <p class="eyebrow">Préparation du contenu</p>
+      <h2 id="client-route-title">Vous fournissez les éléments du site ?</h2>
+      <p>Une liste claire recense les textes, faits et fichiers encore nécessaires, avec leur destination.</p>
+    </div>
+    <a href="/client-a-fournir">Ouvrir la liste client <span aria-hidden="true">→</span></a>
+  </aside>
 </Base>
+
+<style>
+  .contact-hero {
+    display: flex;
+    min-height: 68vh;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(circle at 78% 18%, rgb(255 51 102 / 12%), transparent 34%),
+      var(--noir);
+  }
+
+  .contact-hero__inner,
+  .contact-paths,
+  .contact-status__inner,
+  .client-route {
+    width: min(100%, var(--content-width));
+    margin-inline: auto;
+    padding-inline: var(--pad);
+  }
+
+  .contact-hero__inner {
+    padding-block: clamp(5rem, 11vw, 9rem);
+  }
+
+  .contact-hero h1 {
+    max-width: 56rem;
+    margin-top: 0.8rem;
+    font-size: var(--text-hero);
+  }
+
+  .contact-hero__lead {
+    max-width: 43rem;
+    margin: 1.5rem 0 2.25rem;
+    color: var(--muted);
+  }
+
+  .email-link {
+    display: inline-block;
+    max-width: 100%;
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+    text-decoration-color: var(--rose);
+    text-underline-offset: 0.3em;
+  }
+
+  .contact-paths {
+    padding-block: clamp(5rem, 10vw, 8rem);
+  }
+
+  .contact-paths__heading {
+    max-width: 48rem;
+  }
+
+  .contact-paths__heading h2 {
+    margin-top: 0.8rem;
+  }
+
+  .contact-paths__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: clamp(3rem, 7vw, 6rem);
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .contact-paths article {
+    min-width: 0;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .contact-paths article + article {
+    border-left: 1px solid var(--line-strong);
+  }
+
+  .contact-paths article > span {
+    color: var(--rose);
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+  }
+
+  .contact-paths h3 {
+    margin: 2rem 0 0.8rem;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+  }
+
+  .contact-paths article p,
+  .contact-status p,
+  .client-route p {
+    color: var(--muted);
+  }
+
+  .contact-status {
+    background: var(--surface);
+  }
+
+  .contact-status__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(17rem, 0.6fr);
+    gap: clamp(2rem, 8vw, 7rem);
+    align-items: center;
+    padding-block: clamp(4rem, 8vw, 7rem);
+  }
+
+  .contact-status h2 {
+    margin-top: 0.8rem;
+  }
+
+  .contact-status dl {
+    margin: 0;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .contact-status dl > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .contact-status dt {
+    color: var(--muted);
+  }
+
+  .contact-status dd {
+    margin: 0;
+    color: var(--rose);
+    text-align: right;
+  }
+
+  .contact-status a {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .client-route {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+
+  .client-route h2 {
+    margin: 0.5rem 0;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+  }
+
+  .client-route a {
+    flex: 0 0 auto;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--line-strong);
+  }
+
+  .client-route a:hover {
+    border-color: var(--rose);
+  }
+
+  @media (max-width: 48rem) {
+    .contact-paths__grid,
+    .contact-status__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .contact-paths article + article {
+      border-top: 1px solid var(--line-strong);
+      border-left: 0;
+    }
+
+    .client-route {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>
