@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>document.documentElement.classList.add('js')</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vortex 5 — Preview · CARLAY ART</title>
 <link rel="stylesheet" href="preview.css">
@@ -52,9 +53,8 @@
 <header class="nav">
   <a class="nav__logo" href="accueil.html">CARLAY ART</a>
   <nav class="nav__links">
-    <a href="boutique.html" aria-current="page">Œuvres</a>
+    <a href="boutique.html">Œuvres</a>
     <a href="a-propos.html">L'Artiste</a>
-    <a href="boutique.html">Boutique</a>
     <a href="a-propos.html#contact">Contact</a>
   </nav>
   <button class="nav__cart" aria-label="Panier, 1 œuvre">
@@ -98,10 +98,13 @@
   </div>
   <div class="grid-series">
     <a class="card reveal" href="#" style="--ratio: 1/1;">
-      <div class="card__media"><img src="../original-site/images/vortex-2-680x680.jpeg" alt="Vortex 2"></div>
+      <div class="card__media">
+        <span class="badge-sold">Vendu</span>
+        <img src="../original-site/images/vortex-2-680x680.jpeg" alt="Vortex 2">
+      </div>
       <div class="card__body">
         <div><div class="card__title">Vortex 2</div></div>
-        <div class="card__price">€1,000</div>
+        <div class="card__price card__price--sold">€1,000</div>
       </div>
     </a>
     <a class="card reveal" href="#" style="--ratio: 1/1;">
@@ -127,7 +130,7 @@
 <footer class="footer">
   <div class="footer__bottom" style="border-top: none; margin-top: 0;">
     <span>© 2026 Carlay Art. Tous droits réservés.</span>
-    <a href="https://instagram.com" aria-label="Instagram">Instagram</a>
+    <a href="https://instagram.com" data-todo="replace with artist profile URL" aria-label="Instagram">Instagram</a>
   </div>
 </footer>
 

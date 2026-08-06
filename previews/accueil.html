@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>document.documentElement.classList.add('js')</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Accueil — Preview · CARLAY ART</title>
 <link rel="stylesheet" href="preview.css">
@@ -23,12 +24,6 @@
       var(--noir);
   }
   .hero__logo { width: clamp(180px, 26vw, 300px); margin-bottom: 2.5rem; }
-  .hero__title {
-    font-size: var(--text-hero);
-    text-transform: uppercase;
-    line-height: 0.95;
-  }
-  .hero__title span { display: block; font-size: 0.32em; letter-spacing: 0.5em; font-weight: 600; color: var(--muted); margin-top: 0.8rem; }
   .hero__accent { font-size: var(--text-lg); margin: 1.75rem 0 2.5rem; }
   .hero__scroll {
     position: absolute;
@@ -73,7 +68,6 @@
   <nav class="nav__links">
     <a href="boutique.html">Œuvres</a>
     <a href="a-propos.html">L'Artiste</a>
-    <a href="boutique.html">Boutique</a>
     <a href="a-propos.html#contact">Contact</a>
   </nav>
   <button class="nav__cart" aria-label="Panier, 1 œuvre">
@@ -83,6 +77,7 @@
 </header>
 
 <section class="hero">
+  <h1 class="sr-only">Carlay Art — Artiste contemporaine française, acrylique sur toile</h1>
   <img class="hero__logo" src="../original-site/images/logo-carlay-BLANC.png" alt="Monogramme CA — Carlay Art">
   <p class="hero__accent accent-line">Art Contemporain · Acrylique sur Toile</p>
   <a class="btn btn--primary" href="boutique.html">Découvrir la galerie</a>
@@ -108,10 +103,13 @@
         </div>
       </a>
       <a class="card reveal" href="oeuvre.html" style="--ratio: 1/1;">
-        <div class="card__media"><img src="../original-site/images/vortex-2-680x680.jpeg" alt="Vortex 2 — spirale violette sur teal"></div>
+        <div class="card__media">
+          <span class="badge-sold">Vendu</span>
+          <img src="../original-site/images/vortex-2-680x680.jpeg" alt="Vortex 2 — spirale violette sur teal">
+        </div>
         <div class="card__body">
           <div><div class="card__title">Vortex 2</div><div class="card__meta">32 × 32 cm</div></div>
-          <div class="card__price">€1,000</div>
+          <div class="card__price card__price--sold">€1,000</div>
         </div>
       </a>
       <a class="card reveal" href="oeuvre.html" style="--ratio: 1/1;">
@@ -122,10 +120,13 @@
         </div>
       </a>
       <a class="card reveal" href="oeuvre.html" style="--ratio: 1/1;">
-        <div class="card__media"><img src="../original-site/images/Juliette-1-680x680.jpg" alt="Juliette 1 — éclats d'or sur magenta"></div>
+        <div class="card__media">
+          <span class="badge-sold">Vendu</span>
+          <img src="../original-site/images/Juliette-1-680x680.jpg" alt="Juliette 1 — éclats d'or sur magenta">
+        </div>
         <div class="card__body">
           <div><div class="card__title">Juliette 1</div><div class="card__meta">76 × 102 cm</div></div>
-          <div class="card__price">€3,000</div>
+          <div class="card__price card__price--sold">€3,000</div>
         </div>
       </a>
       <a class="card reveal" href="oeuvre.html" style="--ratio: 1/1;">
@@ -166,37 +167,37 @@
       <h2 class="display">Collections</h2>
     </div>
     <div class="grid-bento">
-      <a class="card card--wide reveal" href="boutique.html" style="--ratio: 16/10; --series: var(--sky);">
+      <a class="card card--wide reveal" href="boutique.html" style="--ratio: 16/10;">
         <div class="card__media"><img src="../original-site/images/Romeo-2-840x1120.jpg" alt="Série Romeo"></div>
         <div class="card__body">
           <div><div class="card__title">Romeo</div><div class="card__meta">3 œuvres · à partir de €3,000</div></div>
         </div>
       </a>
-      <a class="card card--wide reveal" href="boutique.html" style="--ratio: 16/10; --series: var(--teal);">
+      <a class="card card--wide reveal" href="boutique.html" style="--ratio: 16/10;">
         <div class="card__media"><img src="../original-site/images/vortex-2-680x680.jpeg" alt="Série Vortex"></div>
         <div class="card__body">
           <div><div class="card__title">Vortex</div><div class="card__meta">9 œuvres · à partir de €1,000</div></div>
         </div>
       </a>
-      <a class="card reveal" href="boutique.html" style="--ratio: 1/1; --series: var(--neon);">
+      <a class="card reveal" href="boutique.html" style="--ratio: 1/1;">
         <div class="card__media"><img src="../original-site/images/insomnia-3-680x680.jpg" alt="Série Insomnia"></div>
         <div class="card__body">
           <div><div class="card__title">Insomnia</div><div class="card__meta">6 œuvres</div></div>
         </div>
       </a>
-      <a class="card reveal" href="boutique.html" style="--ratio: 1/1; --series: var(--violet);">
+      <a class="card reveal" href="boutique.html" style="--ratio: 1/1;">
         <div class="card__media"><img src="../original-site/images/PURPLE-GALAXY-7-680x680.jpg" alt="Série Purple Galaxy"></div>
         <div class="card__body">
           <div><div class="card__title">Purple Galaxy</div><div class="card__meta">6 œuvres</div></div>
         </div>
       </a>
-      <a class="card reveal" href="boutique.html" style="--ratio: 1/1; --series: var(--magenta);">
+      <a class="card reveal" href="boutique.html" style="--ratio: 1/1;">
         <div class="card__media"><img src="../original-site/images/Juliette-2-680x680.jpg" alt="Série Juliette"></div>
         <div class="card__body">
           <div><div class="card__title">Juliette</div><div class="card__meta">3 œuvres</div></div>
         </div>
       </a>
-      <a class="card reveal" href="boutique.html" style="--ratio: 1/1; --series: var(--gold);">
+      <a class="card reveal" href="boutique.html" style="--ratio: 1/1;">
         <div class="card__media"><img src="../original-site/images/GOLDEN-SUNSET-2-680x680.jpg" alt="Série Golden Sunset"></div>
         <div class="card__body">
           <div><div class="card__title">Golden Sunset</div><div class="card__meta">3 œuvres</div></div>
@@ -253,7 +254,7 @@
   </div>
   <div class="footer__bottom">
     <span>© 2026 Carlay Art. Tous droits réservés.</span>
-    <a href="https://instagram.com" aria-label="Instagram">Instagram</a>
+    <a href="https://instagram.com" data-todo="replace with artist profile URL" aria-label="Instagram">Instagram</a>
   </div>
 </footer>
 

@@ -45,6 +45,17 @@
 
   --pad: clamp(1.25rem, 4vw, 4rem);
   --gap: clamp(1rem, 2vw, 2rem);
+  --nav-h: 4.4rem; /* shared by .nav and anything sticky below it */
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -75,18 +86,21 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ---------- reveal: fail-visible ---------- */
-.reveal {
+/* ---------- reveal: fail-visible ----------
+   Dimmed state only exists when JS has tagged <html class="js">.
+   No JS (or JS failure) = everything fully visible. */
+html.js .reveal {
   opacity: 0.25;
   transform: translateY(16px);
   transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
-.reveal.is-in { opacity: 1; transform: none; }
+html.js .reveal.is-in { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .reveal { opacity: 1; transform: none; transition: none; }
-  * { animation: none !important; }
+  html.js .reveal { opacity: 1; transform: none; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .card:hover .card__media img { transform: none; }
 }
 
 /* ---------- nav ---------- */
@@ -97,7 +111,9 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.1rem var(--pad);
+  min-height: var(--nav-h);
+  box-sizing: border-box;
+  padding: 0.9rem var(--pad);
   background: color-mix(in srgb, var(--noir) 72%, transparent);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -179,7 +195,7 @@ body::after {
   transition: background 0.25s, color 0.25s, border-color 0.25s;
 }
 .btn--primary { background: var(--text); color: var(--noir); }
-.btn--primary:hover { background: var(--rose); color: var(--text); }
+.btn--primary:hover { background: var(--rose); color: var(--noir); }
 .btn--ghost {
   background: none;
   color: var(--text);
@@ -293,6 +309,7 @@ body::after {
 }
 @media (max-width: 560px) {
   .grid-featured, .grid-series { grid-template-columns: 1fr; }
+  .grid-featured .card:first-child { grid-column: auto; grid-row: auto; }
   .grid-bento { grid-template-columns: 1fr; }
 }
 

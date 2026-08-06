@@ -62,7 +62,8 @@ src/
 **Color.**
 - UI stays grayscale: `#0A0A0A` noir, `#141414` surface, `#FAFAFA` text,
   `#B8B8B8` muted (AA on noir), `#8A8A8A` faint, `rgba(255,255,255,.08/.16)` lines.
-- One UI accent: rose `#FF3366` (CTAs, active states, VENDU).
+- One UI accent: rose `#FF3366` (CTAs, active states, VENDU). Text sitting ON a rose
+  fill is always noir `#0A0A0A` (5.58:1, AA) — never white (3.40:1, fails AA at UI sizes).
 - **Signature: series accents** — each series owns a hue sampled from its paintings,
   used ONLY as a 2px rule under series headers + series eyebrow on detail pages:
   Romeo `#87CEEB` · Vortex `#2DD4BF` · Purple Galaxy `#8B5CF6` · Insomnia `#4ADE80` ·
@@ -70,15 +71,24 @@ src/
   default to the neutral line color until sampled.)
 
 **Motion — fail-visible reveals.**
+- The dimmed initial state is JS-gated: an inline script adds `class="js"` to `<html>`,
+  and only `html.js .reveal` is dimmed. **No JS (or failed JS) = everything fully
+  visible.** This is a hard requirement, not an implementation detail.
 - `.reveal`: opacity 0.25 → 1, translateY 16px → 0, 500ms ease-out.
 - IntersectionObserver `rootMargin: 0 0 -8% 0`; elements already in viewport on load
   reveal immediately; observers unobserve after firing (reveal once).
 - Desaturation capped at `saturate(0.85)`, disabled on `(hover: none)` devices.
-- `prefers-reduced-motion`: no transforms, no transitions, full opacity.
+- `prefers-reduced-motion`: kills ALL transitions and animations (including card
+  hover scale), full opacity.
 
 **Components.**
-- Nav (all pages): logo left; Œuvres / L'Artiste / Boutique / Contact; cart pill with
-  count right; transparent → blur on scroll; active link in rose.
+- Nav (all pages): logo left; **three links — Œuvres → `/boutique`, L'Artiste →
+  `/a-propos`, Contact → `/contact`** (no separate "Boutique" item; Œuvres IS the
+  boutique); cart pill with count right; transparent → blur on scroll; active link in
+  rose (`aria-current="page"` only when the destination is the current page).
+  Nav height is the shared token `--nav-h`, consumed by anything sticky beneath it.
+- Mobile nav (<900px): hamburger → fullscreen overlay (per CLAUDE.md), links + cart,
+  focus-trapped, Esc/overlay-tap to close.
 - Artwork card: media (hover: saturate + scale 1.03), body row (title + size left,
   price right), VENDU badge (rose outline chip, top-left) + struck price.
 - Buttons: primary (white → rose on hover), ghost (hairline border), disabled (surface).
@@ -91,10 +101,13 @@ src/
   primary CTA) → Œuvres sélectionnées (1 large + 4 grid) → L'Artiste band (bio + NYC
   photo + signature) → Collections bento on a 12-col grid (2 wide + 4 standard — no
   orphans) + "Voir les 22 séries" → Acquérir band → footer.
-- **Boutique**: header band, sticky filter chips (Tout + per-series), per-series
-  sections with accent rule + count, cards link to detail pages.
-- **Œuvre `/oeuvre/[slug]`** ("viewing room"): left stage (artwork on soft-lit surface,
-  click → full-screen lightbox with zoom); right sticky info column (series eyebrow in
+- **Boutique**: header band, sticky filter chips (offset by `--nav-h`), per-series
+  sections with accent rule + count, cards link to detail pages. **Chips are
+  `<button aria-pressed>` elements that filter series sections client-side** ("Tout"
+  resets); with JS unavailable all sections simply remain visible.
+- **Œuvre `/oeuvre/[slug]`** ("viewing room"): left stage (artwork on soft-lit surface;
+  the stage is a `<button>` opening a full-screen lightbox with zoom — keyboard and
+  touch accessible); right sticky info column (series eyebrow in
   accent color, title, description, specs table, price, AJOUTER AU PANIER + ACHETER
   MAINTENANT, certificate/shipping/payment reassurance); "Plus de la série X" (3 related).
   Sold works keep pages: VENDU state, no cart CTA, link to similar works.
@@ -110,6 +123,18 @@ src/
   (Carte via Stripe/Mollie · iDEAL/Bancontact via Mollie · Crypto via Coinbase),
   sticky order summary, demo-mode notice, Payer button → confirmation page.
 
+## Data & copy decisions
+
+- **Inventory source of truth**: the artwork JSON collection is seeded from the
+  current `boutique.html` sold states (all Romeo/Juliette SOLD; Vortex 1 & 5 available,
+  rest of Vortex SOLD; all Insomnia available; etc.). Preview sample data matches this.
+- **Price format**: keep `€3,000` (symbol-first, comma separator) for parity with the
+  current site — an explicit decision, not an oversight of the French "3 000 €" form.
+- **Instagram URL**: placeholder `https://instagram.com` is marked `data-todo` in
+  previews; the artist's real profile URL must be obtained before launch.
+- **Footer**: the full columned footer is a shared component on ALL pages (subpage
+  previews show only the bottom bar as shorthand).
+
 ## Out of scope (this phase)
 
 - Real payment processing (needs API keys) — adapter ships in demo mode.
@@ -120,12 +145,16 @@ src/
 
 ## Acceptance criteria
 
-1. All 7 pages build statically via Astro; every artwork in the JSON collection gets
+1. All 8 routes build statically via Astro (index, boutique, oeuvre/[slug], a-propos,
+   contact, panier, commande, confirmation); every artwork in the JSON collection gets
    a working `/oeuvre/[slug]` page.
 2. Lighthouse: no images served over 300KB; headings render in Clash Display.
-3. Scrolling any page at normal speed never shows a fully invisible section.
+3. Scrolling any page at normal speed never shows a fully invisible section —
+   **including with JavaScript disabled**.
 4. Cart: add → drawer updates on every page; duplicate add no-ops with toast; sold
    works not addable; checkout completes in demo mode and ends on confirmation page.
 5. No dead links anywhere; nav identical on all pages; © year current.
 6. `prefers-reduced-motion` and keyboard focus states respected.
 7. Existing pages' content parity: nothing from the current index/boutique is lost.
+8. All text meets WCAG AA in every state (default, hover, active, pressed) —
+   including text on rose fills (noir, never white).
