@@ -1,0 +1,101 @@
+---
+import MobileMenu from './MobileMenu.astro';
+
+const { currentPath } = Astro.props;
+const links = [
+  { href: '/boutique', label: 'Œuvres' },
+  { href: '/a-propos', label: "L’Artiste" },
+  { href: '/contact', label: 'Contact' },
+];
+---
+
+<header class="nav">
+  <a class="nav__logo" href="/" aria-label="Carlay Art, accueil">CARLAY ART</a>
+  <nav class="nav__links" aria-label="Navigation principale">
+    {links.map((link) => (
+      <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>{link.label}</a>
+    ))}
+  </nav>
+  <div class="nav__actions">
+    <a class="nav__cart-link" href="/panier" aria-current={currentPath === '/panier' ? 'page' : undefined}>
+      Panier
+    </a>
+    <button
+      id="site-menu-toggle"
+      class="nav__burger"
+      type="button"
+      aria-controls="site-mobile-menu"
+      aria-expanded="false"
+    >
+      <span class="sr-only">Ouvrir le menu</span>
+      <span aria-hidden="true">Menu</span>
+    </button>
+  </div>
+</header>
+
+<MobileMenu currentPath={currentPath} />
+
+<script>
+  const toggle = document.querySelector('#site-menu-toggle');
+  const menu = document.querySelector('#site-mobile-menu');
+
+  if (toggle instanceof HTMLButtonElement && menu instanceof HTMLElement) {
+    const closeButton = menu.querySelector('[data-menu-close]');
+    const focusableSelector = 'a[href], button:not([disabled])';
+
+    const closeMenu = ({ returnFocus = true } = {}) => {
+      menu.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+      if (returnFocus) toggle.focus();
+    };
+
+    const openMenu = () => {
+      menu.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('menu-open');
+      menu.querySelector(focusableSelector)?.focus();
+    };
+
+    toggle.addEventListener('click', () => {
+      if (menu.hidden) openMenu();
+      else closeMenu();
+    });
+
+    closeButton?.addEventListener('click', () => closeMenu());
+    menu.addEventListener('click', (event) => {
+      if (event.target === menu) closeMenu();
+      if (event.target instanceof HTMLAnchorElement) closeMenu({ returnFocus: false });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (menu.hidden) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeMenu();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+
+      const focusable = [...menu.querySelectorAll(focusableSelector)].filter(
+        (element) => element instanceof HTMLElement,
+      );
+      const first = focusable[0];
+      const last = focusable.at(-1);
+      if (!first || !last) return;
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+
+    const desktopQuery = window.matchMedia('(min-width: 56.251rem)');
+    desktopQuery.addEventListener('change', (event) => {
+      if (event.matches && !menu.hidden) closeMenu({ returnFocus: false });
+    });
+  }
+</script>

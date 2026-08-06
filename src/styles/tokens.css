@@ -1,0 +1,35 @@
+:root {
+  --noir: #0a0a0a;
+  --surface: #141414;
+  --surface-2: #1a1a1a;
+  --text: #fafafa;
+  --muted: #b8b8b8;
+  --faint: #8a8a8a;
+  --line: rgb(255 255 255 / 8%);
+  --line-strong: rgb(255 255 255 / 16%);
+  --rose: #ff3366;
+  --teal: #2dd4bf;
+  --violet: #8b5cf6;
+  --neon: #4ade80;
+  --sky: #87ceeb;
+  --gold: #d4a574;
+  --magenta: #d946ef;
+
+  /* Clash remains the preferred display face. The locally bundled Space
+     Grotesk fallback prevents layout collapse if Fontshare is unavailable. */
+  --font-display: 'Clash Display', 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif;
+  --font-accent: 'Playfair Display', Georgia, serif;
+
+  --text-xs: clamp(0.75rem, 0.71rem + 0.18vw, 0.8125rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+  --text-base: clamp(1rem, 0.95rem + 0.3vw, 1.125rem);
+  --text-lg: clamp(1.25rem, 1.1rem + 0.8vw, 1.625rem);
+  --text-xl: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+  --text-2xl: clamp(2.25rem, 1.4rem + 4vw, 4.25rem);
+  --text-hero: clamp(3rem, 1.5rem + 8vw, 7.5rem);
+  --pad: clamp(1.25rem, 4vw, 4rem);
+  --gap: clamp(1rem, 2vw, 2rem);
+  --nav-h: 4.4rem;
+  --content-width: 75rem;
+}

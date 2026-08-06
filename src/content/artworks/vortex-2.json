@@ -1,0 +1,82 @@
+{
+  "id": "legacy-vortex-2",
+  "slug": "vortex-2",
+  "title": "Vortex 2",
+  "series": "Vortex",
+  "seriesSlug": "vortex",
+  "sortOrder": 8,
+  "price": {
+    "amount": 1000,
+    "currency": "EUR",
+    "reviewStatus": "legacy-source"
+  },
+  "availability": "sold",
+  "availabilityReviewStatus": "legacy-source",
+  "medium": {
+    "value": "Acrylique sur toile",
+    "reviewStatus": "legacy-source"
+  },
+  "year": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "dimensions": {
+    "width": 32,
+    "height": 32,
+    "depth": null,
+    "unit": "cm",
+    "reviewStatus": "legacy-source"
+  },
+  "orientation": "square",
+  "aspectRatio": 1,
+  "signaturePlacement": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "condition": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "framingStatus": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "certificateStatus": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "cardDescription": {
+    "value": "Texte éditorial en attente de validation par l’artiste.",
+    "reviewStatus": "draft"
+  },
+  "workNote": {
+    "value": "Note spécifique en attente de validation par l’artiste.",
+    "reviewStatus": "draft"
+  },
+  "seriesStatementRef": {
+    "value": "draft-vortex",
+    "reviewStatus": "draft"
+  },
+  "images": {
+    "full": {
+      "src": null,
+      "alt": null,
+      "reviewStatus": "needs-owner-review"
+    },
+    "card": {
+      "src": "/artworks/vortex-2-680x680.jpeg",
+      "alt": "Vortex 2",
+      "reviewStatus": "legacy-source"
+    },
+    "details": [],
+    "back": null,
+    "signature": null,
+    "roomScale": null
+  },
+  "featured": false,
+  "relatedSlugs": [],
+  "source": {
+    "kind": "legacy-catalog",
+    "file": "boutique.html"
+  }
+}

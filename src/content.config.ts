@@ -1,0 +1,59 @@
+import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
+
+const reviewStatus = z.enum(['legacy-source', 'needs-owner-review', 'draft', 'owner-approved']);
+const nullableFact = z.object({
+  value: z.string().nullable(),
+  reviewStatus,
+});
+const image = z.object({
+  src: z.string().startsWith('/').nullable(),
+  alt: z.string().min(1).nullable(),
+  reviewStatus,
+});
+
+const artworks = defineCollection({
+  loader: glob({ pattern: '*.json', base: './src/content/artworks' }),
+  schema: z.object({
+    id: z.string().min(1),
+    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    title: z.string().min(1),
+    series: z.string().min(1),
+    seriesSlug: z.string().min(1),
+    sortOrder: z.number().int().positive(),
+    price: z.object({ amount: z.number().positive(), currency: z.literal('EUR'), reviewStatus }),
+    availability: z.enum(['available', 'sold', 'not-for-sale']),
+    availabilityReviewStatus: reviewStatus,
+    medium: z.object({ value: z.string().min(1), reviewStatus }),
+    year: z.object({ value: z.number().int().min(1900).max(2100).nullable(), reviewStatus }),
+    dimensions: z.object({
+      width: z.number().positive().nullable(),
+      height: z.number().positive().nullable(),
+      depth: z.number().positive().nullable(),
+      unit: z.literal('cm'),
+      reviewStatus,
+    }),
+    orientation: z.enum(['portrait', 'landscape', 'square', 'unknown']),
+    aspectRatio: z.number().positive().nullable(),
+    signaturePlacement: nullableFact,
+    condition: nullableFact,
+    framingStatus: nullableFact,
+    certificateStatus: nullableFact,
+    cardDescription: z.object({ value: z.string().min(1), reviewStatus }),
+    workNote: z.object({ value: z.string().min(1), reviewStatus }),
+    seriesStatementRef: z.object({ value: z.string().min(1), reviewStatus }),
+    images: z.object({
+      full: image,
+      card: image.refine((value) => value.src !== null && value.alt !== null, 'Card image and alt text are required.'),
+      details: z.array(image),
+      back: image.nullable(),
+      signature: image.nullable(),
+      roomScale: image.nullable(),
+    }),
+    featured: z.boolean(),
+    relatedSlugs: z.array(z.string()),
+    source: z.object({ kind: z.literal('legacy-catalog'), file: z.string().min(1) }),
+  }),
+});
+
+export const collections = { artworks };

@@ -1,0 +1,1164 @@
+{
+  "generatedAt": "2026-08-06",
+  "sourceSnapshotCommit": "aae865bb84c9e1f0ec03fbb3e875efa081dc7c6c",
+  "source": "boutique.html",
+  "policy": "Legacy sold states are retained. All other works remain not-for-sale pending owner approval.",
+  "duplicateCardImages": [
+    {
+      "image": "vortex-2-680x680.jpeg",
+      "slugs": [
+        "vortex-2",
+        "vortex-7"
+      ]
+    },
+    {
+      "image": "elastic-1-2-680x680.jpg",
+      "slugs": [
+        "free-spirit-1",
+        "elastic-1"
+      ]
+    },
+    {
+      "image": "elastic-2-680x680.jpg",
+      "slugs": [
+        "free-spirit-2",
+        "elastic-2"
+      ]
+    },
+    {
+      "image": "elastic-3-680x680.jpg",
+      "slugs": [
+        "free-spirit-3",
+        "elastic-3"
+      ]
+    },
+    {
+      "image": "Splatsh-3-680x680.png",
+      "slugs": [
+        "splatsh-2",
+        "splatsh-3"
+      ]
+    }
+  ],
+  "works": [
+    {
+      "id": "legacy-romeo-1",
+      "slug": "romeo-1",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "Romeo-1-680x680.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-romeo-2",
+      "slug": "romeo-2",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "Romeo-2-680x680.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-romeo-3",
+      "slug": "romeo-3",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "Romeo-3-680x680.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-juliette-1",
+      "slug": "juliette-1",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "Juliette-1-680x680.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-juliette-2",
+      "slug": "juliette-2",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "Juliette-2-680x680.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-juliette-3",
+      "slug": "juliette-3",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "Juliette-3-680x680.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-vortex-1",
+      "slug": "vortex-1",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "vortex1-680x680.jpeg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-vortex-2",
+      "slug": "vortex-2",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "vortex-2-680x680.jpeg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-vortex-3",
+      "slug": "vortex-3",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "vortex-6-680x680.jpeg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-vortex-4",
+      "slug": "vortex-4",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "vortex--680x680.jpeg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-vortex-5",
+      "slug": "vortex-5",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "VORTEX-5.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-vortex-6",
+      "slug": "vortex-6",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "VORTEX-6.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-vortex-7",
+      "slug": "vortex-7",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "vortex-2-680x680.jpeg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-vortex-8",
+      "slug": "vortex-8",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "VORTEX-8.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-vortex-9",
+      "slug": "vortex-9",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "VORTEX-9.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-insomnia-1",
+      "slug": "insomnia-1",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "insomnia-1-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-insomnia-2",
+      "slug": "insomnia-2",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "insomnia-2-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-insomnia-3",
+      "slug": "insomnia-3",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "insomnia-3-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-insomnia-4",
+      "slug": "insomnia-4",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "insomnia-4-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-insomnia-5",
+      "slug": "insomnia-5",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "insomnia-5-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-insomnia-6",
+      "slug": "insomnia-6",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "insomnia-6-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-purple-galaxy-2",
+      "slug": "purple-galaxy-2",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "PURPLE-GALAXY-2-680x680.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-purple-galaxy-4",
+      "slug": "purple-galaxy-4",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "PURPLE-GALAXY-4-680x680.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-purple-galaxy-5",
+      "slug": "purple-galaxy-5",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "PURPLE-GALAXY-5-680x680.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-purple-galaxy-7",
+      "slug": "purple-galaxy-7",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "PURPLE-GALAXY-7-680x680.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-purple-galaxy-8",
+      "slug": "purple-galaxy-8",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "PURPLE-GALAXY-8-680x680.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-purple-galaxy-9",
+      "slug": "purple-galaxy-9",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "PURPLE-GALAXY-9-680x680.jpg",
+      "missingFacts": [
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-cosmic-1",
+      "slug": "cosmic-1",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "COSMIC-1-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-cosmic-2",
+      "slug": "cosmic-2",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "COSMIC-2-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-cosmic-3",
+      "slug": "cosmic-3",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "COSMIC-3-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-evolution-1",
+      "slug": "evolution-1",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "EVOLUTION-1-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-evolution-2",
+      "slug": "evolution-2",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "EVOLUTION-2-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-evolution-3",
+      "slug": "evolution-3",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "EVOLUTION-3-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-golden-sunset-1",
+      "slug": "golden-sunset-1",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "GLODEN-SUNSET-1-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-golden-sunset-2",
+      "slug": "golden-sunset-2",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "GOLDEN-SUNSET-2-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-golden-sunset-3",
+      "slug": "golden-sunset-3",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "GOLDEN-SUNSET-3-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-sweet-life-1",
+      "slug": "sweet-life-1",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "SWEET-LIFE-1-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-sweet-life-2",
+      "slug": "sweet-life-2",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "SWEET-LIFE-2-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-sweet-life-3",
+      "slug": "sweet-life-3",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "SWEET-LIFE-3-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-free-spirit-1",
+      "slug": "free-spirit-1",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "elastic-1-2-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-free-spirit-2",
+      "slug": "free-spirit-2",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "elastic-2-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-free-spirit-3",
+      "slug": "free-spirit-3",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "elastic-3-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-elastic-1",
+      "slug": "elastic-1",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "elastic-1-2-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-elastic-2",
+      "slug": "elastic-2",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "elastic-2-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-elastic-3",
+      "slug": "elastic-3",
+      "sourceSold": false,
+      "availability": "not-for-sale",
+      "cardImage": "elastic-3-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-sunday-morning-1",
+      "slug": "sunday-morning-1",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "sundaymorning1-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-sunday-morning-3",
+      "slug": "sunday-morning-3",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "sunday-morning-3-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-sunday-morning-2",
+      "slug": "sunday-morning-2",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "sunday-morning-2-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-splatsh-1",
+      "slug": "splatsh-1",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "Splatsh-1.png",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-splatsh-2",
+      "slug": "splatsh-2",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "Splatsh-3-680x680.png",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-splatsh-3",
+      "slug": "splatsh-3",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "Splatsh-3-680x680.png",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-blue-dreams",
+      "slug": "blue-dreams",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "BLUE-DREAMS-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-rainbow-tears",
+      "slug": "rainbow-tears",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "Rainbow-tears-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-hope",
+      "slug": "hope",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "Hope-680x680.webp",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-pink-dream",
+      "slug": "pink-dream",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "PINK-DREAM-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-purple-dream",
+      "slug": "purple-dream",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "PURPLE-DREAM-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-humble",
+      "slug": "humble",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "HUMBLE-1-e1737499014597-680x680.jpeg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-positivity",
+      "slug": "positivity",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "POSITIVITY-e1737499176943-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-silver-waves",
+      "slug": "silver-waves",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "Silver-waves.png",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    },
+    {
+      "id": "legacy-baby-blues",
+      "slug": "baby-blues",
+      "sourceSold": true,
+      "availability": "sold",
+      "cardImage": "BABY-BLUES-680x680.jpg",
+      "missingFacts": [
+        "dimensions",
+        "year",
+        "signaturePlacement",
+        "condition",
+        "framingStatus",
+        "certificateStatus",
+        "seriesStatement",
+        "workNote",
+        "faithfulFullWorkImage",
+        "detailImages"
+      ]
+    }
+  ]
+}

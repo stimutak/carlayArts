@@ -1,0 +1,51 @@
+---
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { getCollection } from 'astro:content';
+import Reveal from '../../components/Reveal.astro';
+import Base from '../../layouts/Base.astro';
+import { validateArtworkInventory } from '../../lib/artworks.js';
+import { formatPrice } from '../../lib/series.js';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('artworks');
+  const artworks = entries.map((entry) => entry.data);
+  validateArtworkInventory(artworks, {
+    assetExists: (imagePath) => existsSync(join(process.cwd(), 'public', imagePath.replace(/^\/+/, ''))),
+  });
+
+  return artworks.map((artwork) => ({ params: { slug: artwork.slug }, props: { artwork } }));
+}
+
+const { artwork } = Astro.props;
+const dimensions = artwork.dimensions.width && artwork.dimensions.height
+  ? `${artwork.dimensions.width} × ${artwork.dimensions.height} ${artwork.dimensions.unit}`
+  : 'À confirmer';
+const state = artwork.availability === 'sold' ? 'Vendu — source historique' : 'Hors vente — validation requise';
+---
+
+<Base title={artwork.title} currentPath={`/oeuvre/${artwork.slug}`}>
+  <section class="foundation-page artwork-foundation">
+    <Reveal>
+      <img
+        src={artwork.images.card.src}
+        alt={artwork.images.card.alt}
+        width="680"
+        height="680"
+      />
+      <p class="foundation-page__status">Aperçu catalogue recadré — image intégrale fidèle à fournir.</p>
+    </Reveal>
+    <Reveal class="artwork-foundation__copy">
+      <p class="eyebrow">Série {artwork.series}</p>
+      <h1 class="display">{artwork.title}</h1>
+      <p class="foundation-page__intro">{artwork.workNote.value}</p>
+      <dl class="artwork-foundation__facts">
+        <div><dt>Dimensions</dt><dd>{dimensions}</dd></div>
+        <div><dt>Technique</dt><dd>{artwork.medium.value}</dd></div>
+        <div><dt>Prix source</dt><dd>{formatPrice(artwork.price.amount)}</dd></div>
+        <div><dt>État</dt><dd>{state}</dd></div>
+      </dl>
+      <p class="foundation-page__status">Aucune action d’achat n’est disponible dans cette phase.</p>
+    </Reveal>
+  </section>
+</Base>

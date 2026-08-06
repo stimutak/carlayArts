@@ -1,0 +1,82 @@
+{
+  "id": "legacy-elastic-2",
+  "slug": "elastic-2",
+  "title": "Elastic 2",
+  "series": "Elastic",
+  "seriesSlug": "elastic",
+  "sortOrder": 44,
+  "price": {
+    "amount": 1000,
+    "currency": "EUR",
+    "reviewStatus": "legacy-source"
+  },
+  "availability": "not-for-sale",
+  "availabilityReviewStatus": "needs-owner-review",
+  "medium": {
+    "value": "Acrylique sur toile",
+    "reviewStatus": "legacy-source"
+  },
+  "year": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "dimensions": {
+    "width": null,
+    "height": null,
+    "depth": null,
+    "unit": "cm",
+    "reviewStatus": "needs-owner-review"
+  },
+  "orientation": "unknown",
+  "aspectRatio": null,
+  "signaturePlacement": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "condition": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "framingStatus": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "certificateStatus": {
+    "value": null,
+    "reviewStatus": "needs-owner-review"
+  },
+  "cardDescription": {
+    "value": "Texte éditorial en attente de validation par l’artiste.",
+    "reviewStatus": "draft"
+  },
+  "workNote": {
+    "value": "Note spécifique en attente de validation par l’artiste.",
+    "reviewStatus": "draft"
+  },
+  "seriesStatementRef": {
+    "value": "draft-elastic",
+    "reviewStatus": "draft"
+  },
+  "images": {
+    "full": {
+      "src": null,
+      "alt": null,
+      "reviewStatus": "needs-owner-review"
+    },
+    "card": {
+      "src": "/artworks/elastic-2-680x680.jpg",
+      "alt": "Elastic 2",
+      "reviewStatus": "legacy-source"
+    },
+    "details": [],
+    "back": null,
+    "signature": null,
+    "roomScale": null
+  },
+  "featured": false,
+  "relatedSlugs": [],
+  "source": {
+    "kind": "legacy-catalog",
+    "file": "boutique.html"
+  }
+}
