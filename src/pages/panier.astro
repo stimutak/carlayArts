@@ -1,6 +1,5 @@
 ---
 import { getCollection } from 'astro:content';
-import CartDrawer from '../components/CartDrawer.astro';
 import CartLineItem from '../components/CartLineItem.astro';
 import Base from '../layouts/Base.astro';
 
@@ -47,7 +46,6 @@ const eligibleCatalog = artworks
     <p class="cart-page__status" data-cart-status role="status" aria-live="polite"></p>
     <CartLineItem templateId="cart-page-line-template" />
   </section>
-  <CartDrawer />
 </Base>
 
 <script>

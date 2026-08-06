@@ -33,7 +33,7 @@
       ]
     },
     {
-      "image": "Splatsh-3-680x680.png",
+      "image": "Splatsh-3-680x680.webp",
       "slugs": [
         "splatsh-2",
         "splatsh-3"
@@ -937,7 +937,7 @@
       "slug": "splatsh-1",
       "sourceSold": true,
       "availability": "sold",
-      "cardImage": "Splatsh-1.png",
+      "cardImage": "Splatsh-1.webp",
       "missingFacts": [
         "dimensions",
         "year",
@@ -956,7 +956,7 @@
       "slug": "splatsh-2",
       "sourceSold": true,
       "availability": "sold",
-      "cardImage": "Splatsh-3-680x680.png",
+      "cardImage": "Splatsh-3-680x680.webp",
       "missingFacts": [
         "dimensions",
         "year",
@@ -975,7 +975,7 @@
       "slug": "splatsh-3",
       "sourceSold": true,
       "availability": "sold",
-      "cardImage": "Splatsh-3-680x680.png",
+      "cardImage": "Splatsh-3-680x680.webp",
       "missingFacts": [
         "dimensions",
         "year",
@@ -1127,7 +1127,7 @@
       "slug": "silver-waves",
       "sourceSold": true,
       "availability": "sold",
-      "cardImage": "Silver-waves.png",
+      "cardImage": "Silver-waves.webp",
       "missingFacts": [
         "dimensions",
         "year",

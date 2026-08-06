@@ -101,11 +101,10 @@ a {
   border: 0;
 }
 
-/* The dimmed state exists only after the tiny head script adds .js. If JS is
-   absent, content is fully opaque; if enhancement later fails, it remains
-   readable at 0.35 opacity instead of disappearing. */
+/* Enhancement exists only after the tiny head script adds .js. Opacity stays
+   fully visible so text contrast never depends on animation or script success. */
 html.js .reveal {
-  opacity: 0.35;
+  opacity: 1;
   transform: translateY(1rem);
   transition: opacity 500ms ease-out, transform 500ms ease-out;
 }

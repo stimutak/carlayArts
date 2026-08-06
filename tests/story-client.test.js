@@ -52,6 +52,15 @@ describe('client handoff route', () => {
     expect(component).toContain('inventoryReview.duplicateCardImages.map');
     expect(component).not.toMatch(/phone|telephone|adresse personnelle|mot de passe|password/i);
   });
+
+  it('provides parseable, non-secret intake templates', () => {
+    for (const name of ['artist', 'site', 'policies', 'artwork']) {
+      const source = read(`client-input/${name}.template.json`);
+      expect(() => JSON.parse(source)).not.toThrow();
+      expect(source).not.toMatch(/password|secret|token|cardNumber|cvv|oneTimeCode/i);
+    }
+    expect(read('client-input/README.md')).toContain('/client-a-fournir');
+  });
 });
 
 describe('draft discovery and recovery routes', () => {

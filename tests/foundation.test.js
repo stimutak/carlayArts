@@ -25,9 +25,9 @@ describe('fail-visible reveal contract', () => {
   const css = readFileSync('src/styles/base.css', 'utf8');
   const layout = readFileSync('src/layouts/Base.astro', 'utf8');
 
-  it('gates dimming behind html.js and never starts fully invisible', () => {
+  it('gates enhancement behind html.js and keeps content fully visible', () => {
     expect(css).toContain('html.js .reveal');
-    expect(css).toMatch(/html\.js \.reveal \{[\s\S]*?opacity: 0\.35/);
+    expect(css).toMatch(/html\.js \.reveal \{[\s\S]*?opacity: 1/);
     expect(css).not.toMatch(/opacity:\s*0\s*;/);
     expect(layout).toContain("document.documentElement.classList.add('js')");
   });

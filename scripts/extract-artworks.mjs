@@ -15,6 +15,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { basename, join } from 'node:path';
+import sharp from 'sharp';
 
 const sourceFile = 'boutique.html';
 const sourceImageDir = 'original-site/images';
@@ -35,6 +36,12 @@ mkdirSync(publicSiteDir, { recursive: true });
 
 for (const file of readdirSync(contentDir)) {
   if (file.endsWith('.json')) unlinkSync(join(contentDir, file));
+}
+for (const file of readdirSync(publicImageDir)) {
+  unlinkSync(join(publicImageDir, file));
+}
+for (const file of readdirSync(publicSiteDir)) {
+  unlinkSync(join(publicSiteDir, file));
 }
 
 const textFrom = (card, pattern, label) => {
@@ -91,8 +98,9 @@ for (const [index, card] of cards.entries()) {
   const slug = slugify(rawTitle);
   const id = `legacy-${slug}`;
   const sourceSold = card.includes('product-card__badge--sold');
-  const imageFilename = basename(sourceImage);
-  const sourcePath = join(sourceImageDir, imageFilename);
+  const sourceImageFilename = basename(sourceImage);
+  const imageFilename = sourceImageFilename.replace(/\.png$/i, '.webp');
+  const sourcePath = join(sourceImageDir, sourceImageFilename);
   const dimensions = parseDimensions(dimensionsLabel);
 
   if (seenSlugs.has(slug)) throw new Error(`Duplicate artwork slug: ${slug}`);
@@ -101,7 +109,14 @@ for (const [index, card] of cards.entries()) {
   seenSlugs.add(slug);
   seenIds.add(id);
 
-  copyFileSync(sourcePath, join(publicImageDir, imageFilename));
+  if (/\.png$/i.test(sourceImageFilename)) {
+    await sharp(sourcePath)
+      .resize({ width: 680, height: 680, fit: 'inside', withoutEnlargement: true })
+      .webp({ quality: 82, effort: 5 })
+      .toFile(join(publicImageDir, imageFilename));
+  } else {
+    copyFileSync(sourcePath, join(publicImageDir, imageFilename));
+  }
   imageUsage.set(imageFilename, [...(imageUsage.get(imageFilename) ?? []), slug]);
 
   const record = {
@@ -179,10 +194,16 @@ writeFileSync(
   )}\n`,
 );
 
-for (const filename of ['logo-carlay-BLANC.png', 'Carlay-art-signature.png', 'Carlay-art.jpg']) {
+for (const filename of ['logo-carlay-BLANC.png', 'Carlay-art-signature.png']) {
   const sourcePath = join(sourceImageDir, filename);
   if (!existsSync(sourcePath)) throw new Error(`Unresolved site asset: ${sourcePath}`);
   copyFileSync(sourcePath, join(publicSiteDir, filename));
 }
+const artistSource = join(sourceImageDir, 'Carlay-art.jpg');
+if (!existsSync(artistSource)) throw new Error(`Unresolved site asset: ${artistSource}`);
+await sharp(artistSource)
+  .resize({ width: 1440, height: 1440, fit: 'inside', withoutEnlargement: true })
+  .webp({ quality: 84, effort: 5 })
+  .toFile(join(publicSiteDir, 'Carlay-art.webp'));
 
 console.log(`Wrote ${cards.length} fail-closed artwork records and their review manifest.`);

@@ -1,0 +1,33 @@
+{
+  "slug": null,
+  "approvalStatus": "needs-owner-review",
+  "title": null,
+  "series": null,
+  "price": {
+    "amount": null,
+    "currency": "EUR"
+  },
+  "availability": null,
+  "medium": null,
+  "year": null,
+  "dimensions": {
+    "width": null,
+    "height": null,
+    "depth": null,
+    "unit": "cm"
+  },
+  "signaturePlacement": null,
+  "condition": null,
+  "framingStatus": null,
+  "certificateStatus": null,
+  "cardDescription": null,
+  "workNote": null,
+  "seriesStatement": null,
+  "media": {
+    "full": { "file": null, "alt": null },
+    "details": [],
+    "back": { "file": null, "alt": null },
+    "signature": { "file": null, "alt": null },
+    "roomScale": { "file": null, "alt": null }
+  }
+}

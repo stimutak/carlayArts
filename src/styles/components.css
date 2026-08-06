@@ -58,6 +58,21 @@
   padding-inline: 0.8rem;
   border: 1px solid var(--line-strong);
   border-radius: 99rem;
+  background: transparent;
+  cursor: pointer;
+}
+
+.nav__cart-count {
+  display: inline-grid;
+  min-width: 1.4rem;
+  min-height: 1.4rem;
+  place-items: center;
+  margin-left: 0.4rem;
+  border-radius: 50%;
+  background: var(--rose);
+  color: var(--noir);
+  font-size: 0.75rem;
+  font-weight: 700;
 }
 
 .nav__burger,
