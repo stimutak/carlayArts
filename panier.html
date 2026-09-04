@@ -645,11 +645,16 @@
       }
     }
 
-    // Re-render on cart changes
-    Cart.onChange(renderCheckout);
-
-    // Initial render
-    document.addEventListener('DOMContentLoaded', renderCheckout);
+    // Re-render on cart changes and initial render
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        Cart.onChange(renderCheckout);
+        renderCheckout();
+      });
+    } else {
+      Cart.onChange(renderCheckout);
+      renderCheckout();
+    }
 
     // Scroll progress bar
     const scrollProgress = document.getElementById('scrollProgress');
