@@ -19,7 +19,15 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
 
   <style>
-    /* ── HERO: Art as Atmosphere ── */
+    /* ── HERO: Art as Atmosphere + Cosmic ──
+       Layer stack, back to front:
+         0  .hero__artwork      the painting, slowly breathing
+         1  .hero__color-bleed  pulsing gradient, MULTIPLIED into the art
+         2  .stars              twinkle + zoom stars (above the multiply,
+                                so they stay white instead of being tinted)
+         3  .hero__vignette     darkens the edges
+         4  .hero__content      wordmark, tagline, CTA
+    */
     .hero {
       position: relative;
       min-height: 100vh;
@@ -39,7 +47,9 @@
       background-image: url('original-site/images/PURPLE-GALAXY-7-1153x1536.jpg');
       background-size: cover;
       background-position: center;
-      filter: brightness(0.25) saturate(1.4);
+      /* Brighter than before — the multiply layer above darkens it back down,
+         so starting at 0.25 would crush the painting to black. */
+      filter: brightness(0.16) saturate(1.5);
       transform: scale(1.05);
       animation: heroBreath 20s ease-in-out infinite;
     }
@@ -49,31 +59,103 @@
       50% { transform: scale(1.1); }
     }
 
-    /* Color bleed — amplifies the painting's natural palette */
+    /* Color bleed — the old cosmic gradient, multiplied into the painting so it
+       grades the art rather than covering it. Transparent stops leave the
+       artwork untouched; the coloured hotspots deepen into purple/magenta/rose. */
     .hero__color-bleed {
       position: absolute;
       inset: 0;
       z-index: 1;
       background:
-        radial-gradient(ellipse at 25% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 55%),
-        radial-gradient(ellipse at 75% 70%, rgba(217, 70, 239, 0.2) 0%, transparent 55%),
-        radial-gradient(ellipse at 50% 90%, rgba(255, 51, 102, 0.15) 0%, transparent 50%);
-      mix-blend-mode: screen;
+        radial-gradient(ellipse at 30% 20%, rgba(139, 92, 246, 0.55) 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, rgba(217, 70, 239, 0.45) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 95%, rgba(255, 51, 102, 0.35) 0%, transparent 50%);
+      mix-blend-mode: multiply;
       pointer-events: none;
+      animation: bleedPulse 12s ease-in-out infinite;
+    }
+
+    @keyframes bleedPulse {
+      0%, 100% {
+        opacity: 0.75;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.06);
+      }
+    }
+
+    /* Stars container */
+    .stars {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+      animation: twinkle var(--duration, 3s) ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    .star--large {
+      width: 3px;
+      height: 3px;
+      box-shadow: 0 0 6px 1px rgba(255, 255, 255, 0.5);
+    }
+
+    @keyframes twinkle {
+      0%, 100% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      50% {
+        opacity: var(--brightness, 0.8);
+        transform: scale(1);
+      }
+    }
+
+    /* Bright zooming stars */
+    .star--bright {
+      width: 3px;
+      height: 3px;
+      background: white;
+      animation: zoomStar var(--duration, 6s) ease-in-out infinite;
+    }
+
+    @keyframes zoomStar {
+      0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(2.5);
+      }
     }
 
     /* Dark vignette edges */
     .hero__vignette {
       position: absolute;
       inset: 0;
-      z-index: 2;
-      background: radial-gradient(ellipse at center, transparent 30%, rgba(10, 10, 10, 0.7) 100%);
+      z-index: 3;
+      background:
+        radial-gradient(ellipse at center, rgba(10, 10, 10, 0.25) 0%, rgba(10, 10, 10, 0.75) 55%, rgba(10, 10, 10, 0.97) 100%),
+        linear-gradient(to bottom, rgba(10, 10, 10, 0.55) 0%, rgba(10, 10, 10, 0.15) 30%, rgba(10, 10, 10, 0.15) 65%, rgba(10, 10, 10, 0.8) 100%);
       pointer-events: none;
     }
 
     .hero__content {
       position: relative;
-      z-index: 3;
+      z-index: 4;
     }
 
     .hero__title {
@@ -114,9 +196,16 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .hero__artwork {
+      .hero__artwork,
+      .hero__color-bleed,
+      .star {
         animation: none;
+      }
+      .hero__artwork {
         transform: scale(1.05);
+      }
+      .star {
+        opacity: var(--brightness, 0.8);
       }
     }
 
@@ -425,6 +514,10 @@
   <section class="hero" id="hero">
     <div class="hero__artwork" aria-hidden="true"></div>
     <div class="hero__color-bleed" aria-hidden="true"></div>
+
+    <!-- Stars - generated dynamically -->
+    <div class="stars" id="stars" aria-hidden="true"></div>
+
     <div class="hero__vignette" aria-hidden="true"></div>
 
     <div class="hero__content">
@@ -789,6 +882,75 @@
         img.addEventListener('load', () => img.classList.add('loaded'));
       }
     });
+
+    // Generate stars for hero background
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      if (!starsContainer) return;
+
+      const numStars = 80;
+      const numLargeStars = 15;
+      const numBrightStars = 6;
+
+      // Regular stars
+      for (let i = 0; i < numStars; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.setProperty('--duration', (2 + Math.random() * 4) + 's');
+        star.style.setProperty('--delay', Math.random() * 5 + 's');
+        star.style.setProperty('--brightness', (0.4 + Math.random() * 0.6).toString());
+        starsContainer.appendChild(star);
+      }
+
+      // Large stars
+      for (let i = 0; i < numLargeStars; i++) {
+        const star = document.createElement('div');
+        star.className = 'star star--large';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.setProperty('--duration', (3 + Math.random() * 3) + 's');
+        star.style.setProperty('--delay', Math.random() * 4 + 's');
+        star.style.setProperty('--brightness', '1');
+        starsContainer.appendChild(star);
+      }
+
+      // Bright pulsing stars (slow, prominent)
+      for (let i = 0; i < numBrightStars; i++) {
+        const star = document.createElement('div');
+        star.className = 'star star--bright';
+        star.style.left = (10 + Math.random() * 80) + '%';
+        star.style.top = (10 + Math.random() * 70) + '%';
+        star.style.setProperty('--duration', (5 + Math.random() * 4) + 's');
+        star.style.setProperty('--delay', Math.random() * 3 + 's');
+        starsContainer.appendChild(star);
+      }
+    }
+
+    // Initialize stars after page load
+    createStars();
+
+    // Reveal more stars on scroll (hero becomes more cosmic as you stay)
+    let starsRevealed = false;
+    const heroSection = document.getElementById('hero');
+    setTimeout(() => {
+      if (!starsRevealed && heroSection) {
+        const moreStars = 30;
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < moreStars; i++) {
+          const star = document.createElement('div');
+          star.className = 'star';
+          star.style.left = Math.random() * 100 + '%';
+          star.style.top = Math.random() * 100 + '%';
+          star.style.setProperty('--duration', (2 + Math.random() * 3) + 's');
+          star.style.setProperty('--delay', (Math.random() * 2) + 's');
+          star.style.setProperty('--brightness', (0.6 + Math.random() * 0.4).toString());
+          starsContainer.appendChild(star);
+        }
+        starsRevealed = true;
+      }
+    }, 3000);
 
   </script>
 </body>

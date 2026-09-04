@@ -2,3 +2,5 @@ original-site/
 node_modules/
 .env
 .vercel
+.DS_Store
+.claude/
