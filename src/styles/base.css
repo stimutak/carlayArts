@@ -1,3 +1,16 @@
+/* Clash Display — the display face of the Noir Gallery identity.
+   Self-hosted rather than loaded from Fontshare's CDN, so first render never
+   depends on a third-party stylesheet. One variable file covers 200-700,
+   which is smaller than the three static weights it replaces.
+   Licence: public/fonts/ClashDisplay-FFL-LICENSE.txt */
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Variable.woff2') format('woff2');
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 *,
 *::before,
 *::after {
