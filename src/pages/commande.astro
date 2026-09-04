@@ -290,10 +290,19 @@ import Base from '../layouts/Base.astro';
           customer: validation.values,
           method: data.get('method'),
         }, {
-          provider: 'demo',
+          // Omitted on purpose: createCheckout picks demo or network from
+          // CHECKOUT_TRANSPORT, so one build flag flips the whole flow.
           simulateFailure: data.get('simulate_failure') === 'yes',
           idempotencyKey: `demo:${snapshot.items.map((item) => item.id).sort().join(',')}`,
         });
+        if (result.external) {
+          // The buyer leaves for the provider. The cart is deliberately NOT
+          // cleared here: only the webhook knows whether they actually paid,
+          // and emptying it now would lose the order if they abandon.
+          if (status) status.textContent = 'Redirection vers le paiement sécurisé…';
+          window.location.assign(result.redirect);
+          return;
+        }
         saveDemoConfirmation(result.confirmation);
         const cleared = window.CarlayCart.clearCart();
         if (!cleared.ok) throw new Error('Le résultat démo a été créé, mais le panier n’a pas pu être réinitialisé. Aucun paiement n’a été pris.');

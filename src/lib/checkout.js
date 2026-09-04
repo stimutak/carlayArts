@@ -1,8 +1,12 @@
 import { isCommerceEligible } from './inventory.js';
 
 export const CONFIRMATION_STORAGE_KEY = 'carlay-demo-confirmation-v1';
-export const CHECKOUT_TRANSPORT = 'none';
-const ALLOWED_METHODS = new Set(['card-demo', 'bank-demo', 'crypto-demo']);
+// 'none' keeps the demo adapter; 'network' switches to live providers.
+// Baked at build time because a static site cannot read env at runtime.
+export const CHECKOUT_TRANSPORT = (() => {
+  try { return import.meta.env?.PUBLIC_CHECKOUT_TRANSPORT || 'none'; } catch { return 'none'; }
+})();
+const ALLOWED_METHODS = new Set(['card-demo', 'bank-demo', 'crypto-demo', 'card', 'bank', 'crypto']);
 const REGION_REQUIRED = new Set(['US', 'CA']);
 const inFlight = new Map();
 
@@ -72,9 +76,49 @@ async function demoAdapter(order, options) {
   };
 }
 
+// Live payment transport. Each method maps to a serverless function that talks
+// to the provider; only artwork ids travel, because the server resolves price,
+// title and total from its own catalogue. A tampered payload cannot change what
+// is charged.
+const ENDPOINTS = {
+  card: '/api/checkout-stripe',
+  bank: '/api/checkout-mollie',
+  crypto: '/api/checkout-crypto',
+};
+
+async function networkAdapter(order) {
+  const endpoint = ENDPOINTS[order.method];
+  if (!endpoint) throw new Error('Ce moyen de paiement n’est pas disponible.');
+
+  let response;
+  try {
+    response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        items: order.items.map((item) => ({ id: item.id })),
+        customer: order.customer,
+      }),
+    });
+  } catch {
+    throw new Error('Le service de paiement est injoignable. Aucun paiement n’a été pris.');
+  }
+
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok || !payload.url) {
+    throw new Error(payload.error || 'La création du paiement a échoué. Aucun paiement n’a été pris.');
+  }
+
+  // The buyer now leaves for the provider's page. There is no confirmation to
+  // store yet and the cart stays intact: only the webhook knows if they paid.
+  return { ok: true, external: true, redirect: payload.url, confirmation: null };
+}
+
 export function createCheckout(order, options = {}) {
-  const provider = options.provider ?? 'demo';
-  if (provider !== 'demo') return Promise.reject(new Error('Seul l’adaptateur de démonstration hors paiement est autorisé.'));
+  const provider = options.provider ?? (CHECKOUT_TRANSPORT === 'network' ? 'network' : 'demo');
+  if (provider !== 'demo' && provider !== 'network') {
+    return Promise.reject(new Error(`Fournisseur de paiement inconnu : ${provider}.`));
+  }
 
   let validated;
   try {
@@ -85,7 +129,8 @@ export function createCheckout(order, options = {}) {
 
   const key = options.idempotencyKey || `demo:${validated.items.map((item) => item.id).sort().join(',')}`;
   if (inFlight.has(key)) return inFlight.get(key);
-  const request = demoAdapter(validated, options).finally(() => inFlight.delete(key));
+  const adapter = provider === 'network' ? networkAdapter : demoAdapter;
+  const request = adapter(validated, options).finally(() => inFlight.delete(key));
   inFlight.set(key, request);
   return request;
 }
