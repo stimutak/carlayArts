@@ -490,36 +490,160 @@
 }
 
 /* Homepage */
+/* ── HOME HERO ───────────────────────────────────────────────
+   Layer stack: artwork 0 → multiplied gradient 1 → stars 2 →
+   vignette 3 → content 4. The gradient multiplies into the
+   painting so it grades the art rather than covering it, and the
+   stars sit above the multiply so they stay white. */
 .home-hero {
   position: relative;
   display: grid;
   min-height: calc(100svh - var(--nav-h));
   place-items: center;
   overflow: hidden;
-  padding: var(--pad);
-  background: radial-gradient(ellipse 60% 45% at 78% 82%, rgb(139 92 246 / 14%), transparent 65%), radial-gradient(ellipse 50% 40% at 18% 20%, rgb(255 51 102 / 7%), transparent 60%), var(--noir);
+  padding: var(--gutter);
+  background: var(--color-black);
   text-align: center;
 }
 
-.home-hero__inner {
-  display: grid;
-  justify-items: center;
-  gap: 1.6rem;
+.home-hero__artwork {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background-image: url('/site/hero-purple-galaxy-7.jpg');
+  background-position: center;
+  background-size: cover;
+  /* Dim enough that the painting reads as texture and the stars carry the sky. */
+  filter: brightness(0.16) saturate(1.5);
+  transform: scale(1.05);
+  animation: heroBreath 20s ease-in-out infinite;
 }
 
-.home-hero__logo {
-  width: clamp(11rem, 26vw, 18.75rem);
+@keyframes heroBreath {
+  0%, 100% { transform: scale(1.05); }
+  50% { transform: scale(1.1); }
+}
+
+.home-hero__bleed {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(139, 92, 246, 0.55) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 80%, rgba(217, 70, 239, 0.45) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 95%, rgba(255, 51, 102, 0.35) 0%, transparent 50%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  animation: bleedPulse 12s ease-in-out infinite;
+}
+
+@keyframes bleedPulse {
+  0%, 100% { opacity: 0.75; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+.home-hero__stars {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: var(--radius-full);
+  background: var(--color-white);
+  opacity: 0;
+  animation: twinkle var(--duration, 3s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.star--large {
+  width: 3px;
+  height: 3px;
+  box-shadow: 0 0 6px 1px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: var(--brightness, 0.8); transform: scale(1); }
+}
+
+.star--bright {
+  width: 3px;
+  height: 3px;
+  background: var(--color-white);
+  animation: zoomStar var(--duration, 6s) ease-in-out infinite;
+}
+
+@keyframes zoomStar {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(2.5); }
+}
+
+.home-hero__vignette {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, rgba(10, 10, 10, 0.25) 0%, rgba(10, 10, 10, 0.75) 55%, rgba(10, 10, 10, 0.97) 100%),
+    linear-gradient(to bottom, rgba(10, 10, 10, 0.55) 0%, rgba(10, 10, 10, 0.15) 30%, rgba(10, 10, 10, 0.15) 65%, rgba(10, 10, 10, 0.8) 100%);
+  pointer-events: none;
+}
+
+.home-hero__inner {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-5);
+}
+
+.home-hero__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-hero);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-none);
+  letter-spacing: var(--tracking-tight);
+  text-transform: uppercase;
+}
+
+.home-hero__divider {
+  width: 60px;
+  height: 1px;
+  background: var(--color-ghost-20);
 }
 
 .home-hero__scroll {
   position: absolute;
-  bottom: 1.5rem;
+  z-index: 4;
+  bottom: var(--space-5);
   left: 50%;
-  color: var(--faint);
+  color: var(--text-muted);
   font-size: var(--text-xs);
-  letter-spacing: 0.24em;
+  letter-spacing: var(--tracking-widest);
   text-transform: uppercase;
   transform: translateX(-50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero__artwork,
+  .home-hero__bleed,
+  .star {
+    animation: none;
+  }
+
+  .home-hero__artwork {
+    transform: scale(1.05);
+  }
+
+  .star {
+    opacity: var(--brightness, 0.8);
+  }
 }
 
 .home-artist {

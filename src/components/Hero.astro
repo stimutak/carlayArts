@@ -1,0 +1,63 @@
+---
+/**
+ * Home hero — the Noir Gallery cosmic treatment.
+ *
+ * Layer stack, back to front:
+ *   0  .home-hero__artwork      the painting, slowly breathing
+ *   1  .home-hero__bleed        pulsing gradient, MULTIPLIED into the art
+ *   2  .home-hero__stars        twinkle + zoom stars, above the multiply so
+ *                               they stay white instead of being tinted
+ *   3  .home-hero__vignette     darkens the edges
+ *   4  .home-hero__inner        wordmark, tagline, CTA
+ */
+const { tagline, ctaHref, ctaLabel, scrollHref } = Astro.props;
+---
+
+<section class="home-hero">
+  <div class="home-hero__artwork" aria-hidden="true"></div>
+  <div class="home-hero__bleed" aria-hidden="true"></div>
+  <div class="home-hero__stars" data-hero-stars aria-hidden="true"></div>
+  <div class="home-hero__vignette" aria-hidden="true"></div>
+
+  <div class="home-hero__inner reveal">
+    <h1 class="home-hero__title">Carlay Art</h1>
+    <div class="home-hero__divider" aria-hidden="true"></div>
+    <p class="accent-line">{tagline}</p>
+    <a class="btn" href={ctaHref}>{ctaLabel}</a>
+  </div>
+
+  <a class="home-hero__scroll" href={scrollHref}>Explorer</a>
+</section>
+
+<script>
+  // Stars are decorative, so they are generated client-side rather than shipped
+  // as markup: nothing is lost if this never runs.
+  const container = document.querySelector('[data-hero-stars]');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (container instanceof HTMLElement && !reduced) {
+    const place = (className, count, opts) => {
+      const fragment = document.createDocumentFragment();
+      for (let i = 0; i < count; i += 1) {
+        const star = document.createElement('div');
+        star.className = className;
+        star.style.left = `${opts.inset + Math.random() * (100 - opts.inset * 2)}%`;
+        star.style.top = `${opts.inset + Math.random() * (100 - opts.inset * 2)}%`;
+        star.style.setProperty('--duration', `${opts.minDuration + Math.random() * opts.durationRange}s`);
+        star.style.setProperty('--delay', `${Math.random() * opts.maxDelay}s`);
+        if (opts.brightness) star.style.setProperty('--brightness', String(opts.brightness()));
+        fragment.appendChild(star);
+      }
+      container.appendChild(fragment);
+    };
+
+    place('star', 80, { inset: 0, minDuration: 2, durationRange: 4, maxDelay: 5, brightness: () => 0.4 + Math.random() * 0.6 });
+    place('star star--large', 15, { inset: 0, minDuration: 3, durationRange: 3, maxDelay: 4, brightness: () => 1 });
+    place('star star--bright', 6, { inset: 10, minDuration: 5, durationRange: 4, maxDelay: 3 });
+
+    // The sky deepens a few seconds in, so the hero rewards staying on it.
+    window.setTimeout(() => {
+      place('star', 30, { inset: 0, minDuration: 2, durationRange: 3, maxDelay: 2, brightness: () => 0.6 + Math.random() * 0.4 });
+    }, 3000);
+  }
+</script>
