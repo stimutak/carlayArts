@@ -143,7 +143,7 @@ a {
 html.js.js-ready .reveal {
   opacity: 1;
   transform: translateY(1rem);
-  transition: transform 500ms ease-out;
+  transition: transform var(--duration-slow) var(--ease-out);
 }
 
 html.js.js-ready .reveal.is-in {
