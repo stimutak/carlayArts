@@ -42,6 +42,17 @@ const links = [
 <MobileMenu currentPath={currentPath} />
 
 <script>
+
+  // The nav sits transparent over the page and blurs in once you leave the
+  // top, so the hero reads full-bleed. Passive listener; no layout reads.
+  const siteNav = document.querySelector('.nav');
+  if (siteNav instanceof HTMLElement) {
+    const syncScrolled = () => {
+      siteNav.classList.toggle('nav--scrolled', window.scrollY > 12);
+    };
+    syncScrolled();
+    window.addEventListener('scroll', syncScrolled, { passive: true });
+  }
   const toggle = document.querySelector('#site-menu-toggle');
   const menu = document.querySelector('#site-mobile-menu');
 
