@@ -1,6 +1,10 @@
 const AVAILABILITY = new Set(['available', 'sold', 'not-for-sale']);
 const APPROVED = 'owner-approved';
 
+// Zoom stands in for a detail photograph only above this long edge, in pixels.
+// Below it a zoom shows JPEG artefacts, not brushwork.
+export const MIN_ZOOM_LONG_EDGE = 1400;
+
 const approvedFact = (fact, { numeric = false } = {}) => fact?.reviewStatus === APPROVED
   && (numeric ? Number.isFinite(fact.value) : typeof fact.value === 'string' && fact.value.trim().length > 0);
 
@@ -27,11 +31,23 @@ export function commerceEligibilityIssues(artwork) {
     if (!approvedFact(fact)) issues.push(`${name}:not-owner-approved`);
   }
   const full = artwork?.images?.full;
-  if (!full?.src || !full?.alt || full.reviewStatus !== APPROVED) issues.push('media:full-work-not-verified');
+  const fullApproved = Boolean(full?.src && full?.alt && full.reviewStatus === APPROVED);
+  if (!fullApproved) issues.push('media:full-work-not-verified');
+
+  // A buyer must be able to inspect the surface before committing to a canvas.
+  // That can come from a detail photograph, or — for work that has already left
+  // the studio and cannot be re-shot — from a zoom region on the primary image,
+  // provided that image carries enough pixels for the zoom to show brushwork
+  // rather than compression artefacts.
   const details = artwork?.images?.details ?? [];
-  if (!details.some((image) => image?.src && image?.alt && image.reviewStatus === APPROVED)) {
-    issues.push('media:verified-detail-required');
-  }
+  const hasDetailPhoto = details.some((image) => image?.src && image?.alt && image.reviewStatus === APPROVED);
+  const zoom = artwork?.images?.zoom;
+  const longEdge = Math.max(full?.width ?? 0, full?.height ?? 0);
+  const hasApprovedZoom = fullApproved
+    && zoom?.reviewStatus === APPROVED
+    && longEdge >= MIN_ZOOM_LONG_EDGE;
+
+  if (!hasDetailPhoto && !hasApprovedZoom) issues.push('media:no-inspectable-detail');
   return issues;
 }
 

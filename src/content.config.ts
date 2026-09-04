@@ -9,6 +9,21 @@ const nullableFact = z.object({
 const image = z.object({
   src: z.string().startsWith('/').nullable(),
   alt: z.string().min(1).nullable(),
+  // Pixel dimensions gate whether a zoom region can stand in for a detail
+  // photograph; null until the image has been measured.
+  width: z.number().int().positive().nullable().default(null),
+  height: z.number().int().positive().nullable().default(null),
+  reviewStatus,
+});
+
+// A zoom region on the primary image. 'full-image' lets the viewer magnify the
+// whole canvas; 'region' pins the magnifier to a chosen rectangle.
+const zoomRegion = z.object({
+  mode: z.enum(['full-image', 'region']),
+  rect: z
+    .object({ x: z.number(), y: z.number(), width: z.number(), height: z.number() })
+    .nullable()
+    .default(null),
   reviewStatus,
 });
 
@@ -49,6 +64,7 @@ const artworks = defineCollection({
       back: image.nullable(),
       signature: image.nullable(),
       roomScale: image.nullable(),
+      zoom: zoomRegion.nullable().default(null),
     }),
     featured: z.boolean(),
     relatedSlugs: z.array(z.string()),

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { additionDecision, createInventoryIndex, isCommerceEligible } from '../src/lib/inventory.js';
+import { additionDecision, commerceEligibilityIssues, createInventoryIndex, isCommerceEligible } from '../src/lib/inventory.js';
 
 const approvedFact = (value) => ({ value, reviewStatus: 'owner-approved' });
 
@@ -45,5 +45,28 @@ describe('runtime inventory gate', () => {
     expect(isCommerceEligible(work())).toBe(true);
     expect(isCommerceEligible(work({ price: { amount: 1000, currency: 'EUR', reviewStatus: 'legacy-source' } }))).toBe(false);
     expect(isCommerceEligible(work({ images: { full: null, details: [] } }))).toBe(false);
+  });
+
+  it('accepts a zoom region in place of a detail photograph, above the resolution floor', () => {
+    const bigFull = { src: '/full.jpg', alt: 'Work 1 intégrale', width: 1501, height: 2000, reviewStatus: 'owner-approved' };
+    const smallFull = { ...bigFull, width: 600, height: 600 };
+    const approvedZoom = { mode: 'full-image', rect: null, reviewStatus: 'owner-approved' };
+
+    // Work that has left the studio cannot be re-shot, so a zoom on a
+    // high-resolution primary image stands in for the detail photograph.
+    expect(isCommerceEligible(work({ images: { full: bigFull, details: [], zoom: approvedZoom } }))).toBe(true);
+
+    // Below the floor a zoom shows compression artefacts, not brushwork.
+    expect(isCommerceEligible(work({ images: { full: smallFull, details: [], zoom: approvedZoom } }))).toBe(false);
+    expect(commerceEligibilityIssues(work({ images: { full: smallFull, details: [], zoom: approvedZoom } })))
+      .toContain('media:no-inspectable-detail');
+
+    // An unapproved zoom is not a substitute.
+    expect(isCommerceEligible(work({
+      images: { full: bigFull, details: [], zoom: { ...approvedZoom, reviewStatus: 'draft' } },
+    }))).toBe(false);
+
+    // Neither route present.
+    expect(isCommerceEligible(work({ images: { full: bigFull, details: [], zoom: null } }))).toBe(false);
   });
 });
