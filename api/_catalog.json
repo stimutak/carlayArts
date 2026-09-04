@@ -1,0 +1,173 @@
+{
+  "generatedAt": "2026-09-04T14:05:47.130Z",
+  "artworks": {
+    "vortex-1": {
+      "id": "vortex-1",
+      "name": "Vortex 1",
+      "description": "Série Vortex · Acrylique sur toile · 32×32cm",
+      "image": "original-site/images/vortex1-680x680.jpeg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "vortex-5": {
+      "id": "vortex-5",
+      "name": "Vortex 5",
+      "description": "Série Vortex · Acrylique sur toile · 32×32cm",
+      "image": "original-site/images/VORTEX-5.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "insomnia-1": {
+      "id": "insomnia-1",
+      "name": "Insomnia 1",
+      "description": "Série Insomnia · Acrylique sur toile",
+      "image": "original-site/images/insomnia-1-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "insomnia-2": {
+      "id": "insomnia-2",
+      "name": "Insomnia 2",
+      "description": "Série Insomnia · Acrylique sur toile",
+      "image": "original-site/images/insomnia-2-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "insomnia-3": {
+      "id": "insomnia-3",
+      "name": "Insomnia 3",
+      "description": "Série Insomnia · Acrylique sur toile",
+      "image": "original-site/images/insomnia-3-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "insomnia-4": {
+      "id": "insomnia-4",
+      "name": "Insomnia 4",
+      "description": "Série Insomnia · Acrylique sur toile",
+      "image": "original-site/images/insomnia-4-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "insomnia-5": {
+      "id": "insomnia-5",
+      "name": "Insomnia 5",
+      "description": "Série Insomnia · Acrylique sur toile",
+      "image": "original-site/images/insomnia-5-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "insomnia-6": {
+      "id": "insomnia-6",
+      "name": "Insomnia 6",
+      "description": "Série Insomnia · Acrylique sur toile",
+      "image": "original-site/images/insomnia-6-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "purple-galaxy-4": {
+      "id": "purple-galaxy-4",
+      "name": "Purple Galaxy 4",
+      "description": "Série Purple Galaxy · Acrylique sur toile · 22×30cm",
+      "image": "original-site/images/PURPLE-GALAXY-4-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "evolution-1": {
+      "id": "evolution-1",
+      "name": "Evolution 1",
+      "description": "Série Evolution · Acrylique sur toile",
+      "image": "original-site/images/EVOLUTION-1-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "evolution-2": {
+      "id": "evolution-2",
+      "name": "Evolution 2",
+      "description": "Série Evolution · Acrylique sur toile",
+      "image": "original-site/images/EVOLUTION-2-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "evolution-3": {
+      "id": "evolution-3",
+      "name": "Evolution 3",
+      "description": "Série Evolution · Acrylique sur toile",
+      "image": "original-site/images/EVOLUTION-3-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "golden-sunset-1": {
+      "id": "golden-sunset-1",
+      "name": "Golden Sunset 1",
+      "description": "Série Golden Sunset · Acrylique sur toile",
+      "image": "original-site/images/GLODEN-SUNSET-1-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "golden-sunset-2": {
+      "id": "golden-sunset-2",
+      "name": "Golden Sunset 2",
+      "description": "Série Golden Sunset · Acrylique sur toile",
+      "image": "original-site/images/GOLDEN-SUNSET-2-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "golden-sunset-3": {
+      "id": "golden-sunset-3",
+      "name": "Golden Sunset 3",
+      "description": "Série Golden Sunset · Acrylique sur toile",
+      "image": "original-site/images/GOLDEN-SUNSET-3-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "free-spirit-1": {
+      "id": "free-spirit-1",
+      "name": "Free Spirit 1",
+      "description": "Série Free Spirit · Acrylique sur toile",
+      "image": "original-site/images/elastic-1-2-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "free-spirit-2": {
+      "id": "free-spirit-2",
+      "name": "Free Spirit 2",
+      "description": "Série Free Spirit · Acrylique sur toile",
+      "image": "original-site/images/elastic-2-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "free-spirit-3": {
+      "id": "free-spirit-3",
+      "name": "Free Spirit 3",
+      "description": "Série Free Spirit · Acrylique sur toile",
+      "image": "original-site/images/elastic-3-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "elastic-1": {
+      "id": "elastic-1",
+      "name": "Elastic 1",
+      "description": "Série Elastic · Acrylique sur toile",
+      "image": "original-site/images/elastic-1-2-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "elastic-2": {
+      "id": "elastic-2",
+      "name": "Elastic 2",
+      "description": "Série Elastic · Acrylique sur toile",
+      "image": "original-site/images/elastic-2-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    },
+    "elastic-3": {
+      "id": "elastic-3",
+      "name": "Elastic 3",
+      "description": "Série Elastic · Acrylique sur toile",
+      "image": "original-site/images/elastic-3-680x680.jpg",
+      "price": 1000,
+      "currency": "EUR"
+    }
+  }
+}

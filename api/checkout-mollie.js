@@ -1,3 +1,5 @@
+const { resolveOrder, OrderError } = require('./_order');
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -6,20 +8,14 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const apiKey = process.env.MOLLIE_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'Mollie not configured' });
-  }
-
   try {
-    const { items, total } = req.body;
-    if (!items || !items.length) {
-      return res.status(400).json({ error: 'No items provided' });
-    }
+    // Total is computed from the server catalog, not sent by the browser.
+    const order = resolveOrder(req.body);
 
+    const apiKey = process.env.MOLLIE_API_KEY;
+    if (!apiKey) return res.status(500).json({ error: 'Mollie not configured' });
     const siteUrl = process.env.SITE_URL || 'https://carlay-art.com';
-    const orderTotal = total || items.reduce((sum, i) => sum + (i.price * (i.qty || 1)), 0);
-    const description = items.map(i => `${i.name} x${i.qty || 1}`).join(', ');
+    const description = order.items.map(i => `${i.name} x${i.qty}`).join(', ');
 
     const response = await fetch('https://api.mollie.com/v2/payments', {
       method: 'POST',
@@ -30,9 +26,9 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         amount: {
           currency: 'EUR',
-          value: orderTotal.toFixed(2),
+          value: order.total.toFixed(2),
         },
-        description: `Carlay Art \u2014 ${description}`,
+        description: `Carlay Art — ${description}`,
         redirectUrl: `${siteUrl}/panier.html?status=success`,
         cancelUrl: `${siteUrl}/panier.html?status=cancelled`,
         webhookUrl: `${siteUrl}/api/webhook-mollie`,
@@ -49,6 +45,7 @@ module.exports = async function handler(req, res) {
       res.status(500).json({ error: 'Payment creation failed' });
     }
   } catch (error) {
+    if (error instanceof OrderError) return res.status(error.status).json({ error: error.message });
     console.error('Mollie error:', error.message);
     res.status(500).json({ error: 'Payment session creation failed' });
   }

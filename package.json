@@ -8,7 +8,8 @@
     "scrape:install": "npx playwright install chromium && npm run scrape",
     "dev": "node scripts/dev-server.js",
     "test": "echo \"No tests yet\" && exit 0",
-    "dev:static": "npx serve ."
+    "dev:static": "npx serve .",
+    "build:catalog": "node scripts/build-catalog.js"
   },
   "repository": {
     "type": "git",
