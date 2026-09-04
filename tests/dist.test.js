@@ -8,10 +8,16 @@ const slugs = readdirSync(contentDir)
   .filter((file) => file.endsWith('.json'))
   .map((file) => file.replace(/\.json$/, ''));
 
+// The studio is a standalone CMS shell, not a page of the site: it has no nav,
+// no footer and no Astro layout by design, and it is noindex and behind GitHub
+// login. Site-wide page assertions do not apply to it.
+const isSitePage = (path) => !relative(dist, path).split(/[\\/]/).includes('studio');
+
 const htmlFiles = (directory) =>
   readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const path = join(directory, entry.name);
-    return entry.isDirectory() ? htmlFiles(path) : path.endsWith('.html') ? [path] : [];
+    if (entry.isDirectory()) return htmlFiles(path);
+    return path.endsWith('.html') && isSitePage(path) ? [path] : [];
   });
 
 const outputForPath = (pathname) => {

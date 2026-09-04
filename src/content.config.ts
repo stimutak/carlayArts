@@ -1,5 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { applyOwnerApproval } from './lib/approvals.js';
 
 const reviewStatus = z.enum(['legacy-source', 'needs-owner-review', 'draft', 'owner-approved']);
 const nullableFact = z.object({
@@ -69,7 +70,18 @@ const artworks = defineCollection({
     featured: z.boolean(),
     relatedSlugs: z.array(z.string()),
     source: z.object({ kind: z.literal('legacy-catalog'), file: z.string().min(1) }),
-  }),
+
+    // The single decision the artist makes in the studio. It is expanded into
+    // the individual review stamps below, and only onto facts that carry a
+    // real value — see src/lib/approvals.js.
+    ownerApproval: z
+      .object({
+        readyToSell: z.boolean().default(false),
+        approvedAt: z.string().nullable().default(null),
+        note: z.string().nullable().default(null),
+      })
+      .default({ readyToSell: false, approvedAt: null, note: null }),
+  }).transform(applyOwnerApproval),
 });
 
 export const collections = { artworks };

@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { extname, join, relative } from 'node:path';
+import { extname, join, relative, sep } from 'node:path';
 
 const root = process.cwd();
 const dist = join(root, 'dist');
@@ -12,7 +12,12 @@ const walk = (directory) => readdirSync(directory, { withFileTypes: true }).flat
 });
 
 const files = walk(dist);
-const htmlFiles = files.filter((file) => file.endsWith('.html'));
+// The studio at /studio/ is a standalone CMS shell, not a page of the site.
+// It carries no canonical, description or Open Graph metadata on purpose: it
+// is noindex and sits behind GitHub login, so the SEO and structure checks
+// below would be asserting things that should not be true of it.
+const isSitePage = (file) => !relative(dist, file).split(sep).includes('studio');
+const htmlFiles = files.filter((file) => file.endsWith('.html') && isSitePage(file));
 const routeFor = (file) => {
   const name = relative(dist, file).replaceAll('\\', '/');
   if (name === 'index.html') return '/';

@@ -20,7 +20,8 @@
     "scrape": "node scripts/scrape-site-standalone.js",
     "scrape:install": "npx playwright install chromium && npm run scrape",
     "audit:production": "npm audit --omit=dev",
-    "build:catalog": "node scripts/build-catalog.js"
+    "build:catalog": "node scripts/build-catalog.js",
+    "approvals": "node scripts/approvals-report.mjs"
   },
   "repository": {
     "type": "git",

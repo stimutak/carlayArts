@@ -1,0 +1,159 @@
+# Studio configuration — what Carlay actually sees.
+#
+# The commerce gate checks eleven separate review stamps before a work can be
+# sold. None of them appear here. She fills in what she knows about the piece
+# and sets one switch, "Prête à vendre"; src/lib/approvals.js expands that into
+# the stamps, and only onto facts that carry a real value. A work marked ready
+# with a blank year stays unsellable.
+
+backend:
+  name: github
+  repo: stimutak/carlayArts
+  branch: claude/noir-gallery-merged
+  base_url: https://carlay-art.com      # the OAuth proxy below
+  auth_endpoint: api/oauth
+
+media_folder: public/artworks
+public_folder: /artworks
+
+locale: fr
+
+collections:
+  - name: artworks
+    label: Œuvres
+    label_singular: Œuvre
+    folder: src/content/artworks
+    extension: json
+    format: json
+    create: false            # works are seeded from the catalogue, not invented here
+    delete: false
+    identifier_field: title
+    summary: '{{title}} — {{series}}'
+    sortable_fields: [title, series, sortOrder]
+    view_groups:
+      - label: Série
+        field: series
+    fields:
+      - { name: title, label: Titre, widget: string }
+      - { name: series, label: Série, widget: string, required: false }
+
+      - name: ownerApproval
+        label: Mise en vente
+        widget: object
+        collapsed: false
+        fields:
+          - name: readyToSell
+            label: Prête à vendre
+            widget: boolean
+            default: false
+            hint: >-
+              À activer une fois que tout est renseigné ci-dessous. Si une
+              information manque, l’œuvre reste hors vente : rien n’est publié
+              par erreur.
+          - { name: approvedAt, label: Validée le, widget: datetime, required: false, format: 'yyyy-MM-dd', date_format: 'dd/MM/yyyy', time_format: false }
+          - { name: note, label: Note interne, widget: text, required: false }
+
+      - name: availability
+        label: Disponibilité
+        widget: select
+        options:
+          - { label: Disponible à la vente, value: available }
+          - { label: Vendue, value: sold }
+          - { label: Pas à vendre, value: 'not-for-sale' }
+
+      - name: price
+        label: Prix
+        widget: object
+        fields:
+          - { name: amount, label: Montant (€), widget: number, value_type: int, min: 1 }
+          - { name: currency, label: Devise, widget: hidden, default: EUR }
+
+      - name: year
+        label: Année
+        widget: object
+        fields:
+          - { name: value, label: Année de réalisation, widget: number, value_type: int, min: 1900, max: 2100, required: false }
+
+      - name: dimensions
+        label: Dimensions
+        widget: object
+        hint: En centimètres, sans le cadre.
+        fields:
+          - { name: width, label: Largeur (cm), widget: number, required: false }
+          - { name: height, label: Hauteur (cm), widget: number, required: false }
+          - { name: depth, label: Épaisseur (cm), widget: number, required: false }
+          - { name: unit, label: Unité, widget: hidden, default: cm }
+
+      - name: medium
+        label: Technique
+        widget: object
+        fields:
+          - { name: value, label: Technique, widget: string, default: Acrylique sur toile }
+
+      - name: signaturePlacement
+        label: Signature
+        widget: object
+        fields:
+          - { name: value, label: Où se trouve la signature, widget: string, required: false, hint: 'Par exemple : « Au dos, en bas à droite ».' }
+
+      - name: condition
+        label: État
+        widget: object
+        fields:
+          - { name: value, label: État de l’œuvre, widget: string, required: false, hint: 'Par exemple : « Excellent, jamais exposée ».' }
+
+      - name: framingStatus
+        label: Encadrement
+        widget: object
+        fields:
+          - { name: value, label: Encadrée ou non, widget: string, required: false, hint: 'Par exemple : « Non encadrée, bords peints ».' }
+
+      - name: certificateStatus
+        label: Certificat
+        widget: object
+        fields:
+          - { name: value, label: Certificat d’authenticité, widget: string, required: false, hint: 'Par exemple : « Inclus, signé au dos ».' }
+
+      - name: images
+        label: Images
+        widget: object
+        collapsed: false
+        fields:
+          - name: full
+            label: Photo de l’œuvre entière
+            widget: object
+            hint: >-
+              La photo principale. Pour permettre l’agrandissement sans photo de
+              détail, elle doit faire au moins 1400 px sur le grand côté.
+            fields:
+              - { name: src, label: Fichier, widget: image, required: false }
+              - { name: alt, label: Description de l’image, widget: string, required: false, hint: Lue à voix haute par les lecteurs d’écran. }
+              - { name: width, label: Largeur en pixels, widget: number, value_type: int, required: false }
+              - { name: height, label: Hauteur en pixels, widget: number, value_type: int, required: false }
+
+          - name: zoom
+            label: Agrandissement
+            widget: object
+            required: false
+            hint: >-
+              Remplace la photo de détail pour les œuvres déjà vendues, qui ne
+              peuvent plus être photographiées.
+            fields:
+              - name: mode
+                label: Type d’agrandissement
+                widget: select
+                options:
+                  - { label: Toute l’image, value: 'full-image' }
+                  - { label: Une zone précise, value: region }
+                default: 'full-image'
+
+          - name: details
+            label: Photos de détail
+            widget: list
+            required: false
+            fields:
+              - { name: src, label: Fichier, widget: image }
+              - { name: alt, label: Description de l’image, widget: string }
+
+      - { name: cardDescription, label: Texte de la fiche, widget: object, fields: [{ name: value, label: Texte, widget: text }] }
+      - { name: workNote, label: Note sur l’œuvre, widget: object, fields: [{ name: value, label: Note, widget: text }] }

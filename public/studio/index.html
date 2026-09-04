@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Studio — Carlay Art</title>
+    <style>
+      body { margin: 0; background: #0a0a0a; color: #fafafa; font-family: system-ui, sans-serif; }
+      .studio-note {
+        max-width: 44rem; margin: 0 auto; padding: 2rem 1.5rem 0;
+        font-size: 0.95rem; line-height: 1.6; color: rgba(250, 250, 250, 0.7);
+      }
+      .studio-note strong { color: #fafafa; }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      <p class="studio-note">Le studio a besoin de JavaScript pour fonctionner.</p>
+    </noscript>
+
+    <!--
+      Sveltia CMS: a git-backed editor. Everything saved here becomes a commit on
+      the repository, which triggers a rebuild. There is no database and no
+      separate admin server to keep running.
+
+      This is the only page on the site that loads a third-party script. It is
+      deliberate: the public pages stay self-hosted, and the trade-off does not
+      reach visitors because this page is noindex and behind GitHub login.
+    -->
+    <script src="https://unpkg.com/@sveltia/cms@0.61.0/dist/sveltia-cms.js" type="module"></script>
+  </body>
+</html>
